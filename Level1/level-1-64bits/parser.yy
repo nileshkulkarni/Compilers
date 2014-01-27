@@ -53,6 +53,7 @@
 %type <ast> goto_statement
 %type <ast> if_else_statement
 %type <ast> variable
+%type <ast> expression
 %type <ast> constant
 
 %start program
@@ -116,7 +117,7 @@ assignment_statement_list:
 
 
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
-                    std::cout<<"Came to if \n";
+                   // std::cout<<"Came to if \n";
                  };
 
             
@@ -126,7 +127,7 @@ goto_statement: GOTO '<'NAME INTEGER_NUMBER'>' ';' {
               ; 
               
 
-relational_op : '<' | '>' | '<''=' | '>''=' | '=''=' | '!''=';
+relational_op : '<' | '>' | '<''=' | '>''=' | '=''=' | '!''='; 
 
 expression:
  expression relational_op  expression
@@ -135,9 +136,7 @@ expression:
 ;
 
 assignment_statement:
-	variable '=' variable ';'
-|
-	variable '=' constant ';'
+	variable '=' expression ';'
 ;
 
 variable:
@@ -145,5 +144,6 @@ variable:
 ;
 
 constant:
+        
 	INTEGER_NUMBER
 ;

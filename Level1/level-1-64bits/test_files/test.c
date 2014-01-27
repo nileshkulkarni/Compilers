@@ -3,8 +3,6 @@ main()
 	int a = 4;
 	int b = 3;
 	int c = 3;
-    
-    a = a?b:c;
 
 	if (c > (a > b)?0:21)
 		a = 6;

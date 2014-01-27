@@ -29,11 +29,10 @@ Production Rules
 26: expression ->  expression relational_op expression
 27: expression ->  variable
 28: expression ->  constant
-29: assignment_statement ('=') ->  variable '=' variable ';'
-30: assignment_statement ('=') ->  variable '=' constant ';'
-31: variable (NAME) ->  NAME
-32: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-33: program_$ ->  program
+29: assignment_statement ('=') ->  variable '=' expression ';'
+30: variable (NAME) ->  NAME
+31: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+32: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -60,7 +59,7 @@ Symbolic Terminal tokens:
 
 Grammar States: 
 State 0:
-33: program_$ ->  . program 
+32: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -70,7 +69,7 @@ State 0:
 
 
 State 1:
-33: program_$ -> program  . 
+32: program_$ -> program  . 
 
 
 State 2:
@@ -281,14 +280,13 @@ State 35:
 
 
 State 36:
-29: assignment_statement -> variable  . '=' variable ';' 
-30: assignment_statement -> variable  . '=' constant ';' 
+29: assignment_statement -> variable  . '=' expression ';' 
   0:   On '=' to state 41
 
 
 State 37:
-31: variable -> NAME  . 
-  Reduce by 31: variable -> NAME  . 
+30: variable -> NAME  . 
+  Reduce by 30: variable -> NAME  . 
 
 
 State 38:
@@ -311,28 +309,28 @@ State 40:
 
 
 State 41:
-29: assignment_statement -> variable '='  . variable ';' 
-30: assignment_statement -> variable '='  . constant ';' 
-  0:   On variable to state 47
-  1:   On constant to state 48
-  2:   On NAME to state 37
-  3:   On INTEGER_NUMBER to state 46
+29: assignment_statement -> variable '='  . expression ';' 
+  0:   On expression to state 47
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 42:
 19: goto_statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
-  0:   On INTEGER_NUMBER to state 49
+  0:   On INTEGER_NUMBER to state 48
 
 
 State 43:
 18: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
 26: expression -> expression  . relational_op expression 
-  0:   On ')' to state 50
-  1:   On relational_op to state 51
-  2:   On '<' to state 52
-  3:   On '>' to state 53
-  4:   On '=' to state 54
-  5:   On '!' to state 55
+  0:   On ')' to state 49
+  1:   On relational_op to state 50
+  2:   On '<' to state 51
+  3:   On '>' to state 52
+  4:   On '=' to state 53
+  5:   On '!' to state 54
 
 
 State 44:
@@ -346,127 +344,123 @@ State 45:
 
 
 State 46:
-32: constant -> INTEGER_NUMBER  . 
-  Reduce by 32: constant -> INTEGER_NUMBER  . 
+31: constant -> INTEGER_NUMBER  . 
+  Reduce by 31: constant -> INTEGER_NUMBER  . 
 
 
 State 47:
-29: assignment_statement -> variable '=' variable  . ';' 
-  0:   On ';' to state 56
+29: assignment_statement -> variable '=' expression  . ';' 
+26: expression -> expression  . relational_op expression 
+  0:   On ';' to state 55
+  1:   On relational_op to state 50
+  2:   On '<' to state 51
+  3:   On '>' to state 52
+  4:   On '=' to state 53
+  5:   On '!' to state 54
 
 
 State 48:
-30: assignment_statement -> variable '=' constant  . ';' 
-  0:   On ';' to state 57
+19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
+  0:   On '>' to state 56
 
 
 State 49:
-19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
-  0:   On '>' to state 58
-
-
-State 50:
 18: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
-  0:   On goto_statement to state 59
+  0:   On goto_statement to state 57
   1:   On GOTO to state 34
 
 
-State 51:
+State 50:
 26: expression -> expression relational_op  . expression 
-  0:   On expression to state 60
+  0:   On expression to state 58
   1:   On variable to state 44
   2:   On constant to state 45
   3:   On NAME to state 37
   4:   On INTEGER_NUMBER to state 46
 
 
-State 52:
+State 51:
 20: relational_op -> '<'  . 
 22: relational_op -> '<'  . '=' 
-  0:   On '=' to state 61
+  0:   On '=' to state 59
   Reduce by 20: relational_op -> '<'  . 
 
 
-State 53:
+State 52:
 21: relational_op -> '>'  . 
 23: relational_op -> '>'  . '=' 
-  0:   On '=' to state 62
+  0:   On '=' to state 60
   Reduce by 21: relational_op -> '>'  . 
 
 
-State 54:
+State 53:
 24: relational_op -> '='  . '=' 
-  0:   On '=' to state 63
+  0:   On '=' to state 61
+
+
+State 54:
+25: relational_op -> '!'  . '=' 
+  0:   On '=' to state 62
 
 
 State 55:
-25: relational_op -> '!'  . '=' 
-  0:   On '=' to state 64
+29: assignment_statement -> variable '=' expression ';'  . 
+  Reduce by 29: assignment_statement -> variable '=' expression ';'  . 
 
 
 State 56:
-29: assignment_statement -> variable '=' variable ';'  . 
-  Reduce by 29: assignment_statement -> variable '=' variable ';'  . 
+19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
+  0:   On ';' to state 63
 
 
 State 57:
-30: assignment_statement -> variable '=' constant ';'  . 
-  Reduce by 30: assignment_statement -> variable '=' constant ';'  . 
+18: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 64
 
 
 State 58:
-19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
-  0:   On ';' to state 65
-
-
-State 59:
-18: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
-  0:   On ELSE to state 66
-
-
-State 60:
 26: expression -> expression relational_op expression  . 
 26: expression -> expression  . relational_op expression 
-  0:   On relational_op to state 51
-  1 (AUTO REMOVED by S/R resolution):   On '<' to state 52
-  2 (AUTO REMOVED by S/R resolution):   On '>' to state 53
-  3 (AUTO REMOVED by S/R resolution):   On '=' to state 54
-  4 (AUTO REMOVED by S/R resolution):   On '!' to state 55
+  0:   On relational_op to state 50
+  1 (AUTO REMOVED by S/R resolution):   On '<' to state 51
+  2 (AUTO REMOVED by S/R resolution):   On '>' to state 52
+  3 (AUTO REMOVED by S/R resolution):   On '=' to state 53
+  4 (AUTO REMOVED by S/R resolution):   On '!' to state 54
   Reduce by 26: expression -> expression relational_op expression  . 
 
 
-State 61:
+State 59:
 22: relational_op -> '<' '='  . 
   Reduce by 22: relational_op -> '<' '='  . 
 
 
-State 62:
+State 60:
 23: relational_op -> '>' '='  . 
   Reduce by 23: relational_op -> '>' '='  . 
 
 
-State 63:
+State 61:
 24: relational_op -> '=' '='  . 
   Reduce by 24: relational_op -> '=' '='  . 
 
 
-State 64:
+State 62:
 25: relational_op -> '!' '='  . 
   Reduce by 25: relational_op -> '!' '='  . 
 
 
-State 65:
+State 63:
 19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
   Reduce by 19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
 
 
-State 66:
+State 64:
 18: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
-  0:   On goto_statement to state 67
+  0:   On goto_statement to state 65
   1:   On GOTO to state 34
 
 
-State 67:
+State 65:
 18: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
   Reduce by 18: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
 
