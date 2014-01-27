@@ -1,0 +1,16 @@
+
+;; Function main (main)
+
+  static int a;
+
+main ()
+{
+  int b;
+
+<bb 2>:
+  b = a;
+  return;
+
+}
+
+
