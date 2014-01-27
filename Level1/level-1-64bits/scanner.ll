@@ -73,11 +73,17 @@ goto    {
 
 					return Parser::NAME; 
 				}
+([ \t]*[/][/][^\n]*) {
+			if(command_options.is_show_tokens_selected())
+			    	ignore_token();
+        }
 
 \n		{ 
 			if (command_options.is_show_tokens_selected())
 				ignore_token();
 		}    
+
+
 
 ";;".*  	|
 [ \t]		{
