@@ -37,11 +37,11 @@ for f in files:
 
 for f in error_files:
     print("Testing file  " + f ); 
-    command = "./cfglp_original -tokens  " + f + " > expected " 
+    command = "./cfglp_original -tokens  " + f + " 2> expected " 
     os.system(command) 
-    command = "./cfglp -tokens " + f + " > generated " 
+    command = "./cfglp -tokens " + f + " 2> generated " 
     os.system(command)
-    print("diff starts here \n");
+    #print("diff starts here \n");
     os.system("diff -b expected generated");
 
 
