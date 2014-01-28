@@ -1,0 +1,6 @@
+Line: 2 	Ignored NEWLINE character
+Line: 2 	Token Name: INTEGER 	Token: int 	Token Code: 260
+Line: 2 	Ignored lexeme: ' '
+Line: 2 	Token Name: NAME 	Token: a 	Token Code: 258
+Line: 2 	Ignored lexeme: ' '
+Line: 2 	Token Name: META CHAR 	Token: = 	Token Code: 61
