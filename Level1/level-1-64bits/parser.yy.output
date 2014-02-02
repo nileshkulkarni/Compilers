@@ -45,6 +45,12 @@ Symbolic Terminal tokens:
    261: IF
    262: ELSE
    263: GOTO
+   264: ASSIGN_OP
+   265: GE
+   266: LE
+   267: EQ
+   268: NE
+   269: BASIC_BLOCK
     40: '('
     41: ')'
    123: '{'

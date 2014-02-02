@@ -31,18 +31,17 @@ int		{
 			return Parser::INTEGER; 
 		}
 
-return		{ 
+return	{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
-		}
-
+		} 
 if		{ 
 			store_token_name("IF");
 			return Parser::IF; 
 		}
 
 
-else		{ 
+else	{ 
 			store_token_name("ELSE");
 			return Parser::ELSE; 
 		}
@@ -51,30 +50,39 @@ goto    {
 			return Parser::GOTO; 
 		}
 
-=	    {
+"="    {
 			store_token_name("ASSIGN_OP");
             return Parser::ASSIGN_OP;       		
         }
->=	    {
+
+">="    {
 			store_token_name("GE");
             return Parser::GE;       		
         }
-<=	    {
+
+"<="	{
 			store_token_name("LE");
             return Parser::LE;       		
         }
 
-==      {
+"=="    {
             store_token_name("EQ");
             return Parser::EQ;
         }
 
 
-!=      {
+"!="    {
             store_token_name("NE");
             return Parser::NE;
         }
 
+("<bb ")([digit]*)(">") {
+            store_token_name("BASIC BLOCK");
+			ParserBase::STYPE__ * val = getSval();
+            string matchs = matched();
+			val->integer_value = atoi(matchs.substr(4,matchs.length -5);
+            return Parser::BASIC_BLOCK;
+        }
 
 [<>:{}();=!]	{
 			store_token_name("META CHAR");
