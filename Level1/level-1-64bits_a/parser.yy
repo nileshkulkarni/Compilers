@@ -99,7 +99,7 @@ basic_block_list:
 basic_block:
 	'<' NAME INTEGER_NUMBER '>' ':' executable_statement_list
 ;
-
+/* added a goto and if-stmt to list of executable statements */
 executable_statement_list:
 	assignment_statement_list
 |
@@ -116,21 +116,26 @@ assignment_statement_list:
 ;
 
 
+/* if_else_statement grammar */
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
                    // std::cout<<"Came to if \n";
                  };
 
             
+/* goto statement grammar */
 goto_statement: GOTO '<'NAME INTEGER_NUMBER'>' ';' {
               //std::cout<<"Came to goto statement\n";
               }
               ; 
               
+/* different Relational operators */
 
 relational_op : '<' | '>' | '<''=' | '>''=' | '=''=' | '!''='; 
 
+/* expresssion */
 expression:
- expression relational_op  expression
+ expression relational_op  variable
+| expression relational_op  constant
 | variable 
 | constant
 ;

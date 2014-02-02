@@ -35,17 +35,19 @@ return		{
 			store_token_name("RETURN");
 			return Parser::RETURN; 
 		}
-
+/* lexical for if */
 if		{ 
 			store_token_name("IF");
 			return Parser::IF; 
 		}
 
+/* lexical for else */
 
 else		{ 
 			store_token_name("ELSE");
 			return Parser::ELSE; 
 		}
+/* lexical for goto */
 goto    { 
 			store_token_name("GOTO");
 			return Parser::GOTO; 
@@ -73,6 +75,7 @@ goto    {
 
 					return Parser::NAME; 
 				}
+/* lexical for comments */
 ([ \t]*[/][/][^\n]*) {
 			if(command_options.is_show_tokens_selected())
 			    	ignore_token();

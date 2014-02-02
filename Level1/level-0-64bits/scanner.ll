@@ -36,47 +36,7 @@ return		{
 			return Parser::RETURN; 
 		}
 
-if		{ 
-			store_token_name("IF");
-			return Parser::IF; 
-		}
-
-
-else		{ 
-			store_token_name("ELSE");
-			return Parser::ELSE; 
-		}
-goto    { 
-			store_token_name("GOTO");
-			return Parser::GOTO; 
-		}
-
-=	    {
-			store_token_name("ASSIGN_OP");
-            return Parser::ASSIGN_OP;       		
-        }
->=	    {
-			store_token_name("GE");
-            return Parser::GE;       		
-        }
-<=	    {
-			store_token_name("LE");
-            return Parser::LE;       		
-        }
-
-==      {
-            store_token_name("EQ");
-            return Parser::EQ;
-        }
-
-
-!=      {
-            store_token_name("NE");
-            return Parser::NE;
-        }
-
-
-[<>:{}();=!]	{
+[<>:{}();=]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
@@ -87,7 +47,8 @@ goto    {
 				ParserBase::STYPE__ * val = getSval();
 				val->integer_value = atoi(matched().c_str());
 
-				return Parser::INTEGER_NUMBER; 			}
+				return Parser::INTEGER_NUMBER; 
+			}
 
 [[:alpha:]_][[:alpha:][:digit:]_]* {
 					store_token_name("NAME");
@@ -97,17 +58,11 @@ goto    {
 
 					return Parser::NAME; 
 				}
-([ \t]*[/][/][^\n]*) {
-			if(command_options.is_show_tokens_selected())
-			    	ignore_token();
-        }
 
 \n		{ 
 			if (command_options.is_show_tokens_selected())
 				ignore_token();
 		}    
-
-
 
 ";;".*  	|
 [ \t]		{

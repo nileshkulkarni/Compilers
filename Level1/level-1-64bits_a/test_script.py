@@ -45,6 +45,8 @@ for f in error_files:
     os.system("diff -b expected generated");
 
 
-
+for f in cfgFiles:
+    command ="rm " +f 
+    os.system(command);
 #print cfgFiles
 

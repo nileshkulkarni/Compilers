@@ -1,0 +1,33 @@
+
+
+Changes in scanner.ll
+
+added regex for 
+    --> if
+    --> else
+    --> goto
+    
+/* snippet */
+if		{ 
+			store_token_name("IF");
+			return Parser::IF; 
+		}
+
+
+else		{ 
+			store_token_name("ELSE");
+			return Parser::ELSE; 
+		}
+goto    { 
+			store_token_name("GOTO");
+			return Parser::GOTO; 
+		}
+
+also ignoring comments for the time being
+
+/* snippet ends */
+
+
+Changes in parser.yy
+
+add grammar for if-stmt, goto-stmt, expression, and made changes to assignment statement
