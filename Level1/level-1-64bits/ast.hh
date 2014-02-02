@@ -52,6 +52,12 @@ public:
 	virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
 };
 
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 class Assignment_Ast:public Ast
 {
 	Ast * lhs;
@@ -69,6 +75,15 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 class Name_Ast:public Ast
 {
 	string variable_name;
@@ -88,6 +103,101 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+class IfElse_Ast:public Ast
+{
+	Ast * condition //Condition Ast
+	Ast * ifGoto;  //If GOTO STATEMENT
+	Ast * elseGoto; //Else GOTO STATEMENT
+
+public:
+	IfElse_Ast(Ast * _condition , Ast * if_Goto, Ast * else_Goto);
+	~IfElse_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+class Goto_Ast:public Ast
+{
+	int bb;
+	
+public:
+	Goto_Ast(int _bb);
+	~Goto_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+class Expression_Ast:public Ast{
+	
+	
+	
+	Ast *lhs;
+	OperatorType op;
+	Ast *rhs;
+		
+		
+	
+public:
+
+	enum OperatorType{
+		LE,
+		GE,
+		EQ,
+		NE,
+		LT,
+		GT
+	};
+
+	Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op);
+	~Expression_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+}
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 template <class T>
 class Number_Ast:public Ast
 {
@@ -104,6 +214,10 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 class Return_Ast:public Ast
 {
 
