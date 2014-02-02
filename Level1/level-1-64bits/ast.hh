@@ -111,7 +111,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////
 class IfElse_Ast:public Ast
 {
-	Ast * condition //Condition Ast
+	Ast * condition; //Condition Ast
 	Ast * ifGoto;  //If GOTO STATEMENT
 	Ast * elseGoto; //Else GOTO STATEMENT
 
@@ -119,8 +119,8 @@ public:
 	IfElse_Ast(Ast * _condition , Ast * if_Goto, Ast * else_Goto);
 	~IfElse_Ast();
 
-	Data_Type get_data_type();
-	bool check_ast(int line);
+//	Data_Type get_data_type();
+//	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
 
@@ -145,8 +145,8 @@ public:
 	Goto_Ast(int _bb);
 	~Goto_Ast();
 
-	Data_Type get_data_type();
-	bool check_ast(int line);
+//	Data_Type get_data_type();
+//	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
 
@@ -159,13 +159,6 @@ public:
 class Expression_Ast:public Ast{
 	
 	
-	
-	Ast *lhs;
-	OperatorType op;
-	Ast *rhs;
-		
-		
-	
 public:
 
 	enum OperatorType{
@@ -176,18 +169,28 @@ public:
 		LT,
 		GT
 	};
+private:
+
+	Ast *lhs;
+	OperatorType op;
+	Ast *rhs;
+		
+		
+	
+public:
+
 
 	Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op);
 	~Expression_Ast();
 
-	Data_Type get_data_type();
-	bool check_ast(int line);
+//	Data_Type get_data_type();
+//	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
-}
+};
 
 
 

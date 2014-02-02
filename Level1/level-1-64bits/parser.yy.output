@@ -1,38 +1,37 @@
 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
-1: program ->  declaration_statement_list procedure_name procedure_body
-2: program ->  procedure_name procedure_body
-3: procedure_name (NAME) ->  NAME '(' ')'
-4: procedure_body ('{') ->  '{' declaration_statement_list basic_block_list '}'
-5: procedure_body ('{') ->  '{' basic_block_list '}'
-6: declaration_statement_list ->  declaration_statement
-7: declaration_statement_list ->  declaration_statement_list declaration_statement
-8: declaration_statement (INTEGER) ->  INTEGER NAME ';'
-9: basic_block_list ->  basic_block_list basic_block
-10: basic_block_list ->  basic_block
-11: basic_block ('<') ->  '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list
-12: executable_statement_list ->  assignment_statement_list
-13: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
-14: executable_statement_list ->  assignment_statement_list goto_statement
-15: executable_statement_list ->  assignment_statement_list if_else_statement
-16: assignment_statement_list ->  <empty>
-17: assignment_statement_list ->  assignment_statement_list assignment_statement
-18: if_else_statement (IF) ->  IF '(' expression ')' goto_statement ELSE goto_statement
-19: goto_statement (GOTO) ->  GOTO '<' NAME INTEGER_NUMBER '>' ';'
-20: relational_op ('<') ->  '<'
-21: relational_op ('>') ->  '>'
-22: relational_op ('<') ->  '<' '='
-23: relational_op ('>') ->  '>' '='
-24: relational_op ('=') ->  '=' '='
-25: relational_op ('!') ->  '!' '='
-26: expression ->  expression relational_op expression
-27: expression ->  variable
-28: expression ->  constant
-29: assignment_statement ('=') ->  variable '=' expression ';'
-30: variable (NAME) ->  NAME
-31: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-32: program_$ ->  program
+1: program ->  declaration_statement_list procedure_name #0001 procedure_body
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: procedure_name (NAME) ->  NAME '(' ')'
+6: procedure_body ('{') ->  '{' declaration_statement_list #0003 basic_block_list '}'
+7: #0003 ->  <empty>
+8: procedure_body ('{') ->  '{' basic_block_list '}'
+9: declaration_statement_list ->  declaration_statement
+10: declaration_statement_list ->  declaration_statement_list declaration_statement
+11: declaration_statement (INTEGER) ->  INTEGER NAME ';'
+12: basic_block_list ->  basic_block_list basic_block
+13: basic_block_list ->  basic_block
+14: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list
+15: executable_statement_list ->  assignment_statement_list
+16: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
+17: executable_statement_list ->  assignment_statement_list goto_statement
+18: executable_statement_list ->  assignment_statement_list if_else_statement
+19: assignment_statement_list ->  <empty>
+20: assignment_statement_list ->  assignment_statement_list assignment_statement
+21: if_else_statement (IF) ->  IF '(' expression ')' goto_statement ELSE goto_statement
+22: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
+23: relational_op (LT) ->  LT
+24: relational_op (GT) ->  GT
+25: expression ->  expression relational_op expression
+26: expression ->  variable
+27: expression ->  constant
+28: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
+29: variable (NAME) ->  NAME
+30: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+31: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -50,22 +49,20 @@ Symbolic Terminal tokens:
    266: LE
    267: EQ
    268: NE
-   269: BASIC_BLOCK
+   269: LT
+   270: GT
+   271: BASIC_BLOCK
     40: '('
     41: ')'
    123: '{'
    125: '}'
     59: ';'
-    60: '<'
-    62: '>'
     58: ':'
-    61: '='
-    33: '!'
 
 
 Grammar States: 
 State 0:
-32: program_$ ->  . program 
+31: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -75,12 +72,12 @@ State 0:
 
 
 State 1:
-32: program_$ -> program  . 
+31: program_$ -> program  . 
 
 
 State 2:
-1: program -> declaration_statement_list  . procedure_name procedure_body 
-7: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+1: program -> declaration_statement_list  . procedure_name #0001 procedure_body 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
   0:   On procedure_name to state 7
   1:   On declaration_statement to state 8
   2:   On NAME to state 5
@@ -88,162 +85,160 @@ State 2:
 
 
 State 3:
-2: program -> procedure_name  . procedure_body 
-  0:   On procedure_body to state 9
-  1:   On '{' to state 10
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 9
+  Reduce by 4: #0002 ->  . 
 
 
 State 4:
-6: declaration_statement_list -> declaration_statement  . 
-  Reduce by 6: declaration_statement_list -> declaration_statement  . 
+9: declaration_statement_list -> declaration_statement  . 
+  Reduce by 9: declaration_statement_list -> declaration_statement  . 
 
 
 State 5:
-3: procedure_name -> NAME  . '(' ')' 
-  0:   On '(' to state 11
+5: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 10
 
 
 State 6:
-8: declaration_statement -> INTEGER  . NAME ';' 
-  0:   On NAME to state 12
+11: declaration_statement -> INTEGER  . NAME ';' 
+  0:   On NAME to state 11
 
 
 State 7:
-1: program -> declaration_statement_list procedure_name  . procedure_body 
-  0:   On procedure_body to state 13
-  1:   On '{' to state 10
+1: program -> declaration_statement_list procedure_name  . #0001 procedure_body 
+  0:   On #0001 to state 12
+  Reduce by 2: #0001 ->  . 
 
 
 State 8:
-7: declaration_statement_list -> declaration_statement_list declaration_statement  . 
-  Reduce by 7: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
 
 
 State 9:
-2: program -> procedure_name procedure_body  . 
-  Reduce by 2: program -> procedure_name procedure_body  . 
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 13
+  1:   On '{' to state 14
 
 
 State 10:
-4: procedure_body -> '{'  . declaration_statement_list basic_block_list '}' 
-5: procedure_body -> '{'  . basic_block_list '}' 
-  0:   On declaration_statement_list to state 14
-  1:   On basic_block_list to state 15
-  2:   On declaration_statement to state 4
-  3:   On basic_block to state 16
-  4:   On INTEGER to state 6
-  5:   On '<' to state 17
+5: procedure_name -> NAME '('  . ')' 
+  0:   On ')' to state 15
 
 
 State 11:
-3: procedure_name -> NAME '('  . ')' 
-  0:   On ')' to state 18
+11: declaration_statement -> INTEGER NAME  . ';' 
+  0:   On ';' to state 16
 
 
 State 12:
-8: declaration_statement -> INTEGER NAME  . ';' 
-  0:   On ';' to state 19
+1: program -> declaration_statement_list procedure_name #0001  . procedure_body 
+  0:   On procedure_body to state 17
+  1:   On '{' to state 14
 
 
 State 13:
-1: program -> declaration_statement_list procedure_name procedure_body  . 
-  Reduce by 1: program -> declaration_statement_list procedure_name procedure_body  . 
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
 
 
 State 14:
-4: procedure_body -> '{' declaration_statement_list  . basic_block_list '}' 
-7: declaration_statement_list -> declaration_statement_list  . declaration_statement 
-  0:   On basic_block_list to state 20
-  1:   On declaration_statement to state 8
-  2:   On basic_block to state 16
-  3:   On INTEGER to state 6
-  4:   On '<' to state 17
+6: procedure_body -> '{'  . declaration_statement_list #0003 basic_block_list '}' 
+8: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 18
+  1:   On basic_block_list to state 19
+  2:   On declaration_statement to state 4
+  3:   On basic_block to state 20
+  4:   On INTEGER to state 6
+  5:   On BASIC_BLOCK to state 21
 
 
 State 15:
-5: procedure_body -> '{' basic_block_list  . '}' 
-9: basic_block_list -> basic_block_list  . basic_block 
-  0:   On '}' to state 21
-  1:   On basic_block to state 22
-  2:   On '<' to state 17
+5: procedure_name -> NAME '(' ')'  . 
+  Reduce by 5: procedure_name -> NAME '(' ')'  . 
 
 
 State 16:
-10: basic_block_list -> basic_block  . 
-  Reduce by 10: basic_block_list -> basic_block  . 
+11: declaration_statement -> INTEGER NAME ';'  . 
+  Reduce by 11: declaration_statement -> INTEGER NAME ';'  . 
 
 
 State 17:
-11: basic_block -> '<'  . NAME INTEGER_NUMBER '>' ':' executable_statement_list 
-  0:   On NAME to state 23
+1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+  Reduce by 1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
 
 
 State 18:
-3: procedure_name -> NAME '(' ')'  . 
-  Reduce by 3: procedure_name -> NAME '(' ')'  . 
+6: procedure_body -> '{' declaration_statement_list  . #0003 basic_block_list '}' 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0003 to state 22
+  1:   On declaration_statement to state 8
+  2:   On INTEGER to state 6
+  Reduce by 7: #0003 ->  . 
 
 
 State 19:
-8: declaration_statement -> INTEGER NAME ';'  . 
-  Reduce by 8: declaration_statement -> INTEGER NAME ';'  . 
+8: procedure_body -> '{' basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 23
+  1:   On basic_block to state 24
+  2:   On BASIC_BLOCK to state 21
 
 
 State 20:
-4: procedure_body -> '{' declaration_statement_list basic_block_list  . '}' 
-9: basic_block_list -> basic_block_list  . basic_block 
-  0:   On '}' to state 24
-  1:   On basic_block to state 22
-  2:   On '<' to state 17
+13: basic_block_list -> basic_block  . 
+  Reduce by 13: basic_block_list -> basic_block  . 
 
 
 State 21:
-5: procedure_body -> '{' basic_block_list '}'  . 
-  Reduce by 5: procedure_body -> '{' basic_block_list '}'  . 
+14: basic_block -> BASIC_BLOCK  . ':' executable_statement_list 
+  0:   On ':' to state 25
 
 
 State 22:
-9: basic_block_list -> basic_block_list basic_block  . 
-  Reduce by 9: basic_block_list -> basic_block_list basic_block  . 
+6: procedure_body -> '{' declaration_statement_list #0003  . basic_block_list '}' 
+  0:   On basic_block_list to state 26
+  1:   On basic_block to state 20
+  2:   On BASIC_BLOCK to state 21
 
 
 State 23:
-11: basic_block -> '<' NAME  . INTEGER_NUMBER '>' ':' executable_statement_list 
-  0:   On INTEGER_NUMBER to state 25
+8: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 8: procedure_body -> '{' basic_block_list '}'  . 
 
 
 State 24:
-4: procedure_body -> '{' declaration_statement_list basic_block_list '}'  . 
-  Reduce by 4: procedure_body -> '{' declaration_statement_list basic_block_list '}'  . 
+12: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 12: basic_block_list -> basic_block_list basic_block  . 
 
 
 State 25:
-11: basic_block -> '<' NAME INTEGER_NUMBER  . '>' ':' executable_statement_list 
-  0:   On '>' to state 26
+14: basic_block -> BASIC_BLOCK ':'  . executable_statement_list 
+  0:   On executable_statement_list to state 27
+  1:   On assignment_statement_list to state 28
+  Reduce by 19: assignment_statement_list ->  . 
 
 
 State 26:
-11: basic_block -> '<' NAME INTEGER_NUMBER '>'  . ':' executable_statement_list 
-  0:   On ':' to state 27
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 29
+  1:   On basic_block to state 24
+  2:   On BASIC_BLOCK to state 21
 
 
 State 27:
-11: basic_block -> '<' NAME INTEGER_NUMBER '>' ':'  . executable_statement_list 
-  0:   On executable_statement_list to state 28
-  1:   On assignment_statement_list to state 29
-  Reduce by 16: assignment_statement_list ->  . 
+14: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+  Reduce by 14: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
 
 
 State 28:
-11: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list  . 
-  Reduce by 11: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list  . 
-
-
-State 29:
-12: executable_statement_list -> assignment_statement_list  . 
-13: executable_statement_list -> assignment_statement_list  . RETURN ';' 
-14: executable_statement_list -> assignment_statement_list  . goto_statement 
-15: executable_statement_list -> assignment_statement_list  . if_else_statement 
-17: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+15: executable_statement_list -> assignment_statement_list  . 
+16: executable_statement_list -> assignment_statement_list  . RETURN ';' 
+17: executable_statement_list -> assignment_statement_list  . goto_statement 
+18: executable_statement_list -> assignment_statement_list  . if_else_statement 
+20: assignment_statement_list -> assignment_statement_list  . assignment_statement 
   0:   On RETURN to state 30
   1:   On goto_statement to state 31
   2:   On if_else_statement to state 32
@@ -252,61 +247,66 @@ State 29:
   5:   On IF to state 35
   6:   On variable to state 36
   7:   On NAME to state 37
-  Reduce by 12: executable_statement_list -> assignment_statement_list  . 
+  Reduce by 15: executable_statement_list -> assignment_statement_list  . 
+
+
+State 29:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+  Reduce by 6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
 
 
 State 30:
-13: executable_statement_list -> assignment_statement_list RETURN  . ';' 
+16: executable_statement_list -> assignment_statement_list RETURN  . ';' 
   0:   On ';' to state 38
 
 
 State 31:
-14: executable_statement_list -> assignment_statement_list goto_statement  . 
-  Reduce by 14: executable_statement_list -> assignment_statement_list goto_statement  . 
+17: executable_statement_list -> assignment_statement_list goto_statement  . 
+  Reduce by 17: executable_statement_list -> assignment_statement_list goto_statement  . 
 
 
 State 32:
-15: executable_statement_list -> assignment_statement_list if_else_statement  . 
-  Reduce by 15: executable_statement_list -> assignment_statement_list if_else_statement  . 
+18: executable_statement_list -> assignment_statement_list if_else_statement  . 
+  Reduce by 18: executable_statement_list -> assignment_statement_list if_else_statement  . 
 
 
 State 33:
-17: assignment_statement_list -> assignment_statement_list assignment_statement  . 
-  Reduce by 17: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
 
 
 State 34:
-19: goto_statement -> GOTO  . '<' NAME INTEGER_NUMBER '>' ';' 
-  0:   On '<' to state 39
+22: goto_statement -> GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 39
 
 
 State 35:
-18: if_else_statement -> IF  . '(' expression ')' goto_statement ELSE goto_statement 
+21: if_else_statement -> IF  . '(' expression ')' goto_statement ELSE goto_statement 
   0:   On '(' to state 40
 
 
 State 36:
-29: assignment_statement -> variable  . '=' expression ';' 
-  0:   On '=' to state 41
+28: assignment_statement -> variable  . ASSIGN_OP expression ';' 
+  0:   On ASSIGN_OP to state 41
 
 
 State 37:
-30: variable -> NAME  . 
-  Reduce by 30: variable -> NAME  . 
+29: variable -> NAME  . 
+  Reduce by 29: variable -> NAME  . 
 
 
 State 38:
-13: executable_statement_list -> assignment_statement_list RETURN ';'  . 
-  Reduce by 13: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+16: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+  Reduce by 16: executable_statement_list -> assignment_statement_list RETURN ';'  . 
 
 
 State 39:
-19: goto_statement -> GOTO '<'  . NAME INTEGER_NUMBER '>' ';' 
-  0:   On NAME to state 42
+22: goto_statement -> GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 42
 
 
 State 40:
-18: if_else_statement -> IF '('  . expression ')' goto_statement ELSE goto_statement 
+21: if_else_statement -> IF '('  . expression ')' goto_statement ELSE goto_statement 
   0:   On expression to state 43
   1:   On variable to state 44
   2:   On constant to state 45
@@ -315,7 +315,7 @@ State 40:
 
 
 State 41:
-29: assignment_statement -> variable '='  . expression ';' 
+28: assignment_statement -> variable ASSIGN_OP  . expression ';' 
   0:   On expression to state 47
   1:   On variable to state 44
   2:   On constant to state 45
@@ -324,151 +324,96 @@ State 41:
 
 
 State 42:
-19: goto_statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
-  0:   On INTEGER_NUMBER to state 48
+22: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+  Reduce by 22: goto_statement -> GOTO BASIC_BLOCK ';'  . 
 
 
 State 43:
-18: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
-26: expression -> expression  . relational_op expression 
-  0:   On ')' to state 49
-  1:   On relational_op to state 50
-  2:   On '<' to state 51
-  3:   On '>' to state 52
-  4:   On '=' to state 53
-  5:   On '!' to state 54
+21: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
+25: expression -> expression  . relational_op expression 
+  0:   On ')' to state 48
+  1:   On relational_op to state 49
+  2:   On LT to state 50
+  3:   On GT to state 51
 
 
 State 44:
-27: expression -> variable  . 
-  Reduce by 27: expression -> variable  . 
+26: expression -> variable  . 
+  Reduce by 26: expression -> variable  . 
 
 
 State 45:
-28: expression -> constant  . 
-  Reduce by 28: expression -> constant  . 
+27: expression -> constant  . 
+  Reduce by 27: expression -> constant  . 
 
 
 State 46:
-31: constant -> INTEGER_NUMBER  . 
-  Reduce by 31: constant -> INTEGER_NUMBER  . 
+30: constant -> INTEGER_NUMBER  . 
+  Reduce by 30: constant -> INTEGER_NUMBER  . 
 
 
 State 47:
-29: assignment_statement -> variable '=' expression  . ';' 
-26: expression -> expression  . relational_op expression 
-  0:   On ';' to state 55
-  1:   On relational_op to state 50
-  2:   On '<' to state 51
-  3:   On '>' to state 52
-  4:   On '=' to state 53
-  5:   On '!' to state 54
+28: assignment_statement -> variable ASSIGN_OP expression  . ';' 
+25: expression -> expression  . relational_op expression 
+  0:   On ';' to state 52
+  1:   On relational_op to state 49
+  2:   On LT to state 50
+  3:   On GT to state 51
 
 
 State 48:
-19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
-  0:   On '>' to state 56
-
-
-State 49:
-18: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
-  0:   On goto_statement to state 57
+21: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
+  0:   On goto_statement to state 53
   1:   On GOTO to state 34
 
 
-State 50:
-26: expression -> expression relational_op  . expression 
-  0:   On expression to state 58
+State 49:
+25: expression -> expression relational_op  . expression 
+  0:   On expression to state 54
   1:   On variable to state 44
   2:   On constant to state 45
   3:   On NAME to state 37
   4:   On INTEGER_NUMBER to state 46
 
 
+State 50:
+23: relational_op -> LT  . 
+  Reduce by 23: relational_op -> LT  . 
+
+
 State 51:
-20: relational_op -> '<'  . 
-22: relational_op -> '<'  . '=' 
-  0:   On '=' to state 59
-  Reduce by 20: relational_op -> '<'  . 
+24: relational_op -> GT  . 
+  Reduce by 24: relational_op -> GT  . 
 
 
 State 52:
-21: relational_op -> '>'  . 
-23: relational_op -> '>'  . '=' 
-  0:   On '=' to state 60
-  Reduce by 21: relational_op -> '>'  . 
+28: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+  Reduce by 28: assignment_statement -> variable ASSIGN_OP expression ';'  . 
 
 
 State 53:
-24: relational_op -> '='  . '=' 
-  0:   On '=' to state 61
+21: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 55
 
 
 State 54:
-25: relational_op -> '!'  . '=' 
-  0:   On '=' to state 62
+25: expression -> expression relational_op expression  . 
+25: expression -> expression  . relational_op expression 
+  0:   On relational_op to state 49
+  1 (AUTO REMOVED by S/R resolution):   On LT to state 50
+  2 (AUTO REMOVED by S/R resolution):   On GT to state 51
+  Reduce by 25: expression -> expression relational_op expression  . 
 
 
 State 55:
-29: assignment_statement -> variable '=' expression ';'  . 
-  Reduce by 29: assignment_statement -> variable '=' expression ';'  . 
-
-
-State 56:
-19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
-  0:   On ';' to state 63
-
-
-State 57:
-18: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
-  0:   On ELSE to state 64
-
-
-State 58:
-26: expression -> expression relational_op expression  . 
-26: expression -> expression  . relational_op expression 
-  0:   On relational_op to state 50
-  1 (AUTO REMOVED by S/R resolution):   On '<' to state 51
-  2 (AUTO REMOVED by S/R resolution):   On '>' to state 52
-  3 (AUTO REMOVED by S/R resolution):   On '=' to state 53
-  4 (AUTO REMOVED by S/R resolution):   On '!' to state 54
-  Reduce by 26: expression -> expression relational_op expression  . 
-
-
-State 59:
-22: relational_op -> '<' '='  . 
-  Reduce by 22: relational_op -> '<' '='  . 
-
-
-State 60:
-23: relational_op -> '>' '='  . 
-  Reduce by 23: relational_op -> '>' '='  . 
-
-
-State 61:
-24: relational_op -> '=' '='  . 
-  Reduce by 24: relational_op -> '=' '='  . 
-
-
-State 62:
-25: relational_op -> '!' '='  . 
-  Reduce by 25: relational_op -> '!' '='  . 
-
-
-State 63:
-19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
-  Reduce by 19: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
-
-
-State 64:
-18: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
-  0:   On goto_statement to state 65
+21: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 56
   1:   On GOTO to state 34
 
 
-State 65:
-18: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
-  Reduce by 18: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+State 56:
+21: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+  Reduce by 21: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
 
 
 

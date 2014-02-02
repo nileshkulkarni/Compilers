@@ -26,7 +26,8 @@
 
 #include "parserbase.h"
 #include "scanner.h"
-
+#include "ast.hh"
+#include "common.h"
 //////////////////////////// Parser Initial Code ///////////////////////////
 
 #include<iostream>

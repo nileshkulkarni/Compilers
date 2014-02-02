@@ -56,8 +56,10 @@ void Basic_Block::print_bb(ostream & file_buffer)
 	file_buffer << BB_SPACE << "Basic_Block " << id_number << "\n";
 
 	list<Ast *>::iterator i;
-	for(i = statement_list.begin(); i != statement_list.end(); i++)
+	for(i = statement_list.begin(); i != statement_list.end(); i++){
+		cout<<"hahahahah : "<<endl;
 		(*i)->print_ast(file_buffer);
+	}
 }
 
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)

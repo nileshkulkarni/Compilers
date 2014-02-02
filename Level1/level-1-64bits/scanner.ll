@@ -55,6 +55,19 @@ goto    {
             return Parser::ASSIGN_OP;       		
         }
 
+
+"<"    {
+			store_token_name("LT");
+            return Parser::LT;       		
+        }
+
+">"    {
+			store_token_name("GT");
+            return Parser::GT;       		
+        }
+
+
+
 ">="    {
 			store_token_name("GE");
             return Parser::GE;       		
@@ -76,15 +89,15 @@ goto    {
             return Parser::NE;
         }
 
-("<bb ")([digit]*)(">") {
+([<][b][b][ ][[:digit:]_]+[>]) {
             store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
             string matchs = matched();
-			val->integer_value = atoi(matchs.substr(4,matchs.length -5);
+			val->integer_value = atoi((matchs.substr(4,matchs.length() -5)).c_str());
             return Parser::BASIC_BLOCK;
         }
 
-[<>:{}();=!]	{
+[:{}();=!]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}

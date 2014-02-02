@@ -43,7 +43,7 @@
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
-%token ASSIGN_OP GE LE EQ NE 
+%token ASSIGN_OP GE LE EQ NE LT GT 
 %token <integer_value> BASIC_BLOCK
 
 %type <symbol_table> declaration_statement_list
@@ -52,8 +52,8 @@
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
+%type <op> relational_op
 %type <ast> assignment_statement
-%type <Expression_Ast::OperatorType> relational_op
 %type <ast> goto_statement
 %type <ast> if_else_statement
 %type <ast> variable
@@ -221,30 +221,25 @@ basic_block_list:
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-        /*
-		if (*$2 != "bb")
-		{
-			int line = get_line_number();
-			report_error("Not basic block lable", line);
-		}
-        */
-
+		cout<<"Helllooooo : "<<endl;
+        
 		if ($3 != NULL)
 			$$ = new Basic_Block($1, *$3);
 		else
 		{
 			list<Ast *> * ast_list = new list<Ast *>;
 			$$ = new Basic_Block($1, *ast_list);
+			cout<<"lajfdlkajdfljalsdf"<<endl;
+
 		}
 
-		delete $1;
 	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-		$$ = $1;
+		$$ = $1;;
 	}
 |
 	assignment_statement_list RETURN ';'
@@ -263,20 +258,50 @@ executable_statement_list:
 		$$->push_back(ret);
 	}
 |   
-    assignment_statement_list goto_statement 
+    assignment_statement_list goto_statement
+    {
+		// Current procedure has an occurrence of return statement
+
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back($2);
+    
+    } 
 | 
-   assignment_statement_list if_else_statement
+   assignment_statement_list if_else_statement{
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back($2);
+   }
 ;
 
-assignment_statement_list:
+assignment_statement_list:{
+			$$ = NULL;
+		}
     |
-	assignment_statement_list assignment_statement
+	assignment_statement_list assignment_statement{
+		if ($1 == NULL)
+			$$ = new list<Ast *>;
+
+		else
+			$$ = $1;
+
+		$$->push_back($2);
+		
+	}
 ;
 
 
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
-                  Ast* ifelStmt = new IfElse_Ast($3,$5,$6);   
-                  $$ = ifelStmt; 
+                  $$ =new IfElse_Ast($3,$5,$7);   
                   // std::cout<<"Came to if \n";
                  };
 
@@ -284,32 +309,33 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
 goto_statement: GOTO BASIC_BLOCK ';' {
               //std::cout<<"Came to goto statement\n";
               
-                Ast* goto = new Goto_Ast($1); 
-                $$ = goto; 
+                $$ =  new Goto_Ast($2); 
               }
               ; 
               
 
-relational_op : LT | GT | LE | GE | GT | NE {
-                enum Expression_Ast::OperatorType op=  getOperator($1);  
-                $$ = op;                 
-              
-              }; 
+relational_op : LT{
+                $$ = Expression_Ast::OperatorType::LT;  
+             } 
+              | GT {
+                $$ = Expression_Ast::OperatorType::GT;  
+}; 
 
 expression: expression relational_op  expression{
-           Ast* exp = new Expression_Ast($1,$2,$3); 
+           Ast* exp = new Expression_Ast($1,$3,$2); 
             $$ = exp;
     }
 
 | variable{
     $$ = $1;
 }
-| constant
+| constant{
     $$ = $1;
+    }
 ;
 
 assignment_statement:
-	variable '=' expression ';'
+	variable ASSIGN_OP expression ';'
 	{
 		$$ = new Assignment_Ast($1, $3);
 
