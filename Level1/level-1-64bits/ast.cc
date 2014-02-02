@@ -247,6 +247,89 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 	}
 }
 
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+IfElse_Ast :: IfElse_Ast(Ast * _condition , Ast * if_Goto, Ast * else_Goto){
+	condition = _condition;
+	ifGoto = if_Goto;
+	else_Goto;
+}
+
+
+IfElse_Ast :: 	~IfElse_Ast(){
+	delete(condition);
+	delete(ifGoto);
+	delete(elseGoto);
+	
+}
+
+
+IfElse_Ast :: void print_ast(ostream & file_buffer){
+	
+	file_buffer << AST_SPACE << "IF	" << "\n" ;
+	file_buffer << AST_NODE_SPACE  << "Condition";
+	condition->print_ast(file_buffer);
+	file_buffer<<"\n";
+	ifGoto->print_ast(file_buffer);
+	file_buffer << "\n" << AST_SPACE << " ELSE  " <<"\n";
+	elseGoto->print_ast(file_buffer); 
+	file_buffer << "\n";
+}
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Goto_Ast ::	Goto_Ast(int _bb){
+	bb = _bb;
+}
+
+Goto_Ast ::	~Goto_Ast(){}
+
+
+Goto_Ast ::	void print_ast(ostream & file_buffer){
+	file_buffer << "Goto : <bb "<< bb << " > \n";
+};
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
+	lhs = _lhs;
+	rhs = _rhs;
+	op  = _op;
+}
+	
+
+Expression_Ast :: print_ast(ostream & file_buffer){
+	
+	file_buffer << AST_SPACE << "Expr:\n";
+	file_buffer << AST_NODE_SPACE"LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+	
+	file_buffer << AST_SPACE << "Relational_op : " << getOperator(op) << "\n"; 
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+	
+	
+}
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 
 Return_Ast::Return_Ast()
