@@ -96,6 +96,27 @@ Basic_Block & Procedure::get_start_basic_block()
 	return **i;
 }
 
+
+
+Basic_Block * Procedure::get_bb_by_number(int n){
+
+	list<Basic_Block *>::iterator i;
+	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+	{
+		if((*i)->get_bb_number() == n)
+		return (*i);
+	}
+	return NULL;
+}
+
+
+
+
+
+
+
+
+
 Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 {
 	bool flag = false;
@@ -115,6 +136,7 @@ Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 	return NULL;
 }
 
+
 Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {
 	Local_Environment & eval_env = *new Local_Environment();
@@ -131,7 +153,16 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		current_bb = get_next_bb(*current_bb);		
+		
+		if(result.get_result_enum() == return_result)
+			break;
+		
+		if(result.get_result_enum() == goto_result){
+			assert(result.is_variable_defined);
+			current_bb = get_bb_by_number(result.get_value()); 	
+		}
+		else
+			current_bb = get_next_bb(*current_bb);		
 	}
 
 	file_buffer << "\n\n";
