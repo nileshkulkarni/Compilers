@@ -254,7 +254,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 
 ///////////////////////////////////////////////////////////////////////////
-IfElse_Ast ::IfElse_Ast(Ast * _condition , Ast * if_Goto, Ast * else_Goto){
+IfElse_Ast ::IfElse_Ast(Ast * _condition	 , Goto_Ast * if_Goto, Goto_Ast * else_Goto){
 	condition = _condition;
 	ifGoto = if_Goto;
 	elseGoto = else_Goto;
@@ -274,15 +274,16 @@ void IfElse_Ast ::  print_ast(ostream & file_buffer){
 	file_buffer << AST_SPACE << "If_Else statement:	" << "\n" ;
 	condition->print_ast(file_buffer);
 	file_buffer<<"\n";
-    file_buffer<<AST_NODE_SPACE<<"True Successor: ";
-    ifGoto->print_ast(file_buffer);  
+    file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
     file_buffer<<"\n";
-    file_buffer<<AST_NODE_SPACE<<"False Successor: ";
-	elseGoto->print_ast(file_buffer); 
+    file_buffer<<AST_NODE_SPACE<<"False Successor: "<<elseGoto->get_bb(); 
 }
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
+        Eval_Result & ret = *new Eval_Result_Value_Goto();
+        
+        
         
        // file_buffer<<"here and there : "<<result.get_value()<<endl;
         
@@ -291,17 +292,15 @@ Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file
         
         file_buffer<<"\n";
         if(result.get_value() != 0){
-			file_buffer<<AST_NODE_SPACE<<"Condition True : Goto (BB ";
-			ifGoto->print_ast(file_buffer);
-			file_buffer<<")";
-			return ifGoto->evaluate(eval_env , file_buffer);
+			file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<ifGoto->get_bb()<<")";
+			ret.set_value(ifGoto->get_bb());
 		}
 		else{
-			file_buffer<<AST_NODE_SPACE<<"Condition False : Goto (BB ";
-			elseGoto->print_ast(file_buffer);
-			file_buffer<<")";
-			return elseGoto->evaluate(eval_env , file_buffer);
+			file_buffer<<AST_SPACE<<"Condition False : Goto (BB "<<elseGoto->get_bb()<<")";
+			ret.set_value(elseGoto->get_bb());
 		}
+		
+		return ret;
        
 }
 
@@ -321,13 +320,21 @@ Goto_Ast ::	Goto_Ast(int _bb){
 Goto_Ast ::	~Goto_Ast(){}
 
 
+int Goto_Ast :: get_bb(){
+	return bb;
+}
+
+
 void Goto_Ast ::	print_ast(ostream & file_buffer){
-	file_buffer << bb;
+	file_buffer << AST_SPACE <<"Goto statement:\n";
+	file_buffer << AST_NODE_SPACE << "Successor: "<<bb<<"\n";
+	file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
 };
 
 Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = *new Eval_Result_Value_Goto();
         result.set_value(bb);
+        print_ast(file_buffer);
         return result;
 }
 

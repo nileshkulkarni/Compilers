@@ -300,7 +300,7 @@ assignment_statement_list:{
 
 
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
-                  $$ =new IfElse_Ast($3,$5,$7);   
+                  $$ =new IfElse_Ast($3,(Goto_Ast*)$5,(Goto_Ast*)$7);   
                   // std::cout<<"Came to if \n";
                  };
 

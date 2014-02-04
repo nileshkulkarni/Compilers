@@ -111,15 +111,46 @@ public:
 
 
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+class Goto_Ast:public Ast
+{
+	int bb;
+	
+public:
+	Goto_Ast(int _bb);
+	~Goto_Ast();
+
+//	Data_Type get_data_type();
+//	bool check_ast(int line);
+
+	int get_bb();
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 class IfElse_Ast:public Ast
 {
 	Ast * condition; //Condition Ast
-	Ast * ifGoto;  //If GOTO STATEMENT
-	Ast * elseGoto; //Else GOTO STATEMENT
+	Goto_Ast * ifGoto;  //If GOTO STATEMENT
+	Goto_Ast * elseGoto; //Else GOTO STATEMENT
 
 public:
-	IfElse_Ast(Ast * _condition , Ast * if_Goto, Ast * else_Goto);
+	IfElse_Ast(Ast * _condition , Goto_Ast * if_Goto, Goto_Ast * else_Goto);
 	~IfElse_Ast();
 
 //	Data_Type get_data_type();
@@ -138,23 +169,6 @@ public:
 
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////////
-class Goto_Ast:public Ast
-{
-	int bb;
-	
-public:
-	Goto_Ast(int _bb);
-	~Goto_Ast();
-
-//	Data_Type get_data_type();
-//	bool check_ast(int line);
-
-	void print_ast(ostream & file_buffer);
-
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
-};
 
 
 
