@@ -55,6 +55,9 @@ public:
 	void print_ast(ostream & file_buffer);
 
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
+	
+	Basic_Block *get_bb_by_number(int n);
+	
 	Basic_Block & get_start_basic_block();
 
 	Eval_Result & evaluate(ostream & file_buffer);
