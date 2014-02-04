@@ -281,8 +281,15 @@ void IfElse_Ast ::  print_ast(ostream & file_buffer){
 }
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result & result = *new Eval_Result_Value_Goto();
-        return result;
+		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
+        Eval_Result & ret;
+        
+        if(result == 0)
+			ret = ifGoto->evaluate(eval_env , file_buffer);
+		else
+			ret = elseGoto->evaluate(eval_env , file_buffer);
+       
+       return ret; 
 }
 
 
