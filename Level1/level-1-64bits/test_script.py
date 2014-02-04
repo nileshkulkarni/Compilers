@@ -22,13 +22,13 @@ print("Done generating cfg files\n");
 
 for f in cfgFiles:
     print("Testing file  " + f ); 
-    command = "./cfglp_original -tokens -d " + f + " > expected " 
+    command = "./cfglp_original -eval -d " + f + " > expected " 
     os.system(command) 
-    command = "./cfglp -tokens -d " + f + " > generated " 
+    command = "./cfglp -eval -d " + f + " > generated " 
     os.system(command)
     os.system("diff expected generated");
 
-
+'''
 error_files=[]
 for f in files:
     fileName,fileExt = os.path.splitext( path + f)
@@ -37,7 +37,7 @@ for f in files:
 
 for f in error_files:
     print("Testing file  " + f ); 
-    command = "./cfglp_original -tokens  " + f + " 2> expected " 
+    command = "./cfglp_original -eval  " + f + " 2> expected " 
     os.system(command) 
     command = "./cfglp -tokens " + f + " 2> generated " 
     os.system(command)
@@ -47,4 +47,4 @@ for f in error_files:
 
 
 #print cfgFiles
-
+'''

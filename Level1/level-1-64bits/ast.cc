@@ -298,7 +298,7 @@ Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file
 		}
 		else{
 			file_buffer<<AST_NODE_SPACE<<"Condition False : Goto (BB ";
-			ifGoto->print_ast(file_buffer);
+			elseGoto->print_ast(file_buffer);
 			file_buffer<<")";
 			return elseGoto->evaluate(eval_env , file_buffer);
 		}
@@ -351,6 +351,7 @@ void Expression_Ast :: print_ast(ostream & file_buffer){
 	file_buffer << ")\n";
 	file_buffer << AST_CONDITION_SPACE<< "RHS (";
 	rhs->print_ast(file_buffer);
+	file_buffer<<")";
 }
 
 void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
