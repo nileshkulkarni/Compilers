@@ -273,7 +273,7 @@ IfElse_Ast ::~IfElse_Ast(){
 
 void IfElse_Ast ::  print_ast(ostream & file_buffer){
 	
-	file_buffer << AST_SPACE << "If_Else statement:	" << "\n" ;
+	file_buffer << AST_SPACE << "If_Else statement:	" ;
 	condition->print_ast(file_buffer);
 	file_buffer<<"\n";
     file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
@@ -373,7 +373,7 @@ Data_Type Expression_Ast::get_data_type()
 	
 
 void Expression_Ast :: print_ast(ostream & file_buffer){
-	
+    file_buffer <<"\n";	
     file_buffer << AST_NODE_SPACE<<"Condition: ";
     printOperator(file_buffer,op);
     file_buffer <<"\n";
