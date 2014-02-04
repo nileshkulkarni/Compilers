@@ -200,8 +200,8 @@ public:
 	Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op);
 	~Expression_Ast();
 
-//	Data_Type get_data_type();
-//	bool check_ast(int line);
+	Data_Type get_data_type();
+	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
 	void printOperator(ostream & file_buffer,Expression_Ast::OperatorType op);

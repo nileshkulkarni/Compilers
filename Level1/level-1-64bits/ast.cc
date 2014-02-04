@@ -269,6 +269,8 @@ IfElse_Ast ::~IfElse_Ast(){
 }
 
 
+
+
 void IfElse_Ast ::  print_ast(ostream & file_buffer){
 	
 	file_buffer << AST_SPACE << "If_Else statement:	" << "\n" ;
@@ -342,10 +344,32 @@ Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_b
 
 /////////////////////////////////////////////////////////////////////////////////////////
 Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
+	node_data_type = int_data_type;
 	lhs = _lhs;
 	rhs = _rhs;
 	op  = _op;
 }
+
+
+
+
+bool Expression_Ast::check_ast(int line)
+{
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Expression statement data type not compatible", line);
+}
+
+
+Data_Type Expression_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
 	
 
 void Expression_Ast :: print_ast(ostream & file_buffer){
