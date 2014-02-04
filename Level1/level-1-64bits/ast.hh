@@ -25,6 +25,9 @@
 #define AST_HH
 
 #include<string>
+#include <assert.h>
+
+
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "

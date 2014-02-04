@@ -151,15 +151,16 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	
 	Basic_Block * current_bb = &(get_start_basic_block());
 	while (current_bb)
-	{
+	{	file_buffer<<"\n";
 		result = &(current_bb->evaluate(eval_env, file_buffer));
 		
-		if(result.get_result_enum() == return_result)
+		
+		if(result->get_result_enum() == return_result)
 			break;
 		
-		if(result.get_result_enum() == goto_result){
-			assert(result.is_variable_defined);
-			current_bb = get_bb_by_number(result.get_value()); 	
+		if(result->get_result_enum() == goto_result){
+			assert(result->is_variable_defined());
+			current_bb = get_bb_by_number(result->get_value()); 	
 		}
 		else
 			current_bb = get_next_bb(*current_bb);		

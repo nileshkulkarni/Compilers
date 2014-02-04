@@ -156,7 +156,7 @@ Result_Enum Eval_Result_Value_Goto::get_result_enum()
 
 Eval_Result_Value_Return::Eval_Result_Value_Return()
 {
-	result_type = Return_result;
+	result_type = return_result;
 }
 
 Eval_Result_Value_Return::~Eval_Result_Value_Return()
@@ -172,7 +172,14 @@ bool Eval_Result_Value_Return::is_variable_defined()
 {
 	return defined;
 }
-
+void Eval_Result_Value_Return::set_value(int num)
+{
+	
+}
+int Eval_Result_Value_Return::get_value()
+{
+	return -1;
+}
 void Eval_Result_Value_Return::set_result_enum(Result_Enum res)
 {
 	result_type = res;

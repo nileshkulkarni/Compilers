@@ -119,9 +119,9 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	// Print the result
 
 	print_ast(file_buffer);
-
+	
 	lhs->print_value(eval_env, file_buffer);
-
+	
 	return result;
 }
 /////////////////////////////////////////////////////////////////
@@ -229,6 +229,7 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 	return node_data_type;
 }
 
+
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 {
@@ -282,14 +283,26 @@ void IfElse_Ast ::  print_ast(ostream & file_buffer){
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
-        Eval_Result & ret;
         
-        if(result == 0)
-			ret = ifGoto->evaluate(eval_env , file_buffer);
-		else
-			ret = elseGoto->evaluate(eval_env , file_buffer);
+       // file_buffer<<"here and there : "<<result.get_value()<<endl;
+        
+        print_ast(file_buffer);
+        
+        
+        file_buffer<<"\n";
+        if(result.get_value() != 0){
+			file_buffer<<AST_NODE_SPACE<<"Condition True : Goto (BB ";
+			ifGoto->print_ast(file_buffer);
+			file_buffer<<")";
+			return ifGoto->evaluate(eval_env , file_buffer);
+		}
+		else{
+			file_buffer<<AST_NODE_SPACE<<"Condition False : Goto (BB ";
+			ifGoto->print_ast(file_buffer);
+			file_buffer<<")";
+			return elseGoto->evaluate(eval_env , file_buffer);
+		}
        
-       return ret; 
 }
 
 
@@ -352,9 +365,38 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
     }
 
 }
-
+//template<class DATA_TYPE>
 Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = *new Eval_Result_Value_Int();
+		/*DATA_TYPE res ;
+		DATA_TYPE lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
+		DATA_TYPE rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
+		*/
+		int res ;
+		int lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
+		int rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
+		
+		switch(op){
+			case GT:
+					res = lVal >rVal;
+					break;
+			case LT:
+					res = lVal <rVal;
+					break;
+			case EQ:
+					res = lVal == rVal;
+					break;
+			case NE:
+					res = lVal !=rVal;
+					break;
+			case GE:
+					res = lVal >=rVal;
+					break;
+			case LE:
+					res = lVal <=rVal;
+					break;
+		}
+        result.set_value(res);
         return result;
 }
 
@@ -375,6 +417,7 @@ void Return_Ast::print_ast(ostream & file_buffer)
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = *new Eval_Result_Value_Return();
+	print_ast(file_buffer);
 	return result;
 }
 
