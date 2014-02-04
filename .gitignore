@@ -37,4 +37,8 @@ a.out
 *.map
 core
 
-CATKIN_IGNORE
+scanner.cc
+scanner.hh
+parser.cc
+parser.hh
+*.cs306*
