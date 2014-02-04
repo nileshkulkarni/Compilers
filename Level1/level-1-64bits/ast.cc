@@ -104,7 +104,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+	file_buffer << ")";
 }
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -270,14 +270,14 @@ IfElse_Ast ::~IfElse_Ast(){
 
 void IfElse_Ast ::  print_ast(ostream & file_buffer){
 	
-	file_buffer << AST_SPACE << "IF	" << "\n" ;
-	file_buffer << AST_NODE_SPACE  << "Condition";
+	file_buffer << AST_SPACE << "If_Else statement:	" << "\n" ;
 	condition->print_ast(file_buffer);
 	file_buffer<<"\n";
-	ifGoto->print_ast(file_buffer);
-	file_buffer << "\n" << AST_SPACE << " ELSE  " <<"\n";
+    file_buffer<<AST_NODE_SPACE<<"True Successor: ";
+    ifGoto->print_ast(file_buffer);  
+    file_buffer<<"\n";
+    file_buffer<<AST_NODE_SPACE<<"False Successor: ";
 	elseGoto->print_ast(file_buffer); 
-	file_buffer << "\n";
 }
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
@@ -302,7 +302,7 @@ Goto_Ast ::	~Goto_Ast(){}
 
 
 void Goto_Ast ::	print_ast(ostream & file_buffer){
-	file_buffer << AST_NODE_SPACE << "GOTO : <bb "<< bb << " > \n";
+	file_buffer << bb;
 };
 
 Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
@@ -322,21 +322,28 @@ Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
 
 void Expression_Ast :: print_ast(ostream & file_buffer){
 	
-	file_buffer << "\n"<< AST_SPACE <<" Expr:\n";
-	file_buffer << AST_NODE_SPACE << "LHS (";
+    file_buffer << AST_NODE_SPACE<<"Condition: ";
+    printOperator(file_buffer,op);
+    file_buffer <<"\n";
+    file_buffer << AST_CONDITION_SPACE<< "LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
-	
-	file_buffer << "\t"  << AST_NODE_SPACE << "Relational_op : " <<op << "\n"; 
-
-	file_buffer << AST_NODE_SPACE << "RHS (";
+	file_buffer << AST_CONDITION_SPACE<< "RHS (";
 	rhs->print_ast(file_buffer);
-	file_buffer << ")\n";
-	
-	
 }
 
+void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
+    
+    switch(op){
+        case GT: file_buffer<<"GT";break;
+        case LT: file_buffer<<"LT";break;
+        case LE: file_buffer<<"LE";break;
+        case GE: file_buffer<<"GE";break;
+        case EQ: file_buffer<<"EQ";break;
+        case NE: file_buffer<<"NE";break;
+    }
 
+}
 
 Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = *new Eval_Result_Value_Int();

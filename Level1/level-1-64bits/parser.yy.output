@@ -25,13 +25,17 @@ Production Rules
 22: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
 23: relational_op (LT) ->  LT
 24: relational_op (GT) ->  GT
-25: expression ->  expression relational_op expression
-26: expression ->  variable
-27: expression ->  constant
-28: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
-29: variable (NAME) ->  NAME
-30: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-31: program_$ ->  program
+25: relational_op (GE) ->  GE
+26: relational_op (LE) ->  LE
+27: relational_op (NE) ->  NE
+28: relational_op (EQ) ->  EQ
+29: expression ->  expression relational_op expression
+30: expression ->  variable
+31: expression ->  constant
+32: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
+33: variable (NAME) ->  NAME
+34: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+35: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -62,7 +66,7 @@ Symbolic Terminal tokens:
 
 Grammar States: 
 State 0:
-31: program_$ ->  . program 
+35: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -72,7 +76,7 @@ State 0:
 
 
 State 1:
-31: program_$ -> program  . 
+35: program_$ -> program  . 
 
 
 State 2:
@@ -286,13 +290,13 @@ State 35:
 
 
 State 36:
-28: assignment_statement -> variable  . ASSIGN_OP expression ';' 
+32: assignment_statement -> variable  . ASSIGN_OP expression ';' 
   0:   On ASSIGN_OP to state 41
 
 
 State 37:
-29: variable -> NAME  . 
-  Reduce by 29: variable -> NAME  . 
+33: variable -> NAME  . 
+  Reduce by 33: variable -> NAME  . 
 
 
 State 38:
@@ -315,7 +319,7 @@ State 40:
 
 
 State 41:
-28: assignment_statement -> variable ASSIGN_OP  . expression ';' 
+32: assignment_statement -> variable ASSIGN_OP  . expression ';' 
   0:   On expression to state 47
   1:   On variable to state 44
   2:   On constant to state 45
@@ -330,46 +334,54 @@ State 42:
 
 State 43:
 21: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
-25: expression -> expression  . relational_op expression 
+29: expression -> expression  . relational_op expression 
   0:   On ')' to state 48
   1:   On relational_op to state 49
   2:   On LT to state 50
   3:   On GT to state 51
+  4:   On GE to state 52
+  5:   On LE to state 53
+  6:   On NE to state 54
+  7:   On EQ to state 55
 
 
 State 44:
-26: expression -> variable  . 
-  Reduce by 26: expression -> variable  . 
+30: expression -> variable  . 
+  Reduce by 30: expression -> variable  . 
 
 
 State 45:
-27: expression -> constant  . 
-  Reduce by 27: expression -> constant  . 
+31: expression -> constant  . 
+  Reduce by 31: expression -> constant  . 
 
 
 State 46:
-30: constant -> INTEGER_NUMBER  . 
-  Reduce by 30: constant -> INTEGER_NUMBER  . 
+34: constant -> INTEGER_NUMBER  . 
+  Reduce by 34: constant -> INTEGER_NUMBER  . 
 
 
 State 47:
-28: assignment_statement -> variable ASSIGN_OP expression  . ';' 
-25: expression -> expression  . relational_op expression 
-  0:   On ';' to state 52
+32: assignment_statement -> variable ASSIGN_OP expression  . ';' 
+29: expression -> expression  . relational_op expression 
+  0:   On ';' to state 56
   1:   On relational_op to state 49
   2:   On LT to state 50
   3:   On GT to state 51
+  4:   On GE to state 52
+  5:   On LE to state 53
+  6:   On NE to state 54
+  7:   On EQ to state 55
 
 
 State 48:
 21: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
-  0:   On goto_statement to state 53
+  0:   On goto_statement to state 57
   1:   On GOTO to state 34
 
 
 State 49:
-25: expression -> expression relational_op  . expression 
-  0:   On expression to state 54
+29: expression -> expression relational_op  . expression 
+  0:   On expression to state 58
   1:   On variable to state 44
   2:   On constant to state 45
   3:   On NAME to state 37
@@ -387,31 +399,55 @@ State 51:
 
 
 State 52:
-28: assignment_statement -> variable ASSIGN_OP expression ';'  . 
-  Reduce by 28: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+25: relational_op -> GE  . 
+  Reduce by 25: relational_op -> GE  . 
 
 
 State 53:
-21: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
-  0:   On ELSE to state 55
+26: relational_op -> LE  . 
+  Reduce by 26: relational_op -> LE  . 
 
 
 State 54:
-25: expression -> expression relational_op expression  . 
-25: expression -> expression  . relational_op expression 
-  0:   On relational_op to state 49
-  1 (AUTO REMOVED by S/R resolution):   On LT to state 50
-  2 (AUTO REMOVED by S/R resolution):   On GT to state 51
-  Reduce by 25: expression -> expression relational_op expression  . 
+27: relational_op -> NE  . 
+  Reduce by 27: relational_op -> NE  . 
 
 
 State 55:
-21: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
-  0:   On goto_statement to state 56
-  1:   On GOTO to state 34
+28: relational_op -> EQ  . 
+  Reduce by 28: relational_op -> EQ  . 
 
 
 State 56:
+32: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+  Reduce by 32: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+
+
+State 57:
+21: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 59
+
+
+State 58:
+29: expression -> expression relational_op expression  . 
+29: expression -> expression  . relational_op expression 
+  0:   On relational_op to state 49
+  1 (AUTO REMOVED by S/R resolution):   On LT to state 50
+  2 (AUTO REMOVED by S/R resolution):   On GT to state 51
+  3 (AUTO REMOVED by S/R resolution):   On GE to state 52
+  4 (AUTO REMOVED by S/R resolution):   On LE to state 53
+  5 (AUTO REMOVED by S/R resolution):   On NE to state 54
+  6 (AUTO REMOVED by S/R resolution):   On EQ to state 55
+  Reduce by 29: expression -> expression relational_op expression  . 
+
+
+State 59:
+21: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 60
+  1:   On GOTO to state 34
+
+
+State 60:
 21: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
   Reduce by 21: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
 

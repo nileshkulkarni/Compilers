@@ -221,7 +221,6 @@ basic_block_list:
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-		cout<<"Helllooooo : "<<endl;
         
 		if ($3 != NULL)
 			$$ = new Basic_Block($1, *$3);
@@ -319,6 +318,18 @@ relational_op : LT{
              } 
               | GT {
                 $$ = Expression_Ast::OperatorType::GT;  
+                }
+              | GE {
+                $$ = Expression_Ast::OperatorType::GE;  
+                }
+              | LE {
+                $$ = Expression_Ast::OperatorType::LE;  
+                }
+              | NE {
+                $$ = Expression_Ast::OperatorType::NE;  
+                }
+              | EQ {
+                $$ = Expression_Ast::OperatorType::EQ;  
 }; 
 
 expression: expression relational_op  expression{

@@ -28,7 +28,7 @@
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
-
+#define AST_CONDITION_SPACE "               "
 using namespace std;
 
 class Ast;
@@ -187,6 +187,7 @@ public:
 //	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
+	void printOperator(ostream & file_buffer,Expression_Ast::OperatorType op);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
