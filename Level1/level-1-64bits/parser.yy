@@ -64,6 +64,8 @@
 %type <ast> variable
 %type <ast> atmoic_expression
 %type <ast> expression
+%type <ast> equality_expression
+%type <ast> relational_expression
 %type <ast> constant
 
 
@@ -352,37 +354,7 @@ relational_op : LT{
                 }
 ; 
 
-expression: expression GE  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE ); 
-            $$ = exp;
-    }
-    |expression LE  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
-            $$ = exp;
-    }
-    |expression LT  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
-            $$ = exp;
-    }
-    |expression GT  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
-            $$ = exp;
-    }
-    |expression EQ  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
-            $$ = exp;
-    }
-    |expression NE  expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
-            $$ = exp;
-    }
 
-    | atmoic_expression{
-            $$ = $1;
-     }
-    
-
-;
 atmoic_expression:
                  variable{
     $$ = $1;
@@ -390,6 +362,45 @@ atmoic_expression:
 | constant{
     $$ = $1;
     }
+;
+
+relational_expression: atmoic_expression{
+            $$ = $1;
+    }
+    |
+    relational_expression GE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE ); 
+            $$ = exp;
+    }
+    |relational_expression LE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
+            $$ = exp;
+    }
+    |relational_expression LT  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
+            $$ = exp;
+    }
+    |relational_expression GT  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
+            $$ = exp;
+    }
+;
+
+equality_expression:relational_expression{
+                   $$ =$1;
+    }
+    |equality_expression  EQ  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
+            $$ = exp;
+    }
+    |equality_expression NE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
+            $$ = exp;
+    }
+;
+expression : equality_expression {
+        $$ =$1;
+}
 ;
 
 assignment_statement:
