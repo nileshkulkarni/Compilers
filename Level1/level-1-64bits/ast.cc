@@ -330,13 +330,13 @@ int Goto_Ast :: get_bb(){
 void Goto_Ast ::	print_ast(ostream & file_buffer){
 	file_buffer << AST_SPACE <<"Goto statement:\n";
 	file_buffer << AST_NODE_SPACE << "Successor: "<<bb<<"\n";
-	file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
 };
 
 Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = *new Eval_Result_Value_Goto();
         result.set_value(bb);
         print_ast(file_buffer);
+	    file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
         return result;
 }
 

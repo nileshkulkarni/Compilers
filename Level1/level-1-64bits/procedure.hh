@@ -27,12 +27,15 @@
 #include<string>
 #include<map>
 #include<list>
+#include<set>
 
 #define PROC_SPACE "   "
 #define LOC_VAR_SPACE "      "
 
 using namespace std;
 
+extern std::set<int> bbNo;
+extern std::set<int> gotoNo;
 class Procedure;
 
 class Procedure
@@ -53,6 +56,7 @@ public:
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
 	void print_ast(ostream & file_buffer);
+	bool check_for_undefined_blocks(std::set<int> ,std::set<int>);
 
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	

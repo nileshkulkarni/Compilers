@@ -35,6 +35,8 @@ using namespace std;
 #include"basic-block.hh"
 #include"procedure.hh"
 #include"program.hh"
+std::set<int> bbNo;
+std::set<int> gotoNo;
 
 Procedure::Procedure(Data_Type proc_return_type, string proc_name)
 {
@@ -53,7 +55,18 @@ string Procedure::get_proc_name()
 {
 	return name;
 }
+bool Procedure::check_for_undefined_blocks(std::set<int> bb, std::set<int> gotoNo){
+    std::set<int>::iterator it;
+    for(it = gotoNo.begin();it!=gotoNo.end();it++){
+        if(bb.find(*it) == bb.end()){
+            return false;
+        
+        }
 
+    }
+
+    return true;
+}
 void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 {
 	basic_block_list = bb_list;
@@ -96,7 +109,6 @@ Basic_Block & Procedure::get_start_basic_block()
 }
 
 
-
 Basic_Block * Procedure::get_bb_by_number(int n){
 
 	list<Basic_Block *>::iterator i;
@@ -107,10 +119,6 @@ Basic_Block * Procedure::get_bb_by_number(int n){
 	}
 	return NULL;
 }
-
-
-
-
 
 
 

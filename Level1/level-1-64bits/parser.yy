@@ -39,12 +39,14 @@
     Expression_Ast::OperatorType op;
 };
 
+
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 %token ASSIGN_OP GE LE EQ NE LT GT 
 %token <integer_value> BASIC_BLOCK
+
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -53,10 +55,12 @@
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <op> relational_op
+%type <op> equality_op
 %type <ast> assignment_statement
 %type <ast> goto_statement
 %type <ast> if_else_statement
 %type <ast> variable
+%type <ast> atmoic_expression
 %type <ast> expression
 %type <ast> constant
 
@@ -78,6 +82,7 @@ program:
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 		delete $1;
+
 	}
 |
 	procedure_name
@@ -101,7 +106,7 @@ procedure_body:
 	'{' declaration_statement_list
 	{
 		current_procedure->set_local_list(*$2);
-		delete $2;
+        delete $2;
 	}
     	basic_block_list '}'
 	{
@@ -112,7 +117,14 @@ procedure_body:
 		}
 
 		current_procedure->set_basic_block_list(*$4);
+        
 
+        if(current_procedure->check_for_undefined_blocks(bbNo,gotoNo)){
+            ;
+        } 
+        else{
+        ;
+        } 
 		delete $4;
 	}
 |
@@ -211,9 +223,10 @@ basic_block_list:
 			int line = get_line_number();
 			report_error("Basic block doesn't exist", line);
 		}
-
+         
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
+        
 	}
 	
 ;
@@ -231,6 +244,8 @@ basic_block:
 			cout<<"lajfdlkajdfljalsdf"<<endl;
 
 		}
+
+        bbNo.insert($1);
 
 	}
 ;
@@ -308,10 +323,18 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
 goto_statement: GOTO BASIC_BLOCK ';' {
               //std::cout<<"Came to goto statement\n";
               
-                $$ =  new Goto_Ast($2); 
+                $$ =  new Goto_Ast($2);
+                gotoNo.insert($2);
               }
               ; 
               
+equality_op : 
+               NE {
+                $$ = Expression_Ast::OperatorType::NE;  
+                }
+              | EQ {
+                $$ = Expression_Ast::OperatorType::EQ;  
+}; 
 
 relational_op : LT{
                 $$ = Expression_Ast::OperatorType::LT;  
@@ -325,19 +348,19 @@ relational_op : LT{
               | LE {
                 $$ = Expression_Ast::OperatorType::LE;  
                 }
-              | NE {
-                $$ = Expression_Ast::OperatorType::NE;  
-                }
-              | EQ {
-                $$ = Expression_Ast::OperatorType::EQ;  
-}; 
+; 
 
-expression: expression relational_op  expression{
+expression: expression relational_op  atmoic_expression{
            Ast* exp = new Expression_Ast($1,$3,$2); 
             $$ = exp;
     }
-
-| variable{
+    |expression equality_op  atmoic_expression{
+           Ast* exp = new Expression_Ast($1,$3,$2); 
+            $$ = exp;
+    }
+;
+atmoic_expression:
+                 variable{
     $$ = $1;
 }
 | constant{
