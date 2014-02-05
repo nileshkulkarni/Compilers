@@ -44,9 +44,11 @@
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
-%token ASSIGN_OP GE LE EQ NE LT GT 
+%token ASSIGN_OP  
 %token <integer_value> BASIC_BLOCK
 
+%left <op> EQ NE
+%left <op> LE GE GT LT
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -350,14 +352,36 @@ relational_op : LT{
                 }
 ; 
 
-expression: expression relational_op  atmoic_expression{
-           Ast* exp = new Expression_Ast($1,$3,$2); 
+expression: expression GE  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE ); 
             $$ = exp;
     }
-    |expression equality_op  atmoic_expression{
-           Ast* exp = new Expression_Ast($1,$3,$2); 
+    |expression LE  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
             $$ = exp;
     }
+    |expression LT  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
+            $$ = exp;
+    }
+    |expression GT  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
+            $$ = exp;
+    }
+    |expression EQ  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
+            $$ = exp;
+    }
+    |expression NE  expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
+            $$ = exp;
+    }
+
+    | atmoic_expression{
+            $$ = $1;
+     }
+    
+
 ;
 atmoic_expression:
                  variable{
