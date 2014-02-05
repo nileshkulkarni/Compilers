@@ -41,14 +41,13 @@
 
 
 %token <integer_value> INTEGER_NUMBER
+%token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 %token ASSIGN_OP  
-%token <integer_value> BASIC_BLOCK
-
-%left <op> EQ NE
-%left <op> LE GE GT LT
+%left <op> NE EQ 
+%left <op> LT LE GT GE
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement

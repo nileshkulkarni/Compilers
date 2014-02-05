@@ -44,20 +44,20 @@ Symbolic Terminal tokens:
        error
        EOF
    257: INTEGER_NUMBER
-   258: NAME
-   259: RETURN
-   260: INTEGER
-   261: IF
-   262: ELSE
-   263: GOTO
-   264: ASSIGN_OP
-   265: BASIC_BLOCK
-   266: EQ
-   267: NE
-   268: LE
-   269: GE
+   258: BASIC_BLOCK
+   259: NAME
+   260: RETURN
+   261: INTEGER
+   262: IF
+   263: ELSE
+   264: GOTO
+   265: ASSIGN_OP
+   266: NE
+   267: EQ
+   268: LT
+   269: LE
    270: GT
-   271: LT
+   271: GE
     40: '('
     41: ')'
    123: '{'
