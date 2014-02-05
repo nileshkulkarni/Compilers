@@ -23,27 +23,21 @@ Production Rules
 20: assignment_statement_list ->  assignment_statement_list assignment_statement
 21: if_else_statement (IF) ->  IF '(' expression ')' goto_statement ELSE goto_statement
 22: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
-23: equality_op (NE) ->  NE
-24: equality_op (EQ) ->  EQ
-25: relational_op (LT) ->  LT
-26: relational_op (GT) ->  GT
-27: relational_op (GE) ->  GE
-28: relational_op (LE) ->  LE
-29: atmoic_expression ->  variable
-30: atmoic_expression ->  constant
-31: relational_expression ->  atmoic_expression
-32: relational_expression (GE) ->  relational_expression GE relational_expression
-33: relational_expression (LE) ->  relational_expression LE relational_expression
-34: relational_expression (LT) ->  relational_expression LT relational_expression
-35: relational_expression (GT) ->  relational_expression GT relational_expression
-36: equality_expression ->  relational_expression
-37: equality_expression (EQ) ->  equality_expression EQ relational_expression
-38: equality_expression (NE) ->  equality_expression NE relational_expression
-39: expression ->  equality_expression
-40: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
-41: variable (NAME) ->  NAME
-42: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-43: program_$ ->  program
+23: atmoic_expression ->  variable
+24: atmoic_expression ->  constant
+25: relational_expression ->  atmoic_expression
+26: relational_expression (GE) ->  relational_expression GE relational_expression
+27: relational_expression (LE) ->  relational_expression LE relational_expression
+28: relational_expression (LT) ->  relational_expression LT relational_expression
+29: relational_expression (GT) ->  relational_expression GT relational_expression
+30: equality_expression ->  relational_expression
+31: equality_expression (EQ) ->  equality_expression EQ relational_expression
+32: equality_expression (NE) ->  equality_expression NE relational_expression
+33: expression ->  equality_expression
+34: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
+35: variable (NAME) ->  NAME
+36: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+37: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -72,11 +66,9 @@ Symbolic Terminal tokens:
     58: ':'
 
 
-
-
 Grammar States: 
 State 0:
-43: program_$ ->  . program 
+37: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -86,7 +78,7 @@ State 0:
 
 
 State 1:
-43: program_$ -> program  . 
+37: program_$ -> program  . 
 
 
 State 2:
@@ -300,13 +292,13 @@ State 35:
 
 
 State 36:
-40: assignment_statement -> variable  . ASSIGN_OP expression ';' 
+34: assignment_statement -> variable  . ASSIGN_OP expression ';' 
   0:   On ASSIGN_OP to state 41
 
 
 State 37:
-41: variable -> NAME  . 
-  Reduce by 41: variable -> NAME  . 
+35: variable -> NAME  . 
+  Reduce by 35: variable -> NAME  . 
 
 
 State 38:
@@ -332,7 +324,7 @@ State 40:
 
 
 State 41:
-40: assignment_statement -> variable ASSIGN_OP  . expression ';' 
+34: assignment_statement -> variable ASSIGN_OP  . expression ';' 
   0:   On expression to state 50
   1:   On equality_expression to state 44
   2:   On relational_expression to state 45
@@ -354,49 +346,49 @@ State 43:
 
 
 State 44:
-39: expression -> equality_expression  . 
-37: equality_expression -> equality_expression  . EQ relational_expression 
-38: equality_expression -> equality_expression  . NE relational_expression 
+33: expression -> equality_expression  . 
+31: equality_expression -> equality_expression  . EQ relational_expression 
+32: equality_expression -> equality_expression  . NE relational_expression 
   0:   On EQ to state 52
   1:   On NE to state 53
-  Reduce by 39: expression -> equality_expression  . 
+  Reduce by 33: expression -> equality_expression  . 
 
 
 State 45:
-36: equality_expression -> relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+30: equality_expression -> relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0:   On GE to state 54
   1:   On LE to state 55
   2:   On LT to state 56
   3:   On GT to state 57
-  Reduce by 36: equality_expression -> relational_expression  . 
+  Reduce by 30: equality_expression -> relational_expression  . 
 
 
 State 46:
-31: relational_expression -> atmoic_expression  . 
-  Reduce by 31: relational_expression -> atmoic_expression  . 
+25: relational_expression -> atmoic_expression  . 
+  Reduce by 25: relational_expression -> atmoic_expression  . 
 
 
 State 47:
-29: atmoic_expression -> variable  . 
-  Reduce by 29: atmoic_expression -> variable  . 
+23: atmoic_expression -> variable  . 
+  Reduce by 23: atmoic_expression -> variable  . 
 
 
 State 48:
-30: atmoic_expression -> constant  . 
-  Reduce by 30: atmoic_expression -> constant  . 
+24: atmoic_expression -> constant  . 
+  Reduce by 24: atmoic_expression -> constant  . 
 
 
 State 49:
-42: constant -> INTEGER_NUMBER  . 
-  Reduce by 42: constant -> INTEGER_NUMBER  . 
+36: constant -> INTEGER_NUMBER  . 
+  Reduce by 36: constant -> INTEGER_NUMBER  . 
 
 
 State 50:
-40: assignment_statement -> variable ASSIGN_OP expression  . ';' 
+34: assignment_statement -> variable ASSIGN_OP expression  . ';' 
   0:   On ';' to state 58
 
 
@@ -407,7 +399,7 @@ State 51:
 
 
 State 52:
-37: equality_expression -> equality_expression EQ  . relational_expression 
+31: equality_expression -> equality_expression EQ  . relational_expression 
   0:   On relational_expression to state 60
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -417,7 +409,7 @@ State 52:
 
 
 State 53:
-38: equality_expression -> equality_expression NE  . relational_expression 
+32: equality_expression -> equality_expression NE  . relational_expression 
   0:   On relational_expression to state 61
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -427,7 +419,7 @@ State 53:
 
 
 State 54:
-32: relational_expression -> relational_expression GE  . relational_expression 
+26: relational_expression -> relational_expression GE  . relational_expression 
   0:   On relational_expression to state 62
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -437,7 +429,7 @@ State 54:
 
 
 State 55:
-33: relational_expression -> relational_expression LE  . relational_expression 
+27: relational_expression -> relational_expression LE  . relational_expression 
   0:   On relational_expression to state 63
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -447,7 +439,7 @@ State 55:
 
 
 State 56:
-34: relational_expression -> relational_expression LT  . relational_expression 
+28: relational_expression -> relational_expression LT  . relational_expression 
   0:   On relational_expression to state 64
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -457,7 +449,7 @@ State 56:
 
 
 State 57:
-35: relational_expression -> relational_expression GT  . relational_expression 
+29: relational_expression -> relational_expression GT  . relational_expression 
   0:   On relational_expression to state 65
   1:   On atmoic_expression to state 46
   2:   On variable to state 47
@@ -467,8 +459,8 @@ State 57:
 
 
 State 58:
-40: assignment_statement -> variable ASSIGN_OP expression ';'  . 
-  Reduce by 40: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+34: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+  Reduce by 34: assignment_statement -> variable ASSIGN_OP expression ';'  . 
 
 
 State 59:
@@ -477,81 +469,81 @@ State 59:
 
 
 State 60:
-37: equality_expression -> equality_expression EQ relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+31: equality_expression -> equality_expression EQ relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0:   On GE to state 54
   1:   On LE to state 55
   2:   On LT to state 56
   3:   On GT to state 57
-  Reduce by 37: equality_expression -> equality_expression EQ relational_expression  . 
+  Reduce by 31: equality_expression -> equality_expression EQ relational_expression  . 
 
 
 State 61:
-38: equality_expression -> equality_expression NE relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+32: equality_expression -> equality_expression NE relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0:   On GE to state 54
   1:   On LE to state 55
   2:   On LT to state 56
   3:   On GT to state 57
-  Reduce by 38: equality_expression -> equality_expression NE relational_expression  . 
+  Reduce by 32: equality_expression -> equality_expression NE relational_expression  . 
 
 
 State 62:
-32: relational_expression -> relational_expression GE relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+26: relational_expression -> relational_expression GE relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0 (removed by precedence):   On GE to state 54
   1 (removed by precedence):   On LE to state 55
   2 (removed by precedence):   On LT to state 56
   3 (removed by precedence):   On GT to state 57
-  Reduce by 32: relational_expression -> relational_expression GE relational_expression  . 
+  Reduce by 26: relational_expression -> relational_expression GE relational_expression  . 
 
 
 State 63:
-33: relational_expression -> relational_expression LE relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+27: relational_expression -> relational_expression LE relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0 (removed by precedence):   On GE to state 54
   1 (removed by precedence):   On LE to state 55
   2 (removed by precedence):   On LT to state 56
   3 (removed by precedence):   On GT to state 57
-  Reduce by 33: relational_expression -> relational_expression LE relational_expression  . 
+  Reduce by 27: relational_expression -> relational_expression LE relational_expression  . 
 
 
 State 64:
-34: relational_expression -> relational_expression LT relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+28: relational_expression -> relational_expression LT relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0 (removed by precedence):   On GE to state 54
   1 (removed by precedence):   On LE to state 55
   2 (removed by precedence):   On LT to state 56
   3 (removed by precedence):   On GT to state 57
-  Reduce by 34: relational_expression -> relational_expression LT relational_expression  . 
+  Reduce by 28: relational_expression -> relational_expression LT relational_expression  . 
 
 
 State 65:
-35: relational_expression -> relational_expression GT relational_expression  . 
-32: relational_expression -> relational_expression  . GE relational_expression 
-33: relational_expression -> relational_expression  . LE relational_expression 
-34: relational_expression -> relational_expression  . LT relational_expression 
-35: relational_expression -> relational_expression  . GT relational_expression 
+29: relational_expression -> relational_expression GT relational_expression  . 
+26: relational_expression -> relational_expression  . GE relational_expression 
+27: relational_expression -> relational_expression  . LE relational_expression 
+28: relational_expression -> relational_expression  . LT relational_expression 
+29: relational_expression -> relational_expression  . GT relational_expression 
   0 (removed by precedence):   On GE to state 54
   1 (removed by precedence):   On LE to state 55
   2 (removed by precedence):   On LT to state 56
   3 (removed by precedence):   On GT to state 57
-  Reduce by 35: relational_expression -> relational_expression GT relational_expression  . 
+  Reduce by 29: relational_expression -> relational_expression GT relational_expression  . 
 
 
 State 66:

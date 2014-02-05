@@ -56,8 +56,6 @@
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
-%type <op> relational_op
-%type <op> equality_op
 %type <ast> assignment_statement
 %type <ast> goto_statement
 %type <ast> if_else_statement
@@ -332,31 +330,9 @@ goto_statement: GOTO BASIC_BLOCK ';' {
               }
               ; 
               
-equality_op : 
-               NE {
-                $$ = Expression_Ast::OperatorType::NE;  
-                }
-              | EQ {
-                $$ = Expression_Ast::OperatorType::EQ;  
-}; 
-
-relational_op : LT{
-                $$ = Expression_Ast::OperatorType::LT;  
-             } 
-              | GT {
-                $$ = Expression_Ast::OperatorType::GT;  
-                }
-              | GE {
-                $$ = Expression_Ast::OperatorType::GE;  
-                }
-              | LE {
-                $$ = Expression_Ast::OperatorType::LE;  
-                }
-; 
 
 
-atmoic_expression:
-                 variable{
+atmoic_expression: variable{
     $$ = $1;
 }
 | constant{
