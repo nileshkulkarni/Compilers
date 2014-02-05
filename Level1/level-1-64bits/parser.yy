@@ -105,8 +105,7 @@ procedure_name:
 ;
 
 procedure_body:
-	'{' declaration_statement_list
-	{
+	'{' declaration_statement_list{
 		current_procedure->set_local_list(*$2);
         delete $2;
 	}
@@ -120,13 +119,7 @@ procedure_body:
 
 		current_procedure->set_basic_block_list(*$4);
         
-
-        if(current_procedure->check_for_undefined_blocks(bbNo,gotoNo)){
-            ;
-        } 
-        else{
-        ;
-        } 
+        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
 		delete $4;
 	}
 |
@@ -243,7 +236,6 @@ basic_block:
 		{
 			list<Ast *> * ast_list = new list<Ast *>;
 			$$ = new Basic_Block($1, *ast_list);
-			cout<<"lajfdlkajdfljalsdf"<<endl;
 
 		}
 

@@ -28,7 +28,7 @@ for f in cfgFiles:
     os.system(command)
     os.system("diff -b -B expected generated");
 
-'''
+
 error_files=[]
 for f in files:
     fileName,fileExt = os.path.splitext( path + f)
@@ -37,14 +37,14 @@ for f in files:
 
 for f in error_files:
     print("Testing file  " + f ); 
-    command = "./cfglp_original -eval  " + f + " 2> expected " 
+    command = "./cfglp64 -ast  -d " + f + " 2> expected " 
     os.system(command) 
-    command = "./cfglp -tokens " + f + " 2> generated " 
+    command = "./cfglp -ast -d " + f + " 2> generated " 
     os.system(command)
     #print("diff starts here \n");
-    os.system("diff -b expected generated");
+    os.system("diff -b -B expected generated");
 
 
 
 #print cfgFiles
-'''
+

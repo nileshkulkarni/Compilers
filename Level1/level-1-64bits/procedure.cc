@@ -59,6 +59,10 @@ bool Procedure::check_for_undefined_blocks(std::set<int> bb, std::set<int> gotoN
     std::set<int>::iterator it;
     for(it = gotoNo.begin();it!=gotoNo.end();it++){
         if(bb.find(*it) == bb.end()){
+	        string file_name = command_options.get_file_name();
+            char error_string[100];
+            sprintf(error_string,"%s :: cfglp error : bb %d doesn't exist",file_name.c_str(),*it);
+            print_error(string(error_string),1); 
             return false;
         
         }

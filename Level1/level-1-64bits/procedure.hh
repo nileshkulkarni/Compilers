@@ -28,7 +28,8 @@
 #include<map>
 #include<list>
 #include<set>
-
+#include "user-options.hh"
+#include "error-display.hh"
 #define PROC_SPACE "   "
 #define LOC_VAR_SPACE "      "
 
