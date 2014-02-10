@@ -95,7 +95,7 @@ float {
 
       }
 
-([<][b][b][ ][[:digit:]_]+[>]) {
+([<][b][b][ ][[:digit:]]+[>]) {
             store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
             string matchs = matched();
@@ -108,8 +108,8 @@ float {
 			return matched()[0];
 		}
 
-([-]?[[:digit:]_]+[.][[:digit:]_]+)	{ 
-				store_token_name("NUM");
+([-]?[[:digit:]]+[.][[:digit:]]+)	{ 
+				store_token_name("META CHAR");
 
 				ParserBase::STYPE__ * val = getSval();
                 float va;
@@ -118,7 +118,7 @@ float {
 				return Parser::FLOAT_NUMBER;
     }
 
-[-]?[[:digit:]_]+ 	{ 
+[-]?[[:digit:]]+ 	{ 
 				store_token_name("NUM");
 
 				ParserBase::STYPE__ * val = getSval();
