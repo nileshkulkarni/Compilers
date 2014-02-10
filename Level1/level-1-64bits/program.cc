@@ -110,7 +110,9 @@ void Program::print_ast()
 
 Eval_Result & Program::evaluate()
 {
-	Procedure * main = get_main_procedure(command_options.get_output_buffer());
+    Procedure * main = get_main_procedure(command_options.get_output_buffer());
+    
+
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
 

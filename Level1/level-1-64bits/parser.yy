@@ -39,12 +39,16 @@
     Expression_Ast::OperatorType op;
 };
 
+
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
-%token ASSIGN_OP GE LE EQ NE LT GT 
+%token ASSIGN_OP  
 %token <integer_value> BASIC_BLOCK
+
+%left <op> EQ NE
+%left <op> LE GE GT LT
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -52,12 +56,14 @@
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
-%type <op> relational_op
 %type <ast> assignment_statement
 %type <ast> goto_statement
 %type <ast> if_else_statement
 %type <ast> variable
+%type <ast> atmoic_expression
 %type <ast> expression
+%type <ast> equality_expression
+%type <ast> relational_expression
 %type <ast> constant
 
 
@@ -78,6 +84,7 @@ program:
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 		delete $1;
+
 	}
 |
 	procedure_name
@@ -98,10 +105,9 @@ procedure_name:
 ;
 
 procedure_body:
-	'{' declaration_statement_list
-	{
+	'{' declaration_statement_list{
 		current_procedure->set_local_list(*$2);
-		delete $2;
+        delete $2;
 	}
     	basic_block_list '}'
 	{
@@ -112,7 +118,8 @@ procedure_body:
 		}
 
 		current_procedure->set_basic_block_list(*$4);
-
+        
+        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
 		delete $4;
 	}
 |
@@ -211,9 +218,10 @@ basic_block_list:
 			int line = get_line_number();
 			report_error("Basic block doesn't exist", line);
 		}
-
+         
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
+        
 	}
 	
 ;
@@ -228,9 +236,10 @@ basic_block:
 		{
 			list<Ast *> * ast_list = new list<Ast *>;
 			$$ = new Basic_Block($1, *ast_list);
-			cout<<"lajfdlkajdfljalsdf"<<endl;
 
 		}
+
+        bbNo.insert($1);
 
 	}
 ;
@@ -308,41 +317,58 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
 goto_statement: GOTO BASIC_BLOCK ';' {
               //std::cout<<"Came to goto statement\n";
               
-                $$ =  new Goto_Ast($2); 
+                $$ =  new Goto_Ast($2);
+                gotoNo.insert($2);
               }
               ; 
               
 
-relational_op : LT{
-                $$ = Expression_Ast::OperatorType::LT;  
-             } 
-              | GT {
-                $$ = Expression_Ast::OperatorType::GT;  
-                }
-              | GE {
-                $$ = Expression_Ast::OperatorType::GE;  
-                }
-              | LE {
-                $$ = Expression_Ast::OperatorType::LE;  
-                }
-              | NE {
-                $$ = Expression_Ast::OperatorType::NE;  
-                }
-              | EQ {
-                $$ = Expression_Ast::OperatorType::EQ;  
-}; 
 
-expression: expression relational_op  expression{
-           Ast* exp = new Expression_Ast($1,$3,$2); 
-            $$ = exp;
-    }
-
-| variable{
+atmoic_expression: variable{
     $$ = $1;
 }
 | constant{
     $$ = $1;
     }
+;
+
+relational_expression: atmoic_expression{
+            $$ = $1;
+    }
+    |
+    relational_expression GE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE ); 
+            $$ = exp;
+    }
+    |relational_expression LE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
+            $$ = exp;
+    }
+    |relational_expression LT  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
+            $$ = exp;
+    }
+    |relational_expression GT  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
+            $$ = exp;
+    }
+;
+
+equality_expression:relational_expression{
+                   $$ =$1;
+    }
+    |equality_expression  EQ  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
+            $$ = exp;
+    }
+    |equality_expression NE  relational_expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
+            $$ = exp;
+    }
+;
+expression : equality_expression {
+        $$ =$1;
+}
 ;
 
 assignment_statement:
