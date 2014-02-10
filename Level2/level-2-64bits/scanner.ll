@@ -89,6 +89,12 @@ goto    {
             return Parser::NE;
         }
 
+float {
+            store_token_name("META");
+            return Parser::FLOAT;
+
+      }
+
 ([<][b][b][ ][[:digit:]_]+[>]) {
             store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
@@ -101,6 +107,16 @@ goto    {
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
+
+([-]?[[:digit:]_]+[.][[:digit:]_]+)	{ 
+				store_token_name("NUM");
+
+				ParserBase::STYPE__ * val = getSval();
+                float va;
+                sscanf(matched().c_str(),"%f",&va);
+				val->integer_value =va;
+				return Parser::FLOAT_NUMBER;
+    }
 
 [-]?[[:digit:]_]+ 	{ 
 				store_token_name("NUM");

@@ -1,7 +1,6 @@
 main()
 {
 	int a;
-	float b;
 	float c;
 
 	a = 3;
