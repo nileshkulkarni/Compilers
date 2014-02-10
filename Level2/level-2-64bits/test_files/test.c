@@ -2,8 +2,9 @@ main()
 {
 	int a;
 	float c;
+    float b;
 
 	a = 3;
-	b = 2.4;
 	c = 3;
+	b = a *c;
 }

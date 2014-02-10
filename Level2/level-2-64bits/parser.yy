@@ -48,6 +48,8 @@
 %token RETURN INTEGER FLOAT 
 %token IF ELSE GOTO
 %token ASSIGN_OP  
+%left '+' '-'
+%left '*' '/'
 %left <op> NE EQ 
 %left <op> LT LE GT GE
 
@@ -62,6 +64,8 @@
 %type <ast> if_else_statement
 %type <ast> variable
 %type <ast> atmoic_expression
+%type <ast> arithematic_expression
+%type <ast> type_casted_expression
 %type <ast> expression
 %type <ast> equality_expression
 %type <ast> relational_expression
@@ -85,7 +89,6 @@ program:
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 		delete $1;
-
 	}
 |
 	procedure_name
@@ -189,6 +192,13 @@ declaration_statement_list:
 ;
 
 declaration_statement:
+	FLOAT NAME ';'
+	{
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+	}
+ |
 	INTEGER NAME ';'
 	{
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
@@ -367,7 +377,35 @@ equality_expression:relational_expression{
             $$ = exp;
     }
 ;
-expression : equality_expression {
+
+arithematic_expression: equality_expression {
+                      $$ = $1;
+                     }
+           |arithematic_expression '+' equality_expression{
+                      $$ = $1;
+
+    }
+           |arithematic_expression '-' equality_expression{
+                      $$ = $1;
+
+    }
+           |arithematic_expression '*' equality_expression{
+                      $$ = $1;
+
+    }
+           |arithematic_expression '/' equality_expression{
+                      $$ = $1;
+
+    }
+;
+type_casted_expression: arithematic_expression{
+                      $$ = $1;
+                    }
+                    | '(' DATA_TYPE ')' arithematic_expression{
+                        $$ =$4;
+            }
+ ;
+expression : type_casted_expression{
         $$ =$1;
 }
 ;
@@ -380,6 +418,9 @@ assignment_statement:
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
+;
+
+DATA_TYPE : FLOAT | INTEGER
 ;
 
 variable:
@@ -409,5 +450,10 @@ constant:
 	INTEGER_NUMBER
 	{
 		$$ = new Number_Ast<int>($1, int_data_type);
+	}
+    |
+	FLOAT_NUMBER
+	{
+		$$ = new Number_Ast<float>($1, float_data_type);
 	}
 ;

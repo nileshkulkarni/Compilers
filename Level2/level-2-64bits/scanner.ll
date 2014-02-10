@@ -103,6 +103,10 @@ float {
             return Parser::BASIC_BLOCK;
         }
 
+[-+\*/] {
+        store_token_name("ARTHIOP");
+        return matched()[0]; 
+    }
 [:{}();=!]	{
 			store_token_name("META CHAR");
 			return matched()[0];
@@ -114,7 +118,7 @@ float {
 				ParserBase::STYPE__ * val = getSval();
                 float va;
                 sscanf(matched().c_str(),"%f",&va);
-				val->integer_value =va;
+				val->float_value =va;
 				return Parser::FLOAT_NUMBER;
     }
 
