@@ -28,6 +28,7 @@
 %union 
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -41,9 +42,10 @@
 
 
 %token <integer_value> INTEGER_NUMBER
+%token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
-%token RETURN INTEGER 
+%token RETURN INTEGER FLOAT 
 %token IF ELSE GOTO
 %token ASSIGN_OP  
 %left <op> NE EQ 
