@@ -50,10 +50,7 @@ Data_Type Ast::get_data_type()
 }
 
 
-void Ast::set_data_type(Data_Type d){
 
-		report_internal_error("Should not reach, Ast : set_data_type");
-}
 
 
 
@@ -247,11 +244,6 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 	return node_data_type;
 }
 
-template <class DATA_TYPE>
-void Number_Ast<DATA_TYPE>::set_data_type(Data_Type data_type)
-{
-	node_data_type= data_type;
-}
 
 
 template <class DATA_TYPE>
@@ -381,7 +373,7 @@ bool Expression_Ast::check_ast(int line)
 {
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
-		node_data_type = lhs->get_data_type();
+			node_data_type = lhs->get_data_type();
 		return true;
 	}
 
@@ -392,11 +384,6 @@ bool Expression_Ast::check_ast(int line)
 Data_Type Expression_Ast::get_data_type() 
 {
 	return node_data_type;
-}
-
-void Expression_Ast::set_data_type(Data_Type data_type)
-{
-	node_data_type=data_type;
 }
 
 	
@@ -423,6 +410,7 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
         case GE: file_buffer<<"GE";break;
         case EQ: file_buffer<<"EQ";break;
         case NE: file_buffer<<"NE";break;
+       
     }
 
 }
@@ -464,6 +452,40 @@ Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & 
 
 ///////////////////////////////////////////////////////////////////////////////
 
+Type_Casted_Ast :: Type_Casted_Ast(Ast * _ast, Data_Type data_type){
+	node_data_type = data_type;
+	ast =_ast;
+	
+}
+
+
+
+
+bool Type_Casted_Ast::check_ast(int line)
+{
+		return true;
+		report_error("Expression statement data type not compatible", line);
+}
+
+
+Data_Type Type_Casted_Ast::get_data_type() 
+{
+	return node_data_type;
+}
+
+
+	
+
+void Type_Casted_Ast :: print_ast(ostream & file_buffer){
+	ast->print_ast(file_buffer);
+}
+
+//template<class DATA_TYPE>
+Eval_Result & Type_Casted_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
+        return ast->evaluate(eval_env,file_buffer);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 Return_Ast::Return_Ast()
 {}
 

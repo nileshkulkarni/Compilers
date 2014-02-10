@@ -51,8 +51,8 @@
 %token ASSIGN_OP  
 %left '+' '-'
 %left '*' '/'
-%left <op> NE EQ 
-%left <op> LT LE GT GE
+%left LE GE LT GT
+%left NE EQ
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -64,12 +64,11 @@
 %type <ast> goto_statement
 %type <ast> if_else_statement
 %type <ast> variable
-%type <ast> atmoic_expression
-%type <ast> arithematic_expression
+%type <ast> atomic_expression
+%type <ast> arithmetic_expression
 %type <ast> type_casted_expression
 %type <ast> expression
-%type <ast> equality_expression
-%type <ast> relational_expression
+%type <ast> Big_Expression
 %type <ast> constant
 %type <data_type> DATA_TYPE
 
@@ -335,7 +334,8 @@ goto_statement: GOTO BASIC_BLOCK ';' {
               ; 
               
 
-atmoic_expression: variable{
+
+atomic_expression: variable{
     $$ = $1;
 }
 | constant{
@@ -343,73 +343,109 @@ atmoic_expression: variable{
     }
 ;
 
-relational_expression: atmoic_expression{
-            $$ = $1;
-    }
-    |
-    relational_expression GE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE ); 
-            $$ = exp;
-    }
-    |relational_expression LE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
-            $$ = exp;
-    }
-    |relational_expression LT  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
-            $$ = exp;
-    }
-    |relational_expression GT  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
-            $$ = exp;
-    }
+
+arithmetic_expression: 
+			atomic_expression {
+                      $$ = $1;
+           }
+           | Big_Expression{
+					$$ =$1;
+           }
 ;
 
-equality_expression:relational_expression{
-                   $$ =$1;
-    }
-    |equality_expression  EQ  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
-            $$ = exp;
-    }
-    |equality_expression NE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
-            $$ = exp;
-    }
-;
 
-arithematic_expression: equality_expression {
-                      $$ = $1;
-                     }
-           |arithematic_expression '+' equality_expression{
-                      $$ = $1;
-
-    }
-           |arithematic_expression '-' equality_expression{
-                      $$ = $1;
-
-    }
-           |arithematic_expression '*' equality_expression{
-                      $$ = $1;
-
-    }
-           |arithematic_expression '/' equality_expression{
-                      $$ = $1;
-
-    }
-;
-type_casted_expression: arithematic_expression{
+type_casted_expression: arithmetic_expression{
                       $$ = $1;
                     }
-                    | '(' DATA_TYPE ')' '(' type_casted_expression ')'{
-                        $4->set_data_type($2);
-                        $$ =$4;
+                    | '(' DATA_TYPE ')' '(' Big_Expression ')'{
+                        Ast* type_casted_ast = new Type_Casted_Ast($5,$2);
+                        $$ =type_casted_ast;
 					}
- ;
+					| '(' DATA_TYPE ')' atomic_expression{
+						Ast* type_casted_ast = new Type_Casted_Ast($4,$2);
+                        $$ =type_casted_ast;
+					}					 
+					;
+					 
+
+
+Big_Expression : type_casted_expression '+' type_casted_expression{
+                      
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp;
+				}
+           |type_casted_expression '-' type_casted_expression{
+                     
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MINUS);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp;
+
+			}
+           |type_casted_expression '*' type_casted_expression{
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MULT);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp;
+
+
+		}
+           |type_casted_expression '/' type_casted_expression{
+                     Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV);
+                     int line = get_line_number();
+                     exp->check_ast(line);
+                     $$ = exp;
+
+		}
+    
+           |type_casted_expression LE type_casted_expression{
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp; 
+		  }
+           |type_casted_expression GE type_casted_expression{
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp; 
+		  }
+            |type_casted_expression GT type_casted_expression{
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp; 
+		  }
+           
+            |type_casted_expression LT type_casted_expression{
+                      Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT);
+                      int line = get_line_number();
+                      exp->check_ast(line);
+                      $$ = exp; 
+		  }
+		    |type_casted_expression EQ type_casted_expression{
+                    Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ);
+					int line = get_line_number();
+                    exp->check_ast(line);
+                    $$ = exp; 
+		  }
+           |type_casted_expression NE type_casted_expression{
+                    Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE);
+                    int line = get_line_number();
+                    exp->check_ast(line); 
+                    $$ = exp; 
+		  }
+;
+
+
+ 
 expression : type_casted_expression{
         $$ =$1;
 }
 ;
+
 
 assignment_statement:
 	variable ASSIGN_OP expression ';'
