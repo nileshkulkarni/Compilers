@@ -45,7 +45,7 @@
 %token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
-%token RETURN INTEGER FLOAT 
+%token RETURN INTEGER FLOAT DOUBLE 
 %token IF ELSE GOTO
 %token ASSIGN_OP  
 %left '+' '-'
@@ -402,6 +402,7 @@ type_casted_expression: arithematic_expression{
                       $$ = $1;
                     }
                     | '(' DATA_TYPE ')' arithematic_expression{
+                       //$4.setDataType(DATA_TYPE);
                         $$ =$4;
             }
  ;
@@ -420,7 +421,7 @@ assignment_statement:
 	}
 ;
 
-DATA_TYPE : FLOAT | INTEGER
+DATA_TYPE : FLOAT |DOUBLE| INTEGER
 ;
 
 variable:

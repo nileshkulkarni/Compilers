@@ -45,6 +45,7 @@ public:
 	~Ast();
 
 	virtual Data_Type get_data_type();
+	virtual Data_Type set_data_type();
 	virtual bool check_ast(int line);
 
 	virtual void print_ast(ostream & file_buffer) = 0;

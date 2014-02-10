@@ -89,6 +89,11 @@ goto    {
             return Parser::NE;
         }
 
+double {
+            store_token_name("META");
+            return Parser::DOUBLE;
+
+      }
 float {
             store_token_name("META");
             return Parser::FLOAT;
