@@ -49,6 +49,14 @@ Data_Type Ast::get_data_type()
 	report_internal_error("Should not reach, Ast : get_data_type");
 }
 
+
+void Ast::set_data_type(Data_Type d){
+
+		report_internal_error("Should not reach, Ast : set_data_type");
+}
+
+
+
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	report_internal_error("Should not reach, Ast : print_value");
@@ -77,6 +85,15 @@ Assignment_Ast::~Assignment_Ast()
 	delete lhs;
 	delete rhs;
 }
+
+
+/*
+void Assignment_Ast::set_data_type(Data_Type data_type)
+{
+	node_data_type=data_type;
+}
+*/
+
 
 Data_Type Assignment_Ast::get_data_type()
 {
@@ -230,6 +247,12 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 	return node_data_type;
 }
 
+template <class DATA_TYPE>
+void Number_Ast<DATA_TYPE>::set_data_type(Data_Type data_type)
+{
+	node_data_type= data_type;
+}
+
 
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
@@ -366,9 +389,14 @@ bool Expression_Ast::check_ast(int line)
 }
 
 
-Data_Type Expression_Ast::get_data_type()
+Data_Type Expression_Ast::get_data_type() 
 {
 	return node_data_type;
+}
+
+void Expression_Ast::set_data_type(Data_Type data_type)
+{
+	node_data_type=data_type;
 }
 
 	

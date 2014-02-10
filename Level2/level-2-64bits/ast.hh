@@ -45,12 +45,12 @@ public:
 	~Ast();
 
 	virtual Data_Type get_data_type();
-	virtual Data_Type set_data_type();
+	virtual void set_data_type(Data_Type);
 	virtual bool check_ast(int line);
 
 	virtual void print_ast(ostream & file_buffer) = 0;
 	virtual void print_value(Local_Environment & eval_env, ostream & file_buffer);
-
+	
 	virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
 	virtual void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
 	virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
@@ -70,7 +70,7 @@ class Assignment_Ast:public Ast
 public:
 	Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs);
 	~Assignment_Ast();
-
+ //   void set_data_type(Data_Type); 
 	Data_Type get_data_type();
 	bool check_ast(int line);
 
@@ -98,7 +98,7 @@ public:
 	~Name_Ast();
 
 	Data_Type get_data_type();
-
+ //   void set_data_type(Data_Type); 
 	void print_ast(ostream & file_buffer);
 
 	void print_value(Local_Environment & eval_env, ostream & file_buffer);
@@ -126,6 +126,8 @@ public:
 //	Data_Type get_data_type();
 //	bool check_ast(int line);
 
+	// void set_data_type(Data_Type);
+	
 	int get_bb();
 
 	void print_ast(ostream & file_buffer);
@@ -156,6 +158,9 @@ public:
 
 //	Data_Type get_data_type();
 //	bool check_ast(int line);
+	
+	//void set_data_type(Data_Type);
+
 
 	void print_ast(ostream & file_buffer);
 
@@ -202,6 +207,7 @@ public:
 	~Expression_Ast();
 
 	Data_Type get_data_type();
+    void set_data_type(Data_Type); 
 	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
@@ -229,6 +235,7 @@ public:
 	Number_Ast(T number, Data_Type constant_data_type);
 	~Number_Ast();
 
+    void set_data_type(Data_Type); 
 	Data_Type get_data_type();
 
 	void print_ast(ostream & file_buffer);

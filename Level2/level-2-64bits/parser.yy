@@ -38,6 +38,7 @@
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
     Expression_Ast::OperatorType op;
+    Data_Type data_type;
 };
 
 
@@ -70,7 +71,7 @@
 %type <ast> equality_expression
 %type <ast> relational_expression
 %type <ast> constant
-
+%type <data_type> DATA_TYPE
 
 %start program
 
@@ -334,7 +335,6 @@ goto_statement: GOTO BASIC_BLOCK ';' {
               ; 
               
 
-
 atmoic_expression: variable{
     $$ = $1;
 }
@@ -401,10 +401,10 @@ arithematic_expression: equality_expression {
 type_casted_expression: arithematic_expression{
                       $$ = $1;
                     }
-                    | '(' DATA_TYPE ')' arithematic_expression{
-                       //$4.setDataType(DATA_TYPE);
+                    | '(' DATA_TYPE ')' '(' type_casted_expression ')'{
+                        $4->set_data_type($2);
                         $$ =$4;
-            }
+					}
  ;
 expression : type_casted_expression{
         $$ =$1;
@@ -421,7 +421,19 @@ assignment_statement:
 	}
 ;
 
-DATA_TYPE : FLOAT |DOUBLE| INTEGER
+DATA_TYPE : FLOAT{
+             Data_Type data_type =float_data_type;
+            $$ = data_type;
+          }
+          |DOUBLE{
+             Data_Type data_type =double_data_type;
+            $$ = data_type;
+           
+          }
+          |INTEGER{
+             Data_Type data_type =int_data_type;
+            $$ = data_type;
+          }
 ;
 
 variable:
