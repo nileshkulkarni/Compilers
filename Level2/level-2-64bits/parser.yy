@@ -449,7 +449,7 @@ variable:
 constant:
 	INTEGER_NUMBER
 	{
-		$$ = new Number_Ast<int>($1, int_data_type);
+		$$ = new Number_Ast<float>($1, int_data_type);
 	}
     |
 	FLOAT_NUMBER

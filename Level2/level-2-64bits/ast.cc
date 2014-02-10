@@ -213,6 +213,7 @@ Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class DATA_TYPE>
+
 Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type)
 {
 	constant = number;
@@ -454,3 +455,4 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 template class Number_Ast<int>;
+template class Number_Ast<float>;
