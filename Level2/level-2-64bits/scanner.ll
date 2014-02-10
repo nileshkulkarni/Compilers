@@ -90,12 +90,12 @@ goto    {
         }
 
 double {
-            store_token_name("META");
+            store_token_name("META CHAR");
             return Parser::DOUBLE;
 
       }
 float {
-            store_token_name("META");
+            store_token_name("META CHAR");
             return Parser::FLOAT;
 
       }
@@ -109,7 +109,7 @@ float {
         }
 
 [-+\*/] {
-        store_token_name("ARTHIOP");
+		 store_token_name("ARITHOP");
         return matched()[0]; 
     }
 [:{}();=!]	{
@@ -118,7 +118,7 @@ float {
 		}
 
 ([-]?[[:digit:]]+[.][[:digit:]]+)	{ 
-				store_token_name("META CHAR");
+				store_token_name("FNUM");
 
 				ParserBase::STYPE__ * val = getSval();
                 float va;
