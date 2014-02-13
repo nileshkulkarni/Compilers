@@ -134,35 +134,20 @@ unary_expression: atomic_expression
 ;
 
 
-relational_expression: unary_expression
-    | relational_expression LE relational_expression
-    | relational_expression GE relational_expression
-    | relational_expression LT relational_expression
-    | relational_expression GT relational_expression
-    | relational_expression NE relational_expression
-    | relational_expression EQ relational_expression
+expression: unary_expression
+    | expression LE expression
+    | expression GE expression
+    | expression LT expression
+    | expression GT expression
+    | expression NE expression
+    | expression EQ expression
+    | expression '+' expression         
+    | expression '-' expression
+    | expression '*' expression
+    | expression '/' expression   
+    | '(' DATA_TYPE ')' expression
 
 ;
-
-
-arithmetic_expression: relational_expression
-        |arithmetic_expression '+' arithmetic_expression         
-        |arithmetic_expression '-' arithmetic_expression
-        |arithmetic_expression '*' arithmetic_expression
-        |arithmetic_expression '/' arithmetic_expression    
-;
-
-
-
-type_casted_expression:
-        | '(' DATA_TYPE ')' expression
-;
-					 
-expression :arithmetic_expression
-           |
-           type_casted_expression
-;
-
 
 assignment_statement:
 	variable ASSIGN_OP expression ';'
