@@ -124,44 +124,43 @@ goto_statement: GOTO BASIC_BLOCK ';'
 atomic_expression: variable
      |
      constant
+     |
+     '(' expression ')'
 ;
 
-unary_expression: '-' atomic_expression
+unary_expression: atomic_expression
                 |
                 '-' unary_expression
 ;
 
 
+relational_expression: unary_expression
+    | relational_expression LE relational_expression
+    | relational_expression GE relational_expression
+    | relational_expression LT relational_expression
+    | relational_expression GT relational_expression
+    | relational_expression NE relational_expression
+    | relational_expression EQ relational_expression
 
-arithmetic_expression: atomic_expression
-        |
-        Big_Expressin
 ;
 
 
-type_casted_expression: arithmetic_expression
-        | '(' DATA_TYPE ')' '(' Big_Expression ')'
-        | '(' DATA_TYPE ')' atomic_expression
+arithmetic_expression: relational_expression
+        |arithmetic_expression '+' arithmetic_expression         
+        |arithmetic_expression '-' arithmetic_expression
+        |arithmetic_expression '*' arithmetic_expression
+        |arithmetic_expression '/' arithmetic_expression    
+;
+
+
+
+type_casted_expression:
+        | '(' DATA_TYPE ')' expression
 ;
 					 
-
-
-Big_Expression : unary_expression
-    |type_casted_expression '+' type_casted_expression           
-    |type_casted_expression '-' type_casted_expression
-    |type_casted_expression '*' type_casted_expression
-    |type_casted_expression '/' type_casted_expression    
-    |type_casted_expression LE type_casted_expression
-    |type_casted_expression GE type_casted_expression
-    |type_casted_expression GT type_casted_expression           
-    |type_casted_expression LT type_casted_expression		    
-    |type_casted_expression EQ type_casted_expression
-    |type_casted_expression NE type_casted_expression
-;
-
-
- 
-expression : type_casted_expression
+expression :arithmetic_expression
+           |
+           type_casted_expression
 ;
 
 
