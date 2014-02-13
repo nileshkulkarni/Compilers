@@ -145,7 +145,7 @@ expression: unary_expression
     | expression '-' expression
     | expression '*' expression
     | expression '/' expression   
-    | '(' DATA_TYPE ')' expression
+    | '(' DATA_TYPE ')' atomic_expression
 
 ;
 
