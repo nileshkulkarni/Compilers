@@ -436,7 +436,7 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
 
 
 template<class DATA_TYPE>
-Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
+Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result;
 		if(node_data_type == float_data_type){
 			result = *new Eval_Result_Value_Templated<float>(float_data_type);
@@ -515,7 +515,7 @@ Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & 
 
 
 ///////////////////////////////////////////////////////////////////////////	
-UnaryExpression_Ast :: UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op){
+UnaryExpression_Ast :: UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType _op){
 	exp = _exp;
 	node_data_type = exp->get_data_type();
 	op  = _op;
@@ -525,14 +525,14 @@ UnaryExpression_Ast :: ~UnaryExpression_Ast(){
 
 }
 
-UnaryExpression_Ast :: Data_Type get_data_type(){
+ Data_Type UnaryExpression_Ast :: get_data_type(){
 	return node_data_type;
 }
 
 
-UnaryExpression_Ast :: void print_ast(ostream & file_buffer){
+void UnaryExpression_Ast :: print_ast(ostream & file_buffer){
 	file_buffer <<"\n";	
-    exp->printOperator(file_buffer,op);
+    //exp->printOperator(file_buffer,op);
     file_buffer <<"\n";
     file_buffer << AST_NODE_SPACE<< "LHS (";
 	lhs->print_ast(file_buffer);
