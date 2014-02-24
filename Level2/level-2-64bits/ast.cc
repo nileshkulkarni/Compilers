@@ -403,7 +403,7 @@ Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
 	else
 		node_data_type = lhs->get_data_type(); //## TO-DO , DONE
 	
-	assert(rhs != NULL);
+//	assert(rhs != NULL ; //## TO-DO
 	rhs = _rhs;
 	op  = _op;
 }

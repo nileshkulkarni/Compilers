@@ -352,7 +352,7 @@ atomic_expression: variable{
 
 unary_expression: atomic_expression{
                     $$ =$1;
-					cout<<"here \n";
+					cout<<"here-- \n";
 				}
                 |
                 '-' unary_expression{
@@ -462,6 +462,7 @@ DATA_TYPE : FLOAT{
 variable:
 	NAME
 	{
+		cout<<"here ::: "<<*$1<<endl;
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1)){
