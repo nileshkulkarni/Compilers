@@ -352,7 +352,8 @@ atomic_expression: variable{
 
 unary_expression: atomic_expression{
                     $$ =$1;
-                }
+					cout<<"here \n";
+				}
                 |
                 '-' unary_expression{
                     Ast*  unaryExp = new UnaryExpression_Ast($2,Expression_Ast::OperatorType::MINUS);
@@ -419,6 +420,7 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '/' expression{   
+           cout<<"Here in division\n";
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV ); 
            $$ = exp;
            int line = get_line_number();
