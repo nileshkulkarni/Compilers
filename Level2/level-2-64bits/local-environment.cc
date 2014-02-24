@@ -149,6 +149,50 @@ Result_Enum Eval_Result_Value_Float::get_result_enum()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+Eval_Result_Value_Double::Eval_Result_Value_Double()
+{
+	value.double_ret = 0.0;
+	defined = false;
+	result_type = double_result;
+}
+
+Eval_Result_Value_Double::~Eval_Result_Value_Double()
+{ }
+
+void Eval_Result_Value_Double::set_value(double number)
+{
+	value.double_ret = number;
+	defined = true;
+}
+
+Eval_Result_Ret Eval_Result_Value_Double::get_value()
+{
+	return value;
+}
+
+void Eval_Result_Value_Double::set_variable_status(bool def)
+{
+	defined = def;
+}
+
+bool Eval_Result_Value_Double::is_variable_defined()
+{
+	return defined;
+}
+
+void Eval_Result_Value_Double::set_result_enum(Result_Enum res)
+{
+	result_type = res;
+}
+
+Result_Enum Eval_Result_Value_Double::get_result_enum()
+{
+	return result_type;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
 
 
 Eval_Result_Value_Goto::Eval_Result_Value_Goto()

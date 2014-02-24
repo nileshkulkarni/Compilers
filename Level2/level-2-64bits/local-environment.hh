@@ -130,6 +130,23 @@ public:
 	void set_result_enum(Result_Enum res);
 	Result_Enum get_result_enum();
 };
+class Eval_Result_Value_Double:public Eval_Result_Value
+{
+	int value;
+	bool defined;
+public:
+	Eval_Result_Value_Double();
+	~Eval_Result_Value_Double();
+
+	void set_value(Eval_Result_Ret number);
+	Eval_Result_Ret get_value();
+
+	void set_variable_status(bool def);
+	bool is_variable_defined();
+
+	void set_result_enum(Result_Enum res);
+	Result_Enum get_result_enum();
+};
 
 
 
