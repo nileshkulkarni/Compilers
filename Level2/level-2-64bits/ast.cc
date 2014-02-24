@@ -196,6 +196,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
 	{
+		
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
 		return *result;
 	}

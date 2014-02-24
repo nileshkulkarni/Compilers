@@ -29,18 +29,18 @@ using namespace std;
 #include"local-environment.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-/*
-int Eval_Result::get_value()
-{
-//	report_internal_error("Should not reach, Eval_Result : get_value");
-}
-*/
 
-/*void Eval_Result::set_value(int number)
+Eval_Result_Ret Eval_Result::get_value()
+{
+	report_internal_error("Should not reach, Eval_Result : get_value");
+}
+
+
+void Eval_Result::set_value(Eval_Result_Ret number)
 {
 	report_internal_error("Should not reach, Eval_Result : set_value");
 }
-*/
+
 bool Eval_Result::is_variable_defined()
 {
 	report_internal_error("Should not reach, Eval_Result : is_variable_defined");
@@ -55,7 +55,8 @@ void Eval_Result::set_variable_status(bool def)
 
 Eval_Result_Value_Int::Eval_Result_Value_Int()
 {
-	value = 0;
+	
+	value = Eval_Result_Ret(int_data_type);
 	defined = false;
 	result_type = int_result;
 }
@@ -65,11 +66,14 @@ Eval_Result_Value_Int::~Eval_Result_Value_Int()
 
 void Eval_Result_Value_Int::set_value(int number)
 {
-	value = number;
+	
+	value.int_ret = number;
 	defined = true;
+	
+	
 }
 
-int Eval_Result_Value_Int::get_value()
+Eval_Result_Ret Eval_Result_Value_Int::get_value()
 {
 	return value;
 }
@@ -97,58 +101,51 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T>
-Eval_Result_Value_Templated<T>::Eval_Result_Value_Templated(Data_Type type)
+
+Eval_Result_Value_Float::Eval_Result_Value_Float()
 {
-	value = 0;
+	value.float_ret = 0.0;
 	defined = false;
-	result_type = (type == float_data_type)? float_result : double_result;
+	result_type = float_result;
 }
 
-template<class T>
-Eval_Result_Value_Templated<T>::~Eval_Result_Value_Templated()
+Eval_Result_Value_Float::~Eval_Result_Value_Int()
 { }
 
-template<class T>
-void Eval_Result_Value_Templated<T>::set_value(T number)
+void Eval_Result_Value_Float::set_value(float number)
 {
-	value = number;
+	value.float_ret = number;
 	defined = true;
 }
 
-
-template<class T>
-T Eval_Result_Value_Templated<T>::get_value()
+Eval_Result_Ret Eval_Result_Value_Float::get_value()
 {
 	return value;
 }
 
-template<class T>
-void Eval_Result_Value_Templated<T>::set_variable_status(bool def)
+void Eval_Result_Value_Float::set_variable_status(bool def)
 {
 	defined = def;
 }
 
-
-
-template<class T>
-bool Eval_Result_Value_Templated<T>::is_variable_defined()
+bool Eval_Result_Value_Float::is_variable_defined()
 {
 	return defined;
 }
 
-
-template<class T>
-void Eval_Result_Value_Templated<T>::set_result_enum(Result_Enum res)
+void Eval_Result_Value_Float::set_result_enum(Result_Enum res)
 {
 	result_type = res;
 }
 
-template<class T>
-Result_Enum Eval_Result_Value_Templated<T>::get_result_enum()
+Result_Enum Eval_Result_Value_Float::get_result_enum()
 {
 	return result_type;
 }
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -156,7 +153,7 @@ Result_Enum Eval_Result_Value_Templated<T>::get_result_enum()
 
 Eval_Result_Value_Goto::Eval_Result_Value_Goto()
 {
-	value = 0;
+	value.int_ret = 0;
 	defined = false;
 	result_type = goto_result;
 }
@@ -164,13 +161,13 @@ Eval_Result_Value_Goto::Eval_Result_Value_Goto()
 Eval_Result_Value_Goto::~Eval_Result_Value_Goto()
 { }
 
-void Eval_Result_Value_Goto::set_value(int number)
+void Eval_Result_Value_Goto::set_value(Eval_Result_Ret number)
 {
-	value = number;
+	value.int_ret = number;
 	defined = true;
 }
 
-int Eval_Result_Value_Goto::get_value()
+Eval_Result_Ret Eval_Result_Value_Goto::get_value()
 {
 	return value;
 }
@@ -224,11 +221,11 @@ bool Eval_Result_Value_Return::is_variable_defined()
 {
 	return defined;
 }
-void Eval_Result_Value_Return::set_value(int num)
+void Eval_Result_Value_Return::set_value(Eval_Result_Ret num)
 {
 	
 }
-int Eval_Result_Value_Return::get_value()
+Eval_Result_Ret Eval_Result_Value_Return::get_value()
 {
 	return -1;
 }
