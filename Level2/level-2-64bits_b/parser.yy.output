@@ -1,0 +1,970 @@
+
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list procedure_name #0001 procedure_body
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: procedure_name (NAME) ->  NAME '(' ')'
+6: procedure_body ('{') ->  '{' declaration_statement_list #0003 basic_block_list '}'
+7: #0003 ->  <empty>
+8: procedure_body ('{') ->  '{' basic_block_list '}'
+9: declaration_statement_list ->  declaration_statement
+10: declaration_statement_list ->  declaration_statement_list declaration_statement
+11: declaration_statement (FLOAT) ->  FLOAT NAME ';'
+12: declaration_statement (INTEGER) ->  INTEGER NAME ';'
+13: basic_block_list ->  basic_block_list basic_block
+14: basic_block_list ->  basic_block
+15: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list
+16: executable_statement_list ->  assignment_statement_list
+17: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
+18: executable_statement_list ->  assignment_statement_list goto_statement
+19: executable_statement_list ->  assignment_statement_list if_else_statement
+20: assignment_statement_list ->  <empty>
+21: assignment_statement_list ->  assignment_statement_list assignment_statement
+22: if_else_statement (IF) ->  IF '(' expression ')' goto_statement ELSE goto_statement
+23: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
+24: atomic_expression ->  variable
+25: atomic_expression ->  constant
+26: arithmetic_expression ->  atomic_expression
+27: arithmetic_expression ->  Big_Expression
+28: type_casted_expression ->  arithmetic_expression
+29: type_casted_expression ('(') ->  '(' DATA_TYPE ')' '(' Big_Expression ')'
+30: type_casted_expression ('(') ->  '(' DATA_TYPE ')' atomic_expression
+31: Big_Expression ('+') ->  type_casted_expression '+' type_casted_expression
+32: Big_Expression ('-') ->  type_casted_expression '-' type_casted_expression
+33: Big_Expression ('*') ->  type_casted_expression '*' type_casted_expression
+34: Big_Expression ('/') ->  type_casted_expression '/' type_casted_expression
+35: Big_Expression (LE) ->  type_casted_expression LE type_casted_expression
+36: Big_Expression (GE) ->  type_casted_expression GE type_casted_expression
+37: Big_Expression (GT) ->  type_casted_expression GT type_casted_expression
+38: Big_Expression (LT) ->  type_casted_expression LT type_casted_expression
+39: Big_Expression (EQ) ->  type_casted_expression EQ type_casted_expression
+40: Big_Expression (NE) ->  type_casted_expression NE type_casted_expression
+41: expression ->  type_casted_expression
+42: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
+43: DATA_TYPE (FLOAT) ->  FLOAT
+44: DATA_TYPE (DOUBLE) ->  DOUBLE
+45: DATA_TYPE (INTEGER) ->  INTEGER
+46: variable (NAME) ->  NAME
+47: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+48: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
+49: program_$ ->  program
+
+
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: INTEGER_NUMBER
+   258: BASIC_BLOCK
+   259: FLOAT_NUMBER
+   260: NAME
+   261: RETURN
+   262: INTEGER
+   263: FLOAT
+   264: DOUBLE
+   265: IF
+   266: ELSE
+   267: GOTO
+   268: ASSIGN_OP
+   269: NE
+   270: EQ
+   271: LT
+   272: LE
+   273: GT
+   274: GE
+    43: '+'
+    45: '-'
+    42: '*'
+    47: '/'
+    40: '('
+    41: ')'
+   123: '{'
+   125: '}'
+    59: ';'
+    58: ':'
+
+
+Grammar States: 
+State 0:
+49: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_name to state 3
+  3:   On declaration_statement to state 4
+  4:   On NAME to state 5
+  5:   On FLOAT to state 6
+  6:   On INTEGER to state 7
+
+
+State 1:
+49: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . procedure_name #0001 procedure_body 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On procedure_name to state 8
+  1:   On declaration_statement to state 9
+  2:   On NAME to state 5
+  3:   On FLOAT to state 6
+  4:   On INTEGER to state 7
+
+
+State 3:
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 10
+  Reduce by 4: #0002 ->  . 
+
+
+State 4:
+9: declaration_statement_list -> declaration_statement  . 
+  Reduce by 9: declaration_statement_list -> declaration_statement  . 
+
+
+State 5:
+5: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 11
+
+
+State 6:
+11: declaration_statement -> FLOAT  . NAME ';' 
+  0:   On NAME to state 12
+
+
+State 7:
+12: declaration_statement -> INTEGER  . NAME ';' 
+  0:   On NAME to state 13
+
+
+State 8:
+1: program -> declaration_statement_list procedure_name  . #0001 procedure_body 
+  0:   On #0001 to state 14
+  Reduce by 2: #0001 ->  . 
+
+
+State 9:
+10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 10:
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 15
+  1:   On '{' to state 16
+
+
+State 11:
+5: procedure_name -> NAME '('  . ')' 
+  0:   On ')' to state 17
+
+
+State 12:
+11: declaration_statement -> FLOAT NAME  . ';' 
+  0:   On ';' to state 18
+
+
+State 13:
+12: declaration_statement -> INTEGER NAME  . ';' 
+  0:   On ';' to state 19
+
+
+State 14:
+1: program -> declaration_statement_list procedure_name #0001  . procedure_body 
+  0:   On procedure_body to state 20
+  1:   On '{' to state 16
+
+
+State 15:
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
+
+
+State 16:
+6: procedure_body -> '{'  . declaration_statement_list #0003 basic_block_list '}' 
+8: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 21
+  1:   On basic_block_list to state 22
+  2:   On declaration_statement to state 4
+  3:   On basic_block to state 23
+  4:   On FLOAT to state 6
+  5:   On INTEGER to state 7
+  6:   On BASIC_BLOCK to state 24
+
+
+State 17:
+5: procedure_name -> NAME '(' ')'  . 
+  Reduce by 5: procedure_name -> NAME '(' ')'  . 
+
+
+State 18:
+11: declaration_statement -> FLOAT NAME ';'  . 
+  Reduce by 11: declaration_statement -> FLOAT NAME ';'  . 
+
+
+State 19:
+12: declaration_statement -> INTEGER NAME ';'  . 
+  Reduce by 12: declaration_statement -> INTEGER NAME ';'  . 
+
+
+State 20:
+1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+  Reduce by 1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+
+
+State 21:
+6: procedure_body -> '{' declaration_statement_list  . #0003 basic_block_list '}' 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0003 to state 25
+  1:   On declaration_statement to state 9
+  2:   On FLOAT to state 6
+  3:   On INTEGER to state 7
+  Reduce by 7: #0003 ->  . 
+
+
+State 22:
+8: procedure_body -> '{' basic_block_list  . '}' 
+13: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 26
+  1:   On basic_block to state 27
+  2:   On BASIC_BLOCK to state 24
+
+
+State 23:
+14: basic_block_list -> basic_block  . 
+  Reduce by 14: basic_block_list -> basic_block  . 
+
+
+State 24:
+15: basic_block -> BASIC_BLOCK  . ':' executable_statement_list 
+  0:   On ':' to state 28
+
+
+State 25:
+6: procedure_body -> '{' declaration_statement_list #0003  . basic_block_list '}' 
+  0:   On basic_block_list to state 29
+  1:   On basic_block to state 23
+  2:   On BASIC_BLOCK to state 24
+
+
+State 26:
+8: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 8: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 27:
+13: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 13: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 28:
+15: basic_block -> BASIC_BLOCK ':'  . executable_statement_list 
+  0:   On executable_statement_list to state 30
+  1:   On assignment_statement_list to state 31
+  Reduce by 20: assignment_statement_list ->  . 
+
+
+State 29:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list  . '}' 
+13: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 32
+  1:   On basic_block to state 27
+  2:   On BASIC_BLOCK to state 24
+
+
+State 30:
+15: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+  Reduce by 15: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+
+
+State 31:
+16: executable_statement_list -> assignment_statement_list  . 
+17: executable_statement_list -> assignment_statement_list  . RETURN ';' 
+18: executable_statement_list -> assignment_statement_list  . goto_statement 
+19: executable_statement_list -> assignment_statement_list  . if_else_statement 
+21: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+  0:   On RETURN to state 33
+  1:   On goto_statement to state 34
+  2:   On if_else_statement to state 35
+  3:   On assignment_statement to state 36
+  4:   On GOTO to state 37
+  5:   On IF to state 38
+  6:   On variable to state 39
+  7:   On NAME to state 40
+  Reduce by 16: executable_statement_list -> assignment_statement_list  . 
+
+
+State 32:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+  Reduce by 6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+
+
+State 33:
+17: executable_statement_list -> assignment_statement_list RETURN  . ';' 
+  0:   On ';' to state 41
+
+
+State 34:
+18: executable_statement_list -> assignment_statement_list goto_statement  . 
+  Reduce by 18: executable_statement_list -> assignment_statement_list goto_statement  . 
+
+
+State 35:
+19: executable_statement_list -> assignment_statement_list if_else_statement  . 
+  Reduce by 19: executable_statement_list -> assignment_statement_list if_else_statement  . 
+
+
+State 36:
+21: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 21: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+
+
+State 37:
+23: goto_statement -> GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 42
+
+
+State 38:
+22: if_else_statement -> IF  . '(' expression ')' goto_statement ELSE goto_statement 
+  0:   On '(' to state 43
+
+
+State 39:
+42: assignment_statement -> variable  . ASSIGN_OP expression ';' 
+  0:   On ASSIGN_OP to state 44
+
+
+State 40:
+46: variable -> NAME  . 
+  Reduce by 46: variable -> NAME  . 
+
+
+State 41:
+17: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+  Reduce by 17: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+
+
+State 42:
+23: goto_statement -> GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 45
+
+
+State 43:
+22: if_else_statement -> IF '('  . expression ')' goto_statement ELSE goto_statement 
+  0:   On expression to state 46
+  1:   On type_casted_expression to state 47
+  2:   On arithmetic_expression to state 48
+  3:   On '(' to state 49
+  4:   On atomic_expression to state 50
+  5:   On Big_Expression to state 51
+  6:   On variable to state 52
+  7:   On constant to state 53
+  8:   On NAME to state 40
+  9:   On INTEGER_NUMBER to state 54
+  10:   On FLOAT_NUMBER to state 55
+
+
+State 44:
+42: assignment_statement -> variable ASSIGN_OP  . expression ';' 
+  0:   On expression to state 56
+  1:   On type_casted_expression to state 47
+  2:   On arithmetic_expression to state 48
+  3:   On '(' to state 49
+  4:   On atomic_expression to state 50
+  5:   On Big_Expression to state 51
+  6:   On variable to state 52
+  7:   On constant to state 53
+  8:   On NAME to state 40
+  9:   On INTEGER_NUMBER to state 54
+  10:   On FLOAT_NUMBER to state 55
+
+
+State 45:
+23: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+  Reduce by 23: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+
+
+State 46:
+22: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
+  0:   On ')' to state 57
+
+
+State 47:
+41: expression -> type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4:   On LE to state 62
+  5:   On GE to state 63
+  6:   On GT to state 64
+  7:   On LT to state 65
+  8:   On EQ to state 66
+  9:   On NE to state 67
+  Reduce by 41: expression -> type_casted_expression  . 
+
+
+State 48:
+28: type_casted_expression -> arithmetic_expression  . 
+  Reduce by 28: type_casted_expression -> arithmetic_expression  . 
+
+
+State 49:
+29: type_casted_expression -> '('  . DATA_TYPE ')' '(' Big_Expression ')' 
+30: type_casted_expression -> '('  . DATA_TYPE ')' atomic_expression 
+  0:   On DATA_TYPE to state 68
+  1:   On FLOAT to state 69
+  2:   On DOUBLE to state 70
+  3:   On INTEGER to state 71
+
+
+State 50:
+26: arithmetic_expression -> atomic_expression  . 
+  Reduce by 26: arithmetic_expression -> atomic_expression  . 
+
+
+State 51:
+27: arithmetic_expression -> Big_Expression  . 
+  Reduce by 27: arithmetic_expression -> Big_Expression  . 
+
+
+State 52:
+24: atomic_expression -> variable  . 
+  Reduce by 24: atomic_expression -> variable  . 
+
+
+State 53:
+25: atomic_expression -> constant  . 
+  Reduce by 25: atomic_expression -> constant  . 
+
+
+State 54:
+47: constant -> INTEGER_NUMBER  . 
+  Reduce by 47: constant -> INTEGER_NUMBER  . 
+
+
+State 55:
+48: constant -> FLOAT_NUMBER  . 
+  Reduce by 48: constant -> FLOAT_NUMBER  . 
+
+
+State 56:
+42: assignment_statement -> variable ASSIGN_OP expression  . ';' 
+  0:   On ';' to state 72
+
+
+State 57:
+22: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
+  0:   On goto_statement to state 73
+  1:   On GOTO to state 37
+
+
+State 58:
+31: Big_Expression -> type_casted_expression '+'  . type_casted_expression 
+  0:   On type_casted_expression to state 74
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 59:
+32: Big_Expression -> type_casted_expression '-'  . type_casted_expression 
+  0:   On type_casted_expression to state 75
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 60:
+33: Big_Expression -> type_casted_expression '*'  . type_casted_expression 
+  0:   On type_casted_expression to state 76
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 61:
+34: Big_Expression -> type_casted_expression '/'  . type_casted_expression 
+  0:   On type_casted_expression to state 77
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 62:
+35: Big_Expression -> type_casted_expression LE  . type_casted_expression 
+  0:   On type_casted_expression to state 78
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 63:
+36: Big_Expression -> type_casted_expression GE  . type_casted_expression 
+  0:   On type_casted_expression to state 79
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 64:
+37: Big_Expression -> type_casted_expression GT  . type_casted_expression 
+  0:   On type_casted_expression to state 80
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 65:
+38: Big_Expression -> type_casted_expression LT  . type_casted_expression 
+  0:   On type_casted_expression to state 81
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 66:
+39: Big_Expression -> type_casted_expression EQ  . type_casted_expression 
+  0:   On type_casted_expression to state 82
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 67:
+40: Big_Expression -> type_casted_expression NE  . type_casted_expression 
+  0:   On type_casted_expression to state 83
+  1:   On arithmetic_expression to state 48
+  2:   On '(' to state 49
+  3:   On atomic_expression to state 50
+  4:   On Big_Expression to state 51
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 68:
+29: type_casted_expression -> '(' DATA_TYPE  . ')' '(' Big_Expression ')' 
+30: type_casted_expression -> '(' DATA_TYPE  . ')' atomic_expression 
+  0:   On ')' to state 84
+
+
+State 69:
+43: DATA_TYPE -> FLOAT  . 
+  Reduce by 43: DATA_TYPE -> FLOAT  . 
+
+
+State 70:
+44: DATA_TYPE -> DOUBLE  . 
+  Reduce by 44: DATA_TYPE -> DOUBLE  . 
+
+
+State 71:
+45: DATA_TYPE -> INTEGER  . 
+  Reduce by 45: DATA_TYPE -> INTEGER  . 
+
+
+State 72:
+42: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+  Reduce by 42: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+
+
+State 73:
+22: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 85
+
+
+State 74:
+31: Big_Expression -> type_casted_expression '+' type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0 (removed by precedence):   On '+' to state 58
+  1 (removed by precedence):   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 31: Big_Expression -> type_casted_expression '+' type_casted_expression  . 
+
+
+State 75:
+32: Big_Expression -> type_casted_expression '-' type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0 (removed by precedence):   On '+' to state 58
+  1 (removed by precedence):   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 32: Big_Expression -> type_casted_expression '-' type_casted_expression  . 
+
+
+State 76:
+33: Big_Expression -> type_casted_expression '*' type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0 (removed by precedence):   On '+' to state 58
+  1 (removed by precedence):   On '-' to state 59
+  2 (removed by precedence):   On '*' to state 60
+  3 (removed by precedence):   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 33: Big_Expression -> type_casted_expression '*' type_casted_expression  . 
+
+
+State 77:
+34: Big_Expression -> type_casted_expression '/' type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0 (removed by precedence):   On '+' to state 58
+  1 (removed by precedence):   On '-' to state 59
+  2 (removed by precedence):   On '*' to state 60
+  3 (removed by precedence):   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 34: Big_Expression -> type_casted_expression '/' type_casted_expression  . 
+
+
+State 78:
+35: Big_Expression -> type_casted_expression LE type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 35: Big_Expression -> type_casted_expression LE type_casted_expression  . 
+
+
+State 79:
+36: Big_Expression -> type_casted_expression GE type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 36: Big_Expression -> type_casted_expression GE type_casted_expression  . 
+
+
+State 80:
+37: Big_Expression -> type_casted_expression GT type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 37: Big_Expression -> type_casted_expression GT type_casted_expression  . 
+
+
+State 81:
+38: Big_Expression -> type_casted_expression LT type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4 (removed by precedence):   On LE to state 62
+  5 (removed by precedence):   On GE to state 63
+  6 (removed by precedence):   On GT to state 64
+  7 (removed by precedence):   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 38: Big_Expression -> type_casted_expression LT type_casted_expression  . 
+
+
+State 82:
+39: Big_Expression -> type_casted_expression EQ type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4:   On LE to state 62
+  5:   On GE to state 63
+  6:   On GT to state 64
+  7:   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 39: Big_Expression -> type_casted_expression EQ type_casted_expression  . 
+
+
+State 83:
+40: Big_Expression -> type_casted_expression NE type_casted_expression  . 
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4:   On LE to state 62
+  5:   On GE to state 63
+  6:   On GT to state 64
+  7:   On LT to state 65
+  8 (removed by precedence):   On EQ to state 66
+  9 (removed by precedence):   On NE to state 67
+  Reduce by 40: Big_Expression -> type_casted_expression NE type_casted_expression  . 
+
+
+State 84:
+29: type_casted_expression -> '(' DATA_TYPE ')'  . '(' Big_Expression ')' 
+30: type_casted_expression -> '(' DATA_TYPE ')'  . atomic_expression 
+  0:   On '(' to state 86
+  1:   On atomic_expression to state 87
+  2:   On variable to state 52
+  3:   On constant to state 53
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 54
+  6:   On FLOAT_NUMBER to state 55
+
+
+State 85:
+22: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 88
+  1:   On GOTO to state 37
+
+
+State 86:
+29: type_casted_expression -> '(' DATA_TYPE ')' '('  . Big_Expression ')' 
+  0:   On Big_Expression to state 89
+  1:   On type_casted_expression to state 90
+  2:   On arithmetic_expression to state 48
+  3:   On '(' to state 49
+  4:   On atomic_expression to state 50
+  5:   On variable to state 52
+  6:   On constant to state 53
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 54
+  9:   On FLOAT_NUMBER to state 55
+
+
+State 87:
+30: type_casted_expression -> '(' DATA_TYPE ')' atomic_expression  . 
+  Reduce by 30: type_casted_expression -> '(' DATA_TYPE ')' atomic_expression  . 
+
+
+State 88:
+22: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+  Reduce by 22: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+
+
+State 89:
+29: type_casted_expression -> '(' DATA_TYPE ')' '(' Big_Expression  . ')' 
+27: arithmetic_expression -> Big_Expression  . 
+  0:   On ')' to state 91
+  Reduce by 27: arithmetic_expression -> Big_Expression  . 
+
+
+State 90:
+31: Big_Expression -> type_casted_expression  . '+' type_casted_expression 
+32: Big_Expression -> type_casted_expression  . '-' type_casted_expression 
+33: Big_Expression -> type_casted_expression  . '*' type_casted_expression 
+34: Big_Expression -> type_casted_expression  . '/' type_casted_expression 
+35: Big_Expression -> type_casted_expression  . LE type_casted_expression 
+36: Big_Expression -> type_casted_expression  . GE type_casted_expression 
+37: Big_Expression -> type_casted_expression  . GT type_casted_expression 
+38: Big_Expression -> type_casted_expression  . LT type_casted_expression 
+39: Big_Expression -> type_casted_expression  . EQ type_casted_expression 
+40: Big_Expression -> type_casted_expression  . NE type_casted_expression 
+  0:   On '+' to state 58
+  1:   On '-' to state 59
+  2:   On '*' to state 60
+  3:   On '/' to state 61
+  4:   On LE to state 62
+  5:   On GE to state 63
+  6:   On GT to state 64
+  7:   On LT to state 65
+  8:   On EQ to state 66
+  9:   On NE to state 67
+
+
+State 91:
+29: type_casted_expression -> '(' DATA_TYPE ')' '(' Big_Expression ')'  . 
+  Reduce by 29: type_casted_expression -> '(' DATA_TYPE ')' '(' Big_Expression ')'  . 
+
+
+

@@ -90,12 +90,12 @@ goto    {
         }
 
 double {
-            store_token_name("DOUBLE");
+            store_token_name("META CHAR");
             return Parser::DOUBLE;
 
       }
 float {
-            store_token_name("FLOAT");
+            store_token_name("META CHAR");
             return Parser::FLOAT;
 
       }

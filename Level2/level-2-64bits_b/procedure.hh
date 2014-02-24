@@ -21,63 +21,53 @@
 
 ***********************************************************************************************/
 
-#ifndef SYMBOL_TABLE_HH
-#define SYMBOL_TABLE_HH
+#ifndef PROCEDURE_HH
+#define PROCEDURE_HH
 
 #include<string>
+#include<map>
 #include<list>
+#include<set>
+#include "user-options.hh"
+#include "error-display.hh"
+#define PROC_SPACE "   "
+#define LOC_VAR_SPACE "      "
 
 using namespace std;
 
-class Symbol_Table;
-class Symbol_Table_Entry;
+extern std::set<int> bbNo;
+extern std::set<int> gotoNo;
+class Procedure;
 
-typedef enum
+class Procedure
 {
-	void_data_type,
-	int_data_type,
-    float_data_type,
-    double_data_type
-} Data_Type;
+	Data_Type return_type;
+	string name;
+	Symbol_Table local_symbol_table;
+	list<Basic_Block *> basic_block_list;
 
-typedef enum
-{
-	global,
-	local
-} Table_Scope;
-
-class Symbol_Table
-{
-	list<Symbol_Table_Entry *> variable_table;
-	Table_Scope scope;
 public:
-	Symbol_Table();
-	~Symbol_Table();
+	Procedure(Data_Type proc_return_type, string proc_name);
+	~Procedure();
 
-	Table_Scope get_table_scope();
-	void set_table_scope(Table_Scope list_scope);
+	string get_proc_name();
+	void set_basic_block_list(list<Basic_Block *> bb_list);
+	void set_local_list(Symbol_Table & new_list);
+	Data_Type get_return_type();
+	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
-	void push_symbol(Symbol_Table_Entry * variable);
+	void print_ast(ostream & file_buffer);
+	bool check_for_undefined_blocks(std::set<int> ,std::set<int>);
+
+	Basic_Block * get_next_bb(Basic_Block & current_bb);
+	
+	Basic_Block *get_bb_by_number(int n);
+	
+	Basic_Block & get_start_basic_block();
+
+	Eval_Result & evaluate(ostream & file_buffer);
 
 	bool variable_in_symbol_list_check(string variable);
-	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
-	void global_list_in_proc_map_check(int line);
-
-	void create(Local_Environment & local_global_variables_table);
-};
-
-class Symbol_Table_Entry
-{
-	string variable_name;
-	Data_Type variable_data_type;
-
-public:
-	Symbol_Table_Entry();
-	Symbol_Table_Entry(string & name, Data_Type new_data_type);
-	~Symbol_Table_Entry();
-
-	Data_Type get_data_type();
-	string get_variable_name();
 };
 
 #endif

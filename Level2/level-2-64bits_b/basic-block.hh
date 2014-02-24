@@ -21,63 +21,33 @@
 
 ***********************************************************************************************/
 
-#ifndef SYMBOL_TABLE_HH
-#define SYMBOL_TABLE_HH
+#ifndef BASIC_BLOCK_HH
+#define BASIC_BLOCK_HH
 
 #include<string>
+#include<map>
 #include<list>
+
+#define BB_SPACE "      "
 
 using namespace std;
 
-class Symbol_Table;
-class Symbol_Table_Entry;
+class Basic_Block;
 
-typedef enum
+class Basic_Block
 {
-	void_data_type,
-	int_data_type,
-    float_data_type,
-    double_data_type
-} Data_Type;
-
-typedef enum
-{
-	global,
-	local
-} Table_Scope;
-
-class Symbol_Table
-{
-	list<Symbol_Table_Entry *> variable_table;
-	Table_Scope scope;
-public:
-	Symbol_Table();
-	~Symbol_Table();
-
-	Table_Scope get_table_scope();
-	void set_table_scope(Table_Scope list_scope);
-
-	void push_symbol(Symbol_Table_Entry * variable);
-
-	bool variable_in_symbol_list_check(string variable);
-	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
-	void global_list_in_proc_map_check(int line);
-
-	void create(Local_Environment & local_global_variables_table);
-};
-
-class Symbol_Table_Entry
-{
-	string variable_name;
-	Data_Type variable_data_type;
+	int id_number;
+	list<Ast *> statement_list;
 
 public:
-	Symbol_Table_Entry();
-	Symbol_Table_Entry(string & name, Data_Type new_data_type);
-	~Symbol_Table_Entry();
+	Basic_Block(int basic_block_number, list<Ast *> & ast_list);
+	~Basic_Block();
 
-	Data_Type get_data_type();
-	string get_variable_name();
+	int get_bb_number();
+
+	void print_bb(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 #endif
