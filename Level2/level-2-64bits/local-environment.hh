@@ -51,8 +51,8 @@ protected:
 	Result_Enum result_type;
 
 public:
-	virtual int get_value();
-	virtual void set_value(int value);
+//	virtual int get_value();
+//	virtual void set_value(int value);
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);
@@ -61,11 +61,12 @@ public:
 	virtual Result_Enum get_result_enum() = 0;
 };
 
+
 class Eval_Result_Value:public Eval_Result
 {
 public:
-	virtual void set_value(int number) = 0;
-	virtual int get_value() = 0;
+//	virtual void set_value(int number) = 0;
+//	virtual int get_value() = 0;
 
 	virtual bool is_variable_defined() = 0;
 	virtual void set_variable_status(bool def) = 0;
