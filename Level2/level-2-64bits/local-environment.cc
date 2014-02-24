@@ -95,12 +95,63 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+template<class T>
+Eval_Result_Value_Templated::Eval_Result_Value_Templated(Data_Type type)
+{
+	value = 0;
+	defined = false;
+	result_type = (type == float_data_type)? float_result : double_result;
+}
+
+template<class T>
+Eval_Result_Value_Int::~Eval_Result_Value_Templated()
+{ }
+
+template<class T>
+void Eval_Result_Value_Templated::set_value(T number)
+{
+	value = number;
+	defined = true;
+}
+
+
+template<class T>
+T Eval_Result_Value_Templated::get_value()
+{
+	return value;
+}
+
+template<class T>
+void Eval_Result_Value_Templated::set_variable_status(bool def)
+{
+	defined = def;
+}
 
 
 
+template<class T>
+bool Eval_Result_Value_Templated::is_variable_defined()
+{
+	return defined;
+}
 
+
+template<class T>
+void Eval_Result_Value_Templated::set_result_enum(Result_Enum res)
+{
+	result_type = res;
+}
+
+template<class T>
+Result_Enum Eval_Result_Value_Templated::get_result_enum()
+{
+	return result_type;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
+
+
 
 Eval_Result_Value_Goto::Eval_Result_Value_Goto()
 {

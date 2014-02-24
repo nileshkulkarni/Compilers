@@ -34,6 +34,8 @@ using namespace std;
 typedef enum
 {
 	int_result,
+	float_result,
+	double_result,
 	void_result,
 	goto_result,
 	return_result
@@ -41,6 +43,7 @@ typedef enum
 
 class Eval_Result;
 class Local_Environment;
+
 
 class Eval_Result 
 {
@@ -71,6 +74,9 @@ public:
 	virtual Result_Enum get_result_enum() = 0;
 };
 
+
+
+
 class Eval_Result_Value_Int:public Eval_Result_Value
 {
 	int value;
@@ -89,6 +95,27 @@ public:
 	Result_Enum get_result_enum();
 };
 
+
+
+template<class T>
+class Eval_Result_Value_Templated:public Eval_Result_Value
+{
+	T value;
+	bool defined;
+public
+	
+	Eval_Result_Value_Templated(Data_Type type);
+	~Eval_Result_Value_Templated();
+
+	void set_value(T number);
+	T get_value();
+
+	void set_variable_status(bool def);
+	bool is_variable_defined();
+
+	void set_result_enum(Result_Enum res);
+	Result_Enum get_result_enum();
+};
 
 
 

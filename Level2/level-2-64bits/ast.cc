@@ -360,17 +360,28 @@ Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_b
 
 /////////////////////////////////////////////////////////////////////////////////////////
 Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
-	node_data_type = int_data_type;
 	lhs = _lhs;
+	node_data_type = lhs->get_data_type();
 	rhs = _rhs;
 	op  = _op;
 }
 
 
+Expression_Ast :: Expression_Ast(Ast * _atomic_exp , Data_Type _T){
+	lhs = _atomic_exp; 
+	rhs = NULL;
+	node_data_type = _T;
+}
+	
+
 
 
 bool Expression_Ast::check_ast(int line)
 {
+	if(rhs == NULL){
+		return true;
+	}
+	
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 			node_data_type = lhs->get_data_type();
@@ -393,7 +404,7 @@ void Expression_Ast :: print_ast(ostream & file_buffer){
     file_buffer << AST_NODE_SPACE<<"Condition: ";
     printOperator(file_buffer,op);
     file_buffer <<"\n";
-    file_buffer << AST_CONDITION_SPACE<< "LHS (";
+    file_buffer << AST_NODE_SPACE<< "LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
 	file_buffer << AST_CONDITION_SPACE<< "RHS (";
@@ -401,8 +412,13 @@ void Expression_Ast :: print_ast(ostream & file_buffer){
 	file_buffer<<")";
 }
 
+
 void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
     
+    if(rhs == NULL){
+		file_buffer<<"CASTED EXP: NO OP";
+		return;
+	}
     switch(op){
         case GT: file_buffer<<"GT";break;
         case LT: file_buffer<<"LT";break;
@@ -410,80 +426,170 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
         case GE: file_buffer<<"GE";break;
         case EQ: file_buffer<<"EQ";break;
         case NE: file_buffer<<"NE";break;
-       
+        case PLUS: file_buffer<<"PLUS";break;
+        case MINUS: file_buffer<<"MINUS";break;
+        case MULT: file_buffer<<"MULT";break;
+        case DIV: file_buffer<<"DIV";break;
     }
-
 }
-//template<class DATA_TYPE>
+
+
+
+template<class DATA_TYPE>
 Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result & result = *new Eval_Result_Value_Int();
-		/*DATA_TYPE res ;
+		Eval_Result & result;
+		if(node_data_type == float_data_type){
+			result = *new Eval_Result_Value_Templated<float>(float_data_type);
+		}
+		
+		else if(node_data_type == double_data_type){
+			result = *new Eval_Result_Value_Templated<double>(double_data_type);
+		}
+		
+		else if(node_data_type == int_data_type){
+			result = *new Eval_Result_Value_Int();
+		}
+		
+		DATA_TYPE res ;
 		DATA_TYPE lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
-		DATA_TYPE rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
-		*/
+		/*
 		int res ;
 		int lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
 		int rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
+		*/
 		
-		switch(op){
-			case GT:
-					res = lVal >rVal;
-					break;
-			case LT:
-					res = lVal <rVal;
-					break;
-			case EQ:
-					res = lVal == rVal;
-					break;
-			case NE:
-					res = lVal !=rVal;
-					break;
-			case GE:
-					res = lVal >=rVal;
-					break;
-			case LE:
-					res = lVal <=rVal;
-					break;
+		
+		if(rhs == NULL){
+				res = (DATA_TYPE)lVal;
 		}
+		
+		else{
+			DATA_TYPE rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
+			switch(op){
+				case GT:
+						res = lVal>rVal;
+						break;
+				case LT:
+						res = lVal <rVal;
+						break;
+				case EQ:
+						res = lVal == rVal;
+						break;
+				case NE:
+						res = lVal !=rVal;
+						break;
+				case GE:
+						res = lVal >=rVal;
+						break;
+				case LE:
+						res = lVal <=rVal;
+						break;
+				case PLUS:
+						res = lVal + rVal;
+						break;
+				case MINUS:
+						res = lVal - rVal;
+						break;
+				case MULT:
+						res = lVal * rVal;
+						break;				
+				case DIV:
+						res = lVal / rVal;
+						break;				
+				
+			}
+		}
+		
         result.set_value(res);
         return result;
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
 
-Type_Casted_Ast :: Type_Casted_Ast(Ast * _ast, Data_Type data_type){
-	node_data_type = data_type;
-	ast =_ast;
-	
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////	
+UnaryExpression_Ast :: UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op){
+	exp = _exp;
+	node_data_type = exp->get_data_type();
+	op  = _op;
 }
 
+UnaryExpression_Ast :: ~UnaryExpression_Ast(){
 
-
-
-bool Type_Casted_Ast::check_ast(int line)
-{
-		return true;
-		report_error("Expression statement data type not compatible", line);
 }
 
-
-Data_Type Type_Casted_Ast::get_data_type() 
-{
+UnaryExpression_Ast :: Data_Type get_data_type(){
 	return node_data_type;
 }
 
 
+UnaryExpression_Ast :: void print_ast(ostream & file_buffer){
+	file_buffer <<"\n";	
+    exp->printOperator(file_buffer,op);
+    file_buffer <<"\n";
+    file_buffer << AST_NODE_SPACE<< "LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")";
+}	
+	
 	
 
-void Type_Casted_Ast :: print_ast(ostream & file_buffer){
-	ast->print_ast(file_buffer);
+UnaryExpression_Ast :: void print_value(Local_Environment & eval_env, ostream & file_buffer){
+	file_buffer << evaluate(eval_env , file_buffer).get_value();
 }
 
-//template<class DATA_TYPE>
-Eval_Result & Type_Casted_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
-        return ast->evaluate(eval_env,file_buffer);
+
+template<class DATA_TYPE>	
+UnaryExpression_Ast :: Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+		Eval_Result & result;
+		if(node_data_type == float_data_type){
+			result = *new Eval_Result_Value_Templated<float>(float_data_type);
+		}
+		
+		else if(node_data_type == double_data_type){
+			result = *new Eval_Result_Value_Templated<double>(double_data_type);
+		}
+		
+		else if(node_data_type == int_data_type){
+			result = *new Eval_Result_Value_Int();
+		}
+		
+		DATA_TYPE res ;
+		DATA_TYPE lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
+		
+		switch(op){
+			case PLUS:
+					res = lVal;
+					break;
+			case MINUS:
+					res = -lVal;
+					break;
+		}
+	
+	
+        result.set_value(res);
+        return result;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 Return_Ast::Return_Ast()

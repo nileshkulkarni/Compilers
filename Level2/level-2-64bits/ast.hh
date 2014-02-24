@@ -189,8 +189,7 @@ public:
 		PLUS,
 		MINUS,
 		MULT,
-		DIV
-		
+		DIV		
 	};
 private:
 
@@ -204,6 +203,9 @@ public:
 
 
 	Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op);
+	Expression_Ast(Ast * _atomic_exp , Data_Type _T);
+	
+	
 	~Expression_Ast();
 
 	Data_Type get_data_type();
@@ -215,9 +217,45 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 };
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+	
+template <class T>
+class UnaryExpression_Ast:public Ast
+{
+	Ast *exp;
+	Expression_Ast::OperatorType op;
+
+public:
+	UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op);
+	~UnaryExpression_Ast();
+
+	Data_Type get_data_type();
+	void print_ast(ostream & file_buffer);
+
+	void print_value(Local_Environment & eval_env, ostream & file_buffer);
+	
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
+
+
+
+
+
+
+
+/*
 class Type_Casted_Ast:public Ast{
-	
-	
 public:
 
 	enum OperatorType{
@@ -235,11 +273,7 @@ public:
 private:
 	Ast *ast;
 		
-		
-	
 public:
-
-
 	Type_Casted_Ast(Ast * ast , Data_Type data_type);
 	~Type_Casted_Ast();
 
@@ -251,7 +285,7 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 };
-
+*/
 
 
 
@@ -283,7 +317,6 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////
 class Return_Ast:public Ast
 {
-
 public:
 	Return_Ast();
 	~Return_Ast();
