@@ -356,7 +356,7 @@ unary_expression: atomic_expression{
                 }
                 |
                 '-' unary_expression{
-                    Ast*  unaryExp = new Unary_Exp_Ast($2,Expression_Ast::OperatorType::MINUS);
+                    Ast*  unaryExp = new UnaryExpression_Ast($2,Expression_Ast::OperatorType::MINUS);
                     $$ = unaryExp;
                 }
 ;
@@ -402,7 +402,7 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '+' expression{         
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::ADD ); 
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS ); 
            $$ = exp;
            int line = get_line_number();
            $$->check_ast(line);
@@ -414,7 +414,7 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '*' expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MUL ); 
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MULT ); 
            $$ = exp;
            int line = get_line_number();
            $$->check_ast(line);

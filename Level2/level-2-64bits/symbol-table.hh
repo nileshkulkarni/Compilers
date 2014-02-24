@@ -31,7 +31,7 @@ using namespace std;
 
 class Symbol_Table;
 class Symbol_Table_Entry;
-
+class Local_Environment;
 typedef enum
 {
 	void_data_type,
