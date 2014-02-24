@@ -29,17 +29,18 @@ using namespace std;
 #include"local-environment.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-
+/*
 int Eval_Result::get_value()
 {
-	report_internal_error("Should not reach, Eval_Result : get_value");
+//	report_internal_error("Should not reach, Eval_Result : get_value");
 }
+*/
 
-void Eval_Result::set_value(int number)
+/*void Eval_Result::set_value(int number)
 {
 	report_internal_error("Should not reach, Eval_Result : set_value");
 }
-
+*/
 bool Eval_Result::is_variable_defined()
 {
 	report_internal_error("Should not reach, Eval_Result : is_variable_defined");
