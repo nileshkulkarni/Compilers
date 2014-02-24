@@ -368,42 +368,62 @@ expression: unary_expression{
     | expression LE expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression GE expression {
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression LT expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression GT expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression NE expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression EQ expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression '+' expression{         
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::ADD ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression '-' expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MINUS ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression '*' expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MUL ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | expression '/' expression{   
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV ); 
            $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
            }
     | '(' DATA_TYPE ')' atomic_expression{
            Ast* exp = new Expression_Ast($4,$2); 
