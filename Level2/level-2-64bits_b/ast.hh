@@ -197,7 +197,7 @@ private:
 	Ast *lhs;
 	OperatorType op;
 	Ast *rhs;
-		
+	Data_Type T;	
 		
 	
 public:
@@ -207,6 +207,9 @@ public:
 	~Expression_Ast();
 
 	Data_Type get_data_type();
+    void set_data_type(Data_Type T_);
+    
+   
    bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);

@@ -435,23 +435,37 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
 
 
 
-template<class DATA_TYPE>
 Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result;
+		void *res;
+		void *lVal;
+		void *rVal;
+		
 		if(node_data_type == float_data_type){
+			res = new float();
+			lVal = new float();
+			rVal = new float();		
 			result = *new Eval_Result_Value_Templated<float>(float_data_type);
 		}
 		
 		else if(node_data_type == double_data_type){
+			res = new double();
+			lVal = new double();
+			rVal = new double();		
 			result = *new Eval_Result_Value_Templated<double>(double_data_type);
 		}
 		
 		else if(node_data_type == int_data_type){
+			res = new int();
+			lVal = new int();
+			rVal = new int();		
 			result = *new Eval_Result_Value_Int();
 		}
 		
-		DATA_TYPE res ;
-		DATA_TYPE lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
+		
+		
+		//res ;
+		 *lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
 		/*
 		int res ;
 		int lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
@@ -460,47 +474,50 @@ Eval_Result & Expression_Ast:: evaluate(Local_Environment & eval_env, ostream & 
 		
 		
 		if(rhs == NULL){
-				res = (DATA_TYPE)lVal;
+				*res = (DATA_TYPE)lVal;
 		}
 		
 		else{
 			DATA_TYPE rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
 			switch(op){
 				case GT:
-						res = lVal>rVal;
+						*res = lVal>rVal;
 						break;
 				case LT:
-						res = lVal <rVal;
+						*res = lVal <rVal;
 						break;
 				case EQ:
-						res = lVal == rVal;
+						*res = lVal == rVal;
 						break;
 				case NE:
-						res = lVal !=rVal;
+						*res = lVal !=rVal;
 						break;
 				case GE:
-						res = lVal >=rVal;
+						*res = lVal >=rVal;
 						break;
 				case LE:
-						res = lVal <=rVal;
+						*res = lVal <=rVal;
 						break;
 				case PLUS:
-						res = lVal + rVal;
+						*res = lVal + rVal;
 						break;
 				case MINUS:
-						res = lVal - rVal;
+						*res = lVal - rVal;
 						break;
 				case MULT:
-						res = lVal * rVal;
+						*res = lVal * rVal;
 						break;				
 				case DIV:
-						res = lVal / rVal;
+						*res = lVal / rVal;
 						break;				
 				
 			}
 		}
 		
-        result.set_value(res);
+        result.set_value(*res);
+        free(res);
+        free(lVal);
+        free(rVal);
         return result;
 }
 
