@@ -27,7 +27,12 @@
 #include<string>
 #include<map>
 #include "symbol-table.hh"
+#include <cassert>
 #define VAR_SPACE "         "
+#define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
+
+
+
 
 using namespace std;
 
@@ -56,6 +61,11 @@ struct Eval_Result_Ret{
 	float float_ret;
 	double double_ret;
 	Data_Type data_type;
+	
+	
+	Eval_Result_Ret(){
+	}
+	
 };
 
 
@@ -69,6 +79,8 @@ protected:
 public:
 	virtual Eval_Result_Ret get_value();
 	virtual void set_value(Eval_Result_Ret value);
+	
+
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);
@@ -103,6 +115,7 @@ public:
 	~Eval_Result_Value_Int();
 
 	void set_value(Eval_Result_Ret number);
+	void set_value(int number);
 	Eval_Result_Ret get_value();
 
 	void set_variable_status(bool def);
@@ -115,13 +128,14 @@ public:
 
 class Eval_Result_Value_Float:public Eval_Result_Value
 {
-	int value;
+	Eval_Result_Ret value;
 	bool defined;
 public:
 	Eval_Result_Value_Float();
 	~Eval_Result_Value_Float();
 
 	void set_value(Eval_Result_Ret number);
+	void set_value(float number);
 	Eval_Result_Ret get_value();
 
 	void set_variable_status(bool def);
@@ -132,13 +146,15 @@ public:
 };
 class Eval_Result_Value_Double:public Eval_Result_Value
 {
-	int value;
+	Eval_Result_Ret value;
 	bool defined;
 public:
 	Eval_Result_Value_Double();
 	~Eval_Result_Value_Double();
 
 	void set_value(Eval_Result_Ret number);
+	void set_value(double number);
+	
 	Eval_Result_Ret get_value();
 
 	void set_variable_status(bool def);
@@ -158,13 +174,16 @@ public:
 
 class Eval_Result_Value_Goto:public Eval_Result_Value
 {
-	int value;
+	Eval_Result_Ret value;
 	bool defined;
 public:
 	Eval_Result_Value_Goto();
 	~Eval_Result_Value_Goto();
 
 	void set_value(Eval_Result_Ret number);
+	void set_value(int number);
+	
+	
 	Eval_Result_Ret get_value();
 
 	void set_variable_status(bool def);

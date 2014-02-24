@@ -427,7 +427,10 @@ expression: unary_expression{
            }
     | '(' DATA_TYPE ')' atomic_expression{
            Ast* exp = new Expression_Ast($4,$2); 
+           cout<<"comes here :"<<endl;
            $$ = exp;
+           cout<<"comes here 2:"<<endl;
+           
     }
 ;
 

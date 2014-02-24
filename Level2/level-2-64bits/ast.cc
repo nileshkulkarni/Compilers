@@ -34,10 +34,10 @@ using namespace std;
 #include"ast.hh"
 
 
-#define replace(r) ((r.node_data_type == double_data_type)? r.double_ret : (r.node_data_type == float_data_type)? r.float_ret : r.int_ret)
+#define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
+#define assign_replace(r,v) ((r.data_type == double_data_type)? r.double_ret =v: (r.data_type == float_data_type)? r.float_ret =v: r.int_ret =v)
 
 
-//#define setVal(i) (i.data_type == double_data_type)? i.double_ret = (double
 
 
 Ast::Ast()
@@ -179,7 +179,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
 		if (loc_var_val->get_result_enum() == int_result)
-			file_buffer << loc_var_val->get_value() << "\n";
+			file_buffer << replace(loc_var_val->get_value()) << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -191,7 +191,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 			if (glob_var_val == NULL)
 				file_buffer << "0\n";
 			else
-				file_buffer << glob_var_val->get_value() << "\n";
+				file_buffer << replace(glob_var_val->get_value()) << "\n";
 		}
 		else
 			report_internal_error("Result type can only be int and float");
@@ -265,19 +265,19 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 {
 	if (node_data_type == int_data_type)
 	{
-		Eval_Result & result = *new Eval_Result_Value_Int();
+		Eval_Result_Value_Int & result = *new Eval_Result_Value_Int();
 		result.set_value(constant);
 		return result;
 	}
 	if (node_data_type == float_data_type)
 	{
-		Eval_Result & result = *new Eval_Result_Value_Float();
+		Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
 		result.set_value(constant);
 		return result;
 	}
 	if (node_data_type == double_data_type)
 	{
-		Eval_Result & result = *new Eval_Result_Value_Double();
+		Eval_Result_Value_Double & result = *new Eval_Result_Value_Double();
 		result.set_value(constant);
 		return result;
 	}
@@ -319,7 +319,8 @@ void IfElse_Ast ::  print_ast(ostream & file_buffer){
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
-        Eval_Result & ret = *new Eval_Result_Value_Goto();
+        
+        Eval_Result_Value_Goto & ret = *new Eval_Result_Value_Goto();
         
         
         
@@ -370,7 +371,10 @@ void Goto_Ast ::	print_ast(ostream & file_buffer){
 
 Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
 		Eval_Result & result = *new Eval_Result_Value_Goto();
-        result.set_value(bb);
+        Eval_Result_Ret gotoRet;
+		gotoRet.data_type = int_data_type;
+		gotoRet.int_ret =bb; 
+        result.set_value(gotoRet);
         print_ast(file_buffer);
 	    file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
         return result;
@@ -429,14 +433,17 @@ Data_Type Expression_Ast::get_data_type()
 	
 
 void Expression_Ast :: print_ast(ostream & file_buffer){
+ 
     file_buffer <<"\n";	
     file_buffer << AST_NODE_SPACE<<"Condition: ";
     printOperator(file_buffer,op);
     file_buffer <<"\n";
     file_buffer << AST_NODE_SPACE<< "LHS (";
 	lhs->print_ast(file_buffer);
-	file_buffer << ")\n";
-	file_buffer << AST_CONDITION_SPACE<< "RHS (";
+	file_buffer << ")";
+	if(rhs == NULL)
+		return;
+	file_buffer << "\n" << AST_NODE_SPACE<< "RHS (";
 	rhs->print_ast(file_buffer);
 	file_buffer<<")";
 }
@@ -465,41 +472,35 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
 
 
 Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result & result;
+		
+		Eval_Result *temp;
 		
 		Eval_Result_Ret res;
 		Eval_Result_Ret lVal;
 		Eval_Result_Ret rVal;
+		
 	
 		
 		if(node_data_type == float_data_type){
-			result = *new Eval_Result_Value_Float();
+			temp = new Eval_Result_Value_Float();
 		}
 		
 		else if(node_data_type == double_data_type){
-			result = *new Eval_Result_Value_Double();
+			temp = new Eval_Result_Value_Double();
 		}
 		
 		else if(node_data_type == int_data_type){
-			result = *new Eval_Result_Value_Int();
+			temp = new Eval_Result_Value_Int();
 		}
 		
-		
+		Eval_Result  &result = *temp;
 		
 		
 		 lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
 			
 		 if(rhs == NULL){
 				res.data_type = node_data_type;
-				replace(res) =  replace(lVal);
-/*				
-				if(res.data_type == int_data_type)
-					res.int_ret = (int)getVal(getVal;
-				if(res.data_type == int_data_type)
-					res.int_ret = (float)lVal;
-				if(res.data_type == int_data_type)
-					res.int_ret = (int)lVal;		
-*/
+				assign_replace(res ,  replace(lVal));
 		 }
 		
 		else{
@@ -507,40 +508,41 @@ Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & 
 			res.data_type = node_data_type;
 			switch(op){
 				case GT:
-						replace(res) = replace(lVal)>replace(rVal);
+						assign_replace(res , replace(lVal)>replace(rVal));
 						break;
 				case LT:
-						replace(res) = replace(lVal) < replace(rVal);
+						assign_replace(res , replace(lVal) < replace(rVal));
 						break;
 				case EQ:
-						replace(res) = replace(lVal) ==replace(rVal);
+						assign_replace(res , replace(lVal) ==replace(rVal));
 						break;
 				case NE:
-						replace(res) = replace(lVal) !=replace(rVal);
+						assign_replace(res , replace(lVal) !=replace(rVal));
 						break;
 				case GE:
-						replace(res) = replace(lVal) >=replace(rVal);
+						assign_replace(res , replace(lVal) >=replace(rVal));
 						break;
 				case LE:
-						replace(res) = replace(lVal) <=replace(rVal);
+						assign_replace(res , replace(lVal) <=replace(rVal));
 						break;
 				case PLUS:
-						replace(res) = replace(lVal) + replace(rVal);
+						assign_replace(res , replace(lVal) + replace(rVal));
 						break;
 				case MINUS:
-						replace(res) = replace(lVal) - replace(rVal);
+						assign_replace(res , replace(lVal) - replace(rVal));
 						break;
 				case MULT:
-						replace(res) = replace(lVal) * replace(rVal);
+						assign_replace(res , replace(lVal) * replace(rVal));
 						break;				
 				case DIV:
-						replace(res) = replace(lVal) / replace(rVal);
+						assign_replace(res , replace(lVal) / replace(rVal));
 						break;				
 				
 			}
 		}
 		
-        result.set_value(replace(res));
+		
+        result.set_value(res);
         return result;
 }
 
@@ -581,36 +583,40 @@ void UnaryExpression_Ast :: print_ast(ostream & file_buffer){
 	
 	
 
-UnaryExpression_Ast :: void print_value(Local_Environment & eval_env, ostream & file_buffer){
+void  UnaryExpression_Ast :: print_value(Local_Environment & eval_env, ostream & file_buffer){
 	file_buffer << replace(evaluate(eval_env , file_buffer).get_value());
 }
 
 
-UnaryExpression_Ast :: Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer)
+Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		Eval_Result & result;
+		Eval_Result *temp;
+	
 		if(node_data_type == float_data_type){
-			result = *new Eval_Result_Value_Templated<float>(float_data_type);
+			temp = new Eval_Result_Value_Float();
 		}
 		
 		else if(node_data_type == double_data_type){
-			result = *new Eval_Result_Value_Templated<double>(double_data_type);
+			temp = new Eval_Result_Value_Double();
 		}
 		
 		else if(node_data_type == int_data_type){
-			result = *new Eval_Result_Value_Int();
+			temp = new Eval_Result_Value_Int();
 		}
+		
+		
+		Eval_Result &result = *temp;
 		
 		Eval_Result_Ret res;
 		res.data_type = node_data_type;
-		Eval_Result_Ret lVal =(lhs->evaluate(eval_env,file_buffer)).get_value();
+		Eval_Result_Ret lVal =(exp->evaluate(eval_env,file_buffer)).get_value();
 		
 		switch(op){
-			case PLUS:
-					replace(res) = replace(lVal);
+			case Expression_Ast::PLUS:
+					assign_replace(res , replace(lVal));
 					break;
-			case MINUS:
-					replace(res) = -replace(lVal);
+			case Expression_Ast::MINUS:
+					assign_replace(res , -replace(lVal));
 					break;
 			default:
 					file_buffer<<"UnaryExpression : Wrong OP Entered \n";
@@ -618,7 +624,7 @@ UnaryExpression_Ast :: Eval_Result & evaluate(Local_Environment & eval_env, ostr
 		}
 	
 	
-        result.set_value(replace(res));
+        result.set_value(res);
         return result;
 }
 

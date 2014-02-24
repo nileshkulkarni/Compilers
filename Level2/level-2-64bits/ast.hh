@@ -26,6 +26,7 @@
 
 #include<string>
 #include <assert.h>
+#define replaceRet(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
 
 
 

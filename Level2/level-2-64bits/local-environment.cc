@@ -55,8 +55,8 @@ void Eval_Result::set_variable_status(bool def)
 
 Eval_Result_Value_Int::Eval_Result_Value_Int()
 {
-	
-	value = Eval_Result_Ret(int_data_type);
+//	value = Eval_Result_Ret(int_data_type);
+	value.data_type = int_data_type;
 	defined = false;
 	result_type = int_result;
 }
@@ -66,13 +66,16 @@ Eval_Result_Value_Int::~Eval_Result_Value_Int()
 
 void Eval_Result_Value_Int::set_value(int number)
 {
-	
 	value.int_ret = number;
 	defined = true;
-	
-	
 }
 
+void Eval_Result_Value_Int::set_value(Eval_Result_Ret number)
+{
+	value.double_ret = number.int_ret;
+	assert(number.data_type == int_data_type);
+	defined = true;
+}
 Eval_Result_Ret Eval_Result_Value_Int::get_value()
 {
 	return value;
@@ -104,14 +107,21 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 
 Eval_Result_Value_Float::Eval_Result_Value_Float()
 {
-	value.float_ret = 0.0;
+	value.data_type = float_data_type;
+	value.float_ret = 0;
 	defined = false;
 	result_type = float_result;
 }
 
-Eval_Result_Value_Float::~Eval_Result_Value_Int()
+Eval_Result_Value_Float::~Eval_Result_Value_Float()
 { }
 
+void Eval_Result_Value_Float::set_value(Eval_Result_Ret number)
+{
+	value.float_ret = number.float_ret;
+	assert(number.data_type == float_data_type);
+	defined = true;
+}
 void Eval_Result_Value_Float::set_value(float number)
 {
 	value.float_ret = number;
@@ -152,12 +162,19 @@ Result_Enum Eval_Result_Value_Float::get_result_enum()
 Eval_Result_Value_Double::Eval_Result_Value_Double()
 {
 	value.double_ret = 0.0;
+	value.data_type = double_data_type;
 	defined = false;
 	result_type = double_result;
 }
 
 Eval_Result_Value_Double::~Eval_Result_Value_Double()
 { }
+void Eval_Result_Value_Double::set_value(Eval_Result_Ret number)
+{
+	value.double_ret = number.double_ret;
+	assert(number.data_type == double_data_type);
+	defined = true;
+}
 
 void Eval_Result_Value_Double::set_value(double number)
 {
@@ -198,6 +215,7 @@ Result_Enum Eval_Result_Value_Double::get_result_enum()
 Eval_Result_Value_Goto::Eval_Result_Value_Goto()
 {
 	value.int_ret = 0;
+	value.data_type = int_data_type;
 	defined = false;
 	result_type = goto_result;
 }
@@ -206,6 +224,11 @@ Eval_Result_Value_Goto::~Eval_Result_Value_Goto()
 { }
 
 void Eval_Result_Value_Goto::set_value(Eval_Result_Ret number)
+{
+	value.int_ret = number.int_ret;
+	defined = true;
+}
+void Eval_Result_Value_Goto::set_value(int number)
 {
 	value.int_ret = number;
 	defined = true;
@@ -269,9 +292,12 @@ void Eval_Result_Value_Return::set_value(Eval_Result_Ret num)
 {
 	
 }
+
 Eval_Result_Ret Eval_Result_Value_Return::get_value()
 {
-	return -1;
+	Eval_Result_Ret res;
+	res.data_type = return_data_type;
+	return res;
 }
 void Eval_Result_Value_Return::set_result_enum(Result_Enum res)
 {
@@ -326,7 +352,7 @@ void Local_Environment::print(ostream & file_buffer)
 				file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
 			else
-				file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value() << "\n";
+				file_buffer << VAR_SPACE << (*i).first << " : " << replace(vi->get_value()) << "\n";
 		}
 	}
 }
