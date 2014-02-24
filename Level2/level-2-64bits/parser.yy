@@ -148,6 +148,7 @@ declaration_statement_list:
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
 		string var_name = $1->get_variable_name();
+		
 		if (current_procedure && current_procedure->get_proc_name() == var_name)
 		{
 			int line = get_line_number();
@@ -195,14 +196,12 @@ declaration_statement:
 	FLOAT NAME ';'
 	{
 		$$ = new Symbol_Table_Entry(*$2, float_data_type);
-
 		delete $2;
 	}
  |
 	INTEGER NAME ';'
 	{
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
-
 		delete $2;
 	}
 ;
@@ -427,9 +426,7 @@ expression: unary_expression{
            }
     | '(' DATA_TYPE ')' atomic_expression{
            Ast* exp = new Expression_Ast($4,$2); 
-           cout<<"comes here :"<<endl;
            $$ = exp;
-           cout<<"comes here 2:"<<endl;
            
     }
 ;
@@ -465,12 +462,13 @@ variable:
 	{
 		Symbol_Table_Entry var_table_entry;
 
-		if (current_procedure->variable_in_symbol_list_check(*$1))
+		if (current_procedure->variable_in_symbol_list_check(*$1)){
 			 var_table_entry = current_procedure->get_symbol_table_entry(*$1);
+		}
 
-		else if (program_object.variable_in_symbol_list_check(*$1))
+		else if (program_object.variable_in_symbol_list_check(*$1)){
 			var_table_entry = program_object.get_symbol_table_entry(*$1);
-
+		}
 		else
 		{
 			int line = get_line_number();
@@ -489,8 +487,7 @@ constant:
 	{
 		$$ = new Number_Ast<int>($1, int_data_type);
 	}
-	
-    |
+	|
 	FLOAT_NUMBER
 	{
 		$$ = new Number_Ast<float>($1, float_data_type);

@@ -72,7 +72,7 @@ void Eval_Result_Value_Int::set_value(int number)
 
 void Eval_Result_Value_Int::set_value(Eval_Result_Ret number)
 {
-	value.double_ret = number.int_ret;
+	value.int_ret = number.int_ret;
 	assert(number.data_type == int_data_type);
 	defined = true;
 }
@@ -106,9 +106,9 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 ///////////////////////////////////////////////////////////////////////////////
 
 Eval_Result_Value_Float::Eval_Result_Value_Float()
-{
+{	
+	
 	value.data_type = float_data_type;
-	value.float_ret = 0;
 	defined = false;
 	result_type = float_result;
 }
@@ -122,6 +122,7 @@ void Eval_Result_Value_Float::set_value(Eval_Result_Ret number)
 	assert(number.data_type == float_data_type);
 	defined = true;
 }
+
 void Eval_Result_Value_Float::set_value(float number)
 {
 	value.float_ret = number;
@@ -360,6 +361,7 @@ void Local_Environment::print(ostream & file_buffer)
 bool Local_Environment::is_variable_defined(string name)
 {
 	Eval_Result_Value * i = variable_table[name];
+//	cout<<"KKKKKKKKKKKKK : "<<name<< " " <<(i==NULL)<<endl;
 	if (i != NULL)
 		return i->is_variable_defined();
 	else

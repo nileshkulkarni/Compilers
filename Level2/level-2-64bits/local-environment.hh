@@ -64,6 +64,7 @@ struct Eval_Result_Ret{
 	
 	
 	Eval_Result_Ret(){
+		int_ret =-1;
 	}
 	
 };
@@ -78,7 +79,7 @@ protected:
 
 public:
 	virtual Eval_Result_Ret get_value();
-	virtual void set_value(Eval_Result_Ret value);
+	virtual void set_value(Eval_Result_Ret value) = 0;
 	
 
 
@@ -144,6 +145,8 @@ public:
 	void set_result_enum(Result_Enum res);
 	Result_Enum get_result_enum();
 };
+
+
 class Eval_Result_Value_Double:public Eval_Result_Value
 {
 	Eval_Result_Ret value;

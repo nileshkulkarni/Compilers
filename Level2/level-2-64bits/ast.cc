@@ -137,6 +137,8 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 
 	lhs->set_value_of_evaluation(eval_env, result);
 
+	cout<<"set_value_of_evaluation : "<<replace(result.get_value())<<endl;
+
 	// Print the result
 
 	print_ast(file_buffer);
@@ -173,12 +175,15 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	file_buffer << "\n" << AST_SPACE << variable_name << " : ";
 
+	
 	if (!eval_env.is_variable_defined(variable_name) && !interpreter_global_table.is_variable_defined(variable_name))
 		file_buffer << "undefined";
 
-	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
+  
+    else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
-		if (loc_var_val->get_result_enum() == int_result)
+		
+		if ((loc_var_val->get_result_enum() == int_result) || (loc_var_val->get_result_enum() == float_result))
 			file_buffer << replace(loc_var_val->get_value()) << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
@@ -186,7 +191,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	else
 	{
-		if (glob_var_val->get_result_enum() == int_result)
+		if ((glob_var_val->get_result_enum() == int_result) || (glob_var_val->get_result_enum() == float_result))
 		{
 			if (glob_var_val == NULL)
 				file_buffer << "0\n";
@@ -196,6 +201,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 		else
 			report_internal_error("Result type can only be int and float");
 	}
+	
 	file_buffer << "\n";
 }
 
@@ -218,6 +224,12 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 	if (result.get_result_enum() == int_result)
 	{
 		i = new Eval_Result_Value_Int();
+	 	i->set_value(result.get_value());
+	}
+
+	if (result.get_result_enum() == float_result)
+	{
+		i = new Eval_Result_Value_Float();
 	 	i->set_value(result.get_value());
 	}
 
@@ -441,8 +453,10 @@ void Expression_Ast :: print_ast(ostream & file_buffer){
     file_buffer << AST_NODE_SPACE<< "LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")";
-	if(rhs == NULL)
+	if(rhs == NULL){
+		file_buffer << ((node_data_type == float_data_type)? "FLOAT" : "INT") << " \n" ;
 		return;
+	}
 	file_buffer << "\n" << AST_NODE_SPACE<< "RHS (";
 	rhs->print_ast(file_buffer);
 	file_buffer<<")";
@@ -501,11 +515,13 @@ Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & 
 		 if(rhs == NULL){
 				res.data_type = node_data_type;
 				assign_replace(res ,  replace(lVal));
-		 }
+			//	cout<<"node_data_type is "<<((node_data_type == float_data_type)? "FLOAT" : "INT") << " \n" ;
+		}
 		
 		else{
 			rVal =(rhs->evaluate(eval_env,file_buffer)).get_value();
 			res.data_type = node_data_type;
+		//	cout<<"node_data_type is "<<((node_data_type == float_data_type)? "FLOAT" : "INT") << " \n" ;
 			switch(op){
 				case GT:
 						assign_replace(res , replace(lVal)>replace(rVal));
@@ -541,8 +557,7 @@ Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & 
 			}
 		}
 		
-		
-        result.set_value(res);
+		result.set_value(res);
         return result;
 }
 
