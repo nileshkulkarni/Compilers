@@ -197,7 +197,9 @@ public:
 		PLUS,
 		MINUS,
 		MULT,
-		DIV		
+		DIV,
+		UMINUS,
+		UPLUS	
 	};
 private:
 
@@ -244,6 +246,8 @@ public:
 	UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op);
 	~UnaryExpression_Ast();
 
+	void printOperator(ostream& file_buffer,Expression_Ast::OperatorType op);
+    
 	Data_Type get_data_type();
 	void print_ast(ostream & file_buffer);
 

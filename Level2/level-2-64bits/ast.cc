@@ -170,7 +170,7 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
 	
-	file_buffer<<std::setprecision(2) << std::fixed;
+	file_buffer<< std::fixed << std::setprecision(2) ;
 	if(R.data_type == int_data_type)
 		file_buffer<<R.int_ret; 
 	
@@ -281,6 +281,8 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
 
+	file_buffer<<std::fixed << std::setprecision(2);
+
 	if(R.data_type == int_data_type)
 		file_buffer<<R.int_ret; 
 	
@@ -298,7 +300,7 @@ void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 	Eval_Result_Ret R;
 	R.data_type = node_data_type;
 	assign_replace(R , constant);
-	file_buffer << "NUM : ";
+	file_buffer << "Num : ";
 	printFormatted(file_buffer , R);
 	
 }
@@ -430,7 +432,7 @@ Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
 	lhs = _lhs;
 	assert(_rhs != NULL) ; 
 	rhs = _rhs;
-	if((_op == GE) || (_op == EQ) || (_op == NE) || (_op == LT) || (_op == GT))
+	if((_op == GE) || (_op == EQ) || (_op == NE) || (_op == LT) || (_op == GT) || (_op == LE))
 			node_data_type = int_data_type;
 	else
 		node_data_type = lhs->get_data_type(); //## TO-DO , DONE
@@ -449,18 +451,28 @@ Expression_Ast :: Expression_Ast(Ast * _atomic_exp , Data_Type _T){
 
 bool Expression_Ast::check_ast(int line)
 {
+
+
+
 	if(rhs == NULL){
 		return true;
 	}
+
 	
-	if (lhs->get_data_type() == rhs->get_data_type())
+	if ((lhs->get_data_type() == rhs->get_data_type())
+		|| (((lhs->get_data_type() == float_data_type) || (lhs->get_data_type() == double_data_type))
+				&&
+			((rhs->get_data_type() == float_data_type) || (rhs->get_data_type() == double_data_type))))	
 	{
-			if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT))
+			if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT) || (op == LE))
 					node_data_type = int_data_type;
 			else
 				node_data_type = lhs->get_data_type(); //## TO-DO , DONE
 		return true;
 	}
+	cout<<"rhs data type  "<<rhs->get_data_type()<<endl;
+	cout<<"lhs data type  "<<lhs->get_data_type()<<endl;
+	cout<<"Operator "; printOperator(cout , op); cout<<endl;
 	report_error("Expression statement data type not compatible", line);
 }
 
@@ -483,7 +495,7 @@ void Expression_Ast :: print_ast(ostream & file_buffer){
     file_buffer << AST_NODE_SPACE;
 	
     
-    if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT))
+    if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT) || (op == LE))
 		file_buffer << "Condition: "; 
 	else
 		file_buffer << "Arith: "; 
@@ -616,6 +628,12 @@ UnaryExpression_Ast :: UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorT
 	op  = _op;
 }
 
+void UnaryExpression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
+    
+    switch(op){
+        case Expression_Ast::UMINUS: file_buffer<<"UMINUS";break;
+	}       
+}
 UnaryExpression_Ast :: ~UnaryExpression_Ast(){
 
 }
@@ -628,6 +646,9 @@ UnaryExpression_Ast :: ~UnaryExpression_Ast(){
 void UnaryExpression_Ast :: print_ast(ostream & file_buffer){
 	file_buffer <<"\n";	
     //exp->printOperator(file_buffer,op);   //## TO-DO
+	file_buffer << AST_NODE_SPACE;
+	file_buffer << "Arith: "; 
+    printOperator(file_buffer,op);
     file_buffer <<"\n";
     file_buffer << AST_NODE_SPACE<< "LHS (";
 	exp->print_ast(file_buffer);
@@ -665,10 +686,10 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 		Eval_Result_Ret lVal =(exp->evaluate(eval_env,file_buffer)).get_value();
 		
 		switch(op){
-			case Expression_Ast::PLUS:
+			case Expression_Ast::UPLUS:
 					assign_replace(res , replace(lVal));
 					break;
-			case Expression_Ast::MINUS:
+			case Expression_Ast::UMINUS:
 					assign_replace(res , -replace(lVal));
 					break;
 			default:
