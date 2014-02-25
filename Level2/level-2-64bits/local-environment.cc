@@ -340,6 +340,13 @@ Local_Environment::Local_Environment()
 
 Local_Environment::~Local_Environment()
 {}
+void Local_Environment::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
+	
+	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
+	char outputString[100];
+	sprintf(outputString ,  perFlag.c_str() , replace(R));
+	file_buffer << string(outputString);
+}
 
 void Local_Environment::print(ostream & file_buffer)
 {
@@ -352,8 +359,11 @@ void Local_Environment::print(ostream & file_buffer)
 			if (vi->is_variable_defined() == false)
 				file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
-			else
-				file_buffer << VAR_SPACE << (*i).first << " : " << replace(vi->get_value()) << "\n";
+			else{
+				file_buffer << VAR_SPACE << (*i).first << " : "; 
+				printFormatted(file_buffer, vi->get_value());
+				file_buffer<< "\n";
+			}
 		}
 	}
 }

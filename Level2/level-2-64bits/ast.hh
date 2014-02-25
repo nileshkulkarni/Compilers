@@ -35,6 +35,12 @@
 #define AST_CONDITION_SPACE "               "
 using namespace std;
 
+
+
+
+
+
+
 class Ast;
 
 class Ast
@@ -91,6 +97,7 @@ class Name_Ast:public Ast
 {
 	string variable_name;
 	Symbol_Table_Entry variable_symbol_entry;
+	void printFormatted(ostream & file_buffer , Eval_Result_Ret R);
 
 public:
 	Name_Ast(string & name, Symbol_Table_Entry & var_entry);
@@ -299,6 +306,8 @@ template <class T>
 class Number_Ast:public Ast
 {
 	T constant;
+	void printFormatted(ostream & file_buffer , Eval_Result_Ret R);
+
 
 public:
 	Number_Ast(T number, Data_Type constant_data_type);

@@ -167,6 +167,16 @@ void Name_Ast::print_ast(ostream & file_buffer)
 	file_buffer << "Name : " << variable_name;
 }
 
+
+void Name_Ast::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
+	
+	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
+	char outputString[100];
+	sprintf(outputString ,  perFlag.c_str() , replace(R));
+	file_buffer << string(outputString);
+}
+
+
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);
@@ -182,8 +192,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
     else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
 		
-		if ((loc_var_val->get_result_enum() == int_result) || (loc_var_val->get_result_enum() == float_result))
-			file_buffer << replace(loc_var_val->get_value()) << "\n";
+		if ((loc_var_val->get_result_enum() == int_result) || (loc_var_val->get_result_enum() == float_result)){
+			printFormatted(file_buffer , loc_var_val->get_value());
+		}
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -195,8 +206,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 			if (glob_var_val == NULL)
 				file_buffer << "0\n";
 			else
-				file_buffer << replace(glob_var_val->get_value()) << "\n";
-		}
+				printFormatted(file_buffer , glob_var_val->get_value());		}
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -263,12 +273,25 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 	return node_data_type;
 }
 
+template <class DATA_TYPE>
+void Number_Ast<DATA_TYPE>::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
+	
+	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
+	char outputString[100];
+	sprintf(outputString ,  perFlag.c_str() , replace(R));
+	file_buffer << string(outputString);
+}
 
 
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 {
-	file_buffer << "Num : " << constant;
+	Eval_Result_Ret R;
+	R.data_type = node_data_type;
+	assign_replace(R , constant);
+	file_buffer << "NUM : ";
+	printFormatted(file_buffer , R);
+	
 }
 
 template <class DATA_TYPE>

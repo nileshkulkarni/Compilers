@@ -236,6 +236,7 @@ public:
 	Eval_Result_Value * get_variable_value(string name);
 	void put_variable_value(Eval_Result_Value & value, string name);
 	bool does_variable_exist(string name);
+	void printFormatted(ostream & file_buffer , Eval_Result_Ret R);
 };
 
 extern Local_Environment interpreter_global_table;
