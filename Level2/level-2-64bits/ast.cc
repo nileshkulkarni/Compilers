@@ -32,7 +32,7 @@ using namespace std;
 
 #include"symbol-table.hh"
 #include"ast.hh"
-
+#include <iomanip>
 
 #define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
 #define assign_replace(r,v) ((r.data_type == double_data_type)? r.double_ret =v: (r.data_type == float_data_type)? r.float_ret =v: r.int_ret =v)
@@ -170,10 +170,15 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
 	
-	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
-	char outputString[100];
-	sprintf(outputString ,  perFlag.c_str() , replace(R));
-	file_buffer << string(outputString);
+	file_buffer<<std::setprecision(2) << std::fixed;
+	if(R.data_type == int_data_type)
+		file_buffer<<R.int_ret; 
+	
+	else if(R.data_type == float_data_type)
+		file_buffer<<R.float_ret; 
+	
+	else if(R.data_type == double_data_type)
+		file_buffer<<setprecision(4)<<R.double_ret; 
 }
 
 
@@ -275,11 +280,15 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
+
+	if(R.data_type == int_data_type)
+		file_buffer<<R.int_ret; 
 	
-	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
-	char outputString[100];
-	sprintf(outputString ,  perFlag.c_str() , replace(R));
-	file_buffer << string(outputString);
+	else if(R.data_type == float_data_type)
+		file_buffer<<setprecision(2)<<R.float_ret; 
+	
+	else if(R.data_type == double_data_type)
+		file_buffer<<setprecision(4)<<R.double_ret; 
 }
 
 

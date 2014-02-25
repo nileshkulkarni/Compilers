@@ -25,7 +25,7 @@ for f in cfgFiles:
 
     command = "./cfglp64  -tokens -d " + f + " > expected " 
     os.system(command) 
-    command = "./cfglp -tokens -d " + f + " > generated " 
+    command = "./cfglp -tokens  -d " + f + " > generated " 
     os.system(command)
     os.system("diff -b -B expected generated");
 '''

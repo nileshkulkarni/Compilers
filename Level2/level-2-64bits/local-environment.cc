@@ -29,6 +29,7 @@ using namespace std;
 #include"local-environment.hh"
 #include"error-display.hh"
 #include"user-options.hh"
+#include <iomanip>
 
 Eval_Result_Ret Eval_Result::get_value()
 {
@@ -341,11 +342,15 @@ Local_Environment::Local_Environment()
 Local_Environment::~Local_Environment()
 {}
 void Local_Environment::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
+	file_buffer<<std::setprecision(2) << std::fixed;
+	if(R.data_type == int_data_type)
+		file_buffer<<R.int_ret; 
 	
-	string perFlag = ((R.data_type == int_data_type)? "%ld" : "%.2f");
-	char outputString[100];
-	sprintf(outputString ,  perFlag.c_str() , replace(R));
-	file_buffer << string(outputString);
+	else if(R.data_type == float_data_type)
+		file_buffer<<R.float_ret; 
+	
+	else if(R.data_type == double_data_type)
+		file_buffer<<setprecision(4)<<R.double_ret; 
 }
 
 void Local_Environment::print(ostream & file_buffer)

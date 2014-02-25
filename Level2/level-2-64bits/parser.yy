@@ -401,14 +401,6 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '+' expression{         
-           if($3 == NULL){
-                std::cout<<"It is indeed null\n";
-            }
-            else{
-                std::cout<<"It is not\n";
-            }
-           // std::cout<<"Printing left\n";
-           // $1->print_ast(cout);
            assert($3 != NULL);
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS ); 
            $$ = exp;
@@ -495,10 +487,13 @@ constant:
 	INTEGER_NUMBER
 	{
 		$$ = new Number_Ast<int>($1, int_data_type);
+		//cout<<"$1 : "<<$1<<endl;
+
 	}
 	|
 	FLOAT_NUMBER
 	{
+		//cout<<"$1 : "<<$1<<endl;
 		$$ = new Number_Ast<float>($1, float_data_type);
 	}
 	;
