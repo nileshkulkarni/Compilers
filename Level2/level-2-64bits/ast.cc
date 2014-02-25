@@ -137,7 +137,6 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 
 	lhs->set_value_of_evaluation(eval_env, result);
 
-	cout<<"set_value_of_evaluation : "<<replace(result.get_value())<<endl;
 
 	// Print the result
 
@@ -397,14 +396,12 @@ Eval_Result & Goto_Ast:: evaluate(Local_Environment & eval_env, ostream & file_b
 /////////////////////////////////////////////////////////////////////////////////////////
 Expression_Ast :: Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op){
 	lhs = _lhs;
+	assert(_rhs != NULL) ; 
+	rhs = _rhs;
 	if((_op == GE) || (_op == EQ) || (_op == NE) || (_op == LT) || (_op == GT))
 			node_data_type = int_data_type;
-	
 	else
 		node_data_type = lhs->get_data_type(); //## TO-DO , DONE
-	
-//	assert(rhs != NULL ; //## TO-DO
-	rhs = _rhs;
 	op  = _op;
 }
 
@@ -432,7 +429,6 @@ bool Expression_Ast::check_ast(int line)
 				node_data_type = lhs->get_data_type(); //## TO-DO , DONE
 		return true;
 	}
-
 	report_error("Expression statement data type not compatible", line);
 }
 
@@ -446,18 +442,28 @@ Data_Type Expression_Ast::get_data_type()
 
 void Expression_Ast :: print_ast(ostream & file_buffer){
  
-    file_buffer <<"\n";	
-    file_buffer << AST_NODE_SPACE<<"Condition: ";
-    printOperator(file_buffer,op);
-    file_buffer <<"\n";
-    file_buffer << AST_NODE_SPACE<< "LHS (";
-	lhs->print_ast(file_buffer);
-	file_buffer << ")";
-	if(rhs == NULL){
-		file_buffer << ((node_data_type == float_data_type)? "FLOAT" : "INT") << " \n" ;
+    if(rhs == NULL){
+		lhs->print_ast(file_buffer);
 		return;
 	}
-	file_buffer << "\n" << AST_NODE_SPACE<< "RHS (";
+    
+    file_buffer <<"\n";	
+    file_buffer << AST_NODE_SPACE;
+	
+    
+    if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT))
+		file_buffer << "Condition: "; 
+	else
+		file_buffer << "Arith: "; 
+	
+	
+	printOperator(file_buffer , op);
+	file_buffer <<"\n";
+    
+    file_buffer <<  AST_CONDITION_SPACE << "LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")";
+	file_buffer << "\n" << AST_CONDITION_SPACE<< "RHS (";
 	rhs->print_ast(file_buffer);
 	file_buffer<<")";
 }

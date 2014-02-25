@@ -352,7 +352,6 @@ atomic_expression: variable{
 
 unary_expression: atomic_expression{
                     $$ =$1;
-					cout<<"here-- \n";
 				}
                 |
                 '-' unary_expression{
@@ -402,6 +401,15 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '+' expression{         
+           if($3 == NULL){
+                std::cout<<"It is indeed null\n";
+            }
+            else{
+                std::cout<<"It is not\n";
+            }
+           // std::cout<<"Printing left\n";
+           // $1->print_ast(cout);
+           assert($3 != NULL);
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS ); 
            $$ = exp;
            int line = get_line_number();
@@ -420,7 +428,6 @@ expression: unary_expression{
            $$->check_ast(line);
            }
     | expression '/' expression{   
-           cout<<"Here in division\n";
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV ); 
            $$ = exp;
            int line = get_line_number();
@@ -462,7 +469,6 @@ DATA_TYPE : FLOAT{
 variable:
 	NAME
 	{
-		cout<<"here ::: "<<*$1<<endl;
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1)){
