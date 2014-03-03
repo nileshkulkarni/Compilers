@@ -30,6 +30,10 @@ int		{
 			store_token_name("INTEGER");
 			return Parser::INTEGER; 
 		}
+void    {
+			store_token_name("VOID");
+			return Parser::VOID;
+		}
 
 return	{ 
 			store_token_name("RETURN");
@@ -112,7 +116,7 @@ float {
 		 store_token_name("ARITHOP");
         return matched()[0]; 
     }
-[:{}();=!]	{
+[:{}();=!,]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
