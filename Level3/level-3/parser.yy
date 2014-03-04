@@ -59,13 +59,72 @@
 program:
 
 	declaration_statement_list  procedure_declaration_list procedure_list
+    /*procedure_name
+	{
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = false;				
+        // No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+		delete $1;
+
+	
+    }*/
 |
 	declaration_statement_list  procedure_list    
+    /*procedure_name
+	{
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = false;				
+        // No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+		delete $1;
+
+	
+    }*/
 |
 
 	procedure_declaration_list  procedure_list
+    /*procedure_name
+	{
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = false;				
+        // No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+		delete $1;
+
+	
+    }*/
 |
     procedure_list
+/*	procedure_name
+	{
+		return_statement_used_flag = false;				// No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+	
+    }
+    */
 ;
 
 
@@ -101,11 +160,44 @@ procedure_name:
 procedure_body:
 	'{' 
 	declaration_statement_list 
+    {/*
+		current_procedure->set_local_list(*$2);
+        delete $2;
+	*/
+    }
 	
     basic_block_list
+	{/*
+		if (return_statement_used_flag == false)
+		{
+			int line = get_line_number();
+			report_error("Atleast 1 basic block should have a return statement", line);
+		}
+
+		current_procedure->set_basic_block_list(*$4);
+        
+        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+		delete $4;
+	*/
+    }
     '}'
 |
 	'{' basic_block_list '}'
+	{
+			cout<<"comes in procedure _name: "<<endl;
+
+	/*
+		if (return_statement_used_flag == false)
+		{
+			int line = get_line_number();
+			report_error("Atleast 1 basic block should have a return statement", line);
+		}
+
+		current_procedure->set_basic_block_list(*$2);
+
+		delete $2;
+	*/
+    }
 ;
 
 
@@ -154,22 +246,99 @@ argument : expression
 
 declaration_statement_list:
 	declaration_statement
+	{/*
+		int line = get_line_number();
+		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
+
+		string var_name = $1->get_variable_name();
+		
+		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		{
+			int line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		$$ = new Symbol_Table();
+		$$->push_symbol($1);
+	*/
+    }
 	
 |
 	declaration_statement_list declaration_statement
+	{/*
+		// if declaration is local then no need to check in global list
+		// if declaration is global then this list is global list
+
+		int line = get_line_number();
+		program_object.variable_in_proc_map_check($2->get_variable_name(), line);
+
+		string var_name = $2->get_variable_name();
+		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		{
+			int line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		if ($1 != NULL)
+		{
+			if($1->variable_in_symbol_list_check(var_name))
+			{
+				int line = get_line_number();
+				report_error("Variable is declared twice", line);
+			}
+
+			$$ = $1;
+		}
+
+		else
+			$$ = new Symbol_Table();
+
+		$$->push_symbol($2);
+	*/
+    }
 	
 ;
 
 declaration_statement:
 	DATA_TYPE NAME ';'
+	{/*
+		$$ = new Symbol_Table_Entry(*$2, $1);
+		delete $2;
+	*/
+    }
 	
 ;
 
 basic_block_list:
 	basic_block_list basic_block
+	{/*
+		if (!$2)
+		{
+			int line = get_line_number();
+			report_error("Basic block doesn't exist", line);
+		}
+
+		bb_strictly_increasing_order_check($$, $2->get_bb_number());
+
+		$$ = $1;
+		$$->push_back($2);
+	*/
+    }
 	
 |
 	basic_block
+	{/*
+		if (!$1)
+		{
+			int line = get_line_number();
+			report_error("Basic block doesn't exist", line);
+		}
+         
+		$$ = new list<Basic_Block *>;
+		$$->push_back($1);
+        
+	*/
+    }
 	
 	
 	
@@ -177,34 +346,118 @@ basic_block_list:
 
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
+	{/*
+        
+		if ($3 != NULL)
+			$$ = new Basic_Block($1, *$3);
+		else
+		{
+			list<Ast *> * ast_list = new list<Ast *>;
+			$$ = new Basic_Block($1, *ast_list);
+
+		}
+
+        bbNo.insert($1);
+
+	
+    */
 	
 ;
 
 executable_statement_list:
 	assignment_statement_list
+	{/*
+		$$ = $1;;
+	*/
+    }
 |
 	assignment_statement_list return_statement
+	{/*
+		Ast * ret = new Return_Ast();
+
+		return_statement_used_flag = true;	
+        // Current procedure has an occurrence of return statement
+
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back(ret);
+	*/
+    }
 |   
     assignment_statement_list goto_statement  
+    {/*
+            // Current procedure has an occurrence of return statement
+
+            if ($1 != NULL)
+                $$ = $1;
+
+            else
+                $$ = new list<Ast *>;
+
+            $$->push_back($2);
+        
+        */
+     } 
+
 | 
-   assignment_statement_list if_else_statement
+   assignment_statement_list if_else_statement{/*
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back($2);
+   */
+   }
+
     
 ;
 
-assignment_statement_list:   
+assignment_statement_list:   {/*
+			$$ = NULL;
+    */
+    }
+
     |
-	assignment_statement_list assignment_statement
+	assignment_statement_list assignment_statement{/*
+        if ($1 == NULL)
+            $$ = new list<Ast *>;
+
+        else
+            $$ = $1;
+
+        $$->push_back($2);
+    */
+    }
+
 ;
 
 assignment_statement:
 	variable ASSIGN_OP expression ';'
+	{/*
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+	*/
+    }
 	
     |
    function_call ';' 
 
 ;
 
-if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement
+if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{/*
+                  $$ =new IfElse_Ast($3,(Goto_Ast*)$5,(Goto_Ast*)$7);   
+                  // std::cout<<"Came to if \n";
+                 */
+                 }
+
 
 ;
 
@@ -215,13 +468,28 @@ return_statement: RETURN ';'
 ;
 
             
-goto_statement: GOTO BASIC_BLOCK ';'  
+goto_statement: GOTO BASIC_BLOCK ';'  {/*
+              //std::cout<<"Came to goto statement\n";
+              
+                $$ =  new Goto_Ast($2);
+                gotoNo.insert($2);
+              */
+              }
+
 ; 
               
-atomic_expression: variable
+atomic_expression: variable{/*
+                 $$ = $1;
+     */
+     }
+
      |
      constant
-     |
+ {/*
+            $$ =$1;
+     */
+     }
+    |
      '(' expression ')'
     |
     function_call
