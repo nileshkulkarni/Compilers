@@ -1,0 +1,1357 @@
+
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list procedure_declaration_list procedure_list
+2: program ->  declaration_statement_list procedure_list
+3: program ->  procedure_declaration_list procedure_list
+4: program ->  procedure_list
+5: procedure_declaration_list ->  procedure_declaration_list procedure_declaration
+6: procedure_declaration_list ->  procedure_declaration
+7: procedure_declaration (NAME) ->  DATA_TYPE NAME '(' parameter_list ')' ';'
+8: procedure_declaration (VOID) ->  VOID NAME '(' parameter_list ')' ';'
+9: procedure_list ->  procedure_list procedure
+10: procedure_list ->  procedure
+11: procedure ->  procedure_name procedure_body
+12: procedure_name (NAME) ->  NAME '(' parameter_list ')'
+13: procedure_body ('{') ->  '{' declaration_statement_list #0001 basic_block_list '}'
+14: #0001 ->  <empty>
+15: procedure_body ('{') ->  '{' basic_block_list '}'
+16: parameter_list ->  one_or_more_parameter_list
+17: parameter_list ->  <empty>
+18: one_or_more_parameter_list (',') ->  one_or_more_parameter_list ',' parameter
+19: one_or_more_parameter_list ->  parameter
+20: parameter (NAME) ->  DATA_TYPE NAME
+21: argument_list ->  one_or_more_argument_list
+22: argument_list ->  <empty>
+23: one_or_more_argument_list (',') ->  one_or_more_argument_list ',' argument
+24: one_or_more_argument_list ->  argument
+25: argument (NAME) ->  NAME
+26: declaration_statement_list ->  declaration_statement
+27: declaration_statement_list ->  declaration_statement_list declaration_statement
+28: declaration_statement (NAME) ->  DATA_TYPE NAME ';'
+29: basic_block_list ->  basic_block_list basic_block
+30: basic_block_list ->  basic_block
+31: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list
+32: executable_statement_list ->  assignment_statement_list
+33: executable_statement_list (';') ->  assignment_statement_list return_statement ';'
+34: executable_statement_list ->  assignment_statement_list goto_statement
+35: executable_statement_list ->  assignment_statement_list if_else_statement
+36: assignment_statement_list ->  <empty>
+37: assignment_statement_list ->  assignment_statement_list assignment_statement
+38: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP expression ';'
+39: assignment_statement (';') ->  function_call ';'
+40: if_else_statement (IF) ->  IF '(' expression ')' goto_statement ELSE goto_statement
+41: return_statement (RETURN) ->  RETURN ';'
+42: return_statement (RETURN) ->  RETURN expression ';'
+43: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
+44: atomic_expression ->  variable
+45: atomic_expression ->  constant
+46: atomic_expression ('(') ->  '(' expression ')'
+47: atomic_expression ->  function_call
+48: unary_expression ->  atomic_expression
+49: unary_expression ('-') ->  '-' unary_expression
+50: function_call (NAME) ->  NAME '(' argument_list ')'
+51: expression ->  unary_expression
+52: expression (LE) ->  expression LE expression
+53: expression (GE) ->  expression GE expression
+54: expression (LT) ->  expression LT expression
+55: expression (GT) ->  expression GT expression
+56: expression (NE) ->  expression NE expression
+57: expression (EQ) ->  expression EQ expression
+58: expression ('+') ->  expression '+' expression
+59: expression ('-') ->  expression '-' expression
+60: expression ('*') ->  expression '*' expression
+61: expression ('/') ->  expression '/' expression
+62: expression ('(') ->  '(' DATA_TYPE ')' atomic_expression
+63: DATA_TYPE (FLOAT) ->  FLOAT
+64: DATA_TYPE (DOUBLE) ->  DOUBLE
+65: DATA_TYPE (INTEGER) ->  INTEGER
+66: variable (NAME) ->  NAME
+67: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+68: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
+69: program_$ ->  program
+
+
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: INTEGER_NUMBER
+   258: BASIC_BLOCK
+   259: FLOAT_NUMBER
+   260: NAME
+   261: RETURN
+   262: INTEGER
+   263: FLOAT
+   264: DOUBLE
+   265: VOID
+   266: IF
+   267: ELSE
+   268: GOTO
+   269: ASSIGN_OP
+   270: NE
+   271: EQ
+   272: LT
+   273: LE
+   274: GT
+   275: GE
+    43: '+'
+    45: '-'
+    42: '*'
+    47: '/'
+    40: '('
+    41: ')'
+    59: ';'
+   123: '{'
+   125: '}'
+    44: ','
+    58: ':'
+
+
+Grammar States: 
+State 0:
+69: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_declaration_list to state 3
+  3:   On procedure_list to state 4
+  4:   On declaration_statement to state 5
+  5:   On procedure_declaration to state 6
+  6:   On procedure to state 7
+  7:   On DATA_TYPE to state 8
+  8:   On VOID to state 9
+  9:   On procedure_name to state 10
+  10:   On FLOAT to state 11
+  11:   On DOUBLE to state 12
+  12:   On INTEGER to state 13
+  13:   On NAME to state 14
+
+
+State 1:
+69: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . procedure_declaration_list procedure_list 
+2: program -> declaration_statement_list  . procedure_list 
+27: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On procedure_declaration_list to state 15
+  1:   On procedure_list to state 16
+  2:   On declaration_statement to state 17
+  3:   On procedure_declaration to state 6
+  4:   On procedure to state 7
+  5:   On DATA_TYPE to state 8
+  6:   On VOID to state 9
+  7:   On procedure_name to state 10
+  8:   On FLOAT to state 11
+  9:   On DOUBLE to state 12
+  10:   On INTEGER to state 13
+  11:   On NAME to state 14
+
+
+State 3:
+3: program -> procedure_declaration_list  . procedure_list 
+5: procedure_declaration_list -> procedure_declaration_list  . procedure_declaration 
+  0:   On procedure_list to state 18
+  1:   On procedure_declaration to state 19
+  2:   On procedure to state 7
+  3:   On DATA_TYPE to state 20
+  4:   On VOID to state 9
+  5:   On procedure_name to state 10
+  6:   On FLOAT to state 11
+  7:   On DOUBLE to state 12
+  8:   On INTEGER to state 13
+  9:   On NAME to state 14
+
+
+State 4:
+4: program -> procedure_list  . 
+9: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 21
+  1:   On procedure_name to state 10
+  2:   On NAME to state 14
+  Reduce by 4: program -> procedure_list  . 
+
+
+State 5:
+26: declaration_statement_list -> declaration_statement  . 
+  Reduce by 26: declaration_statement_list -> declaration_statement  . 
+
+
+State 6:
+6: procedure_declaration_list -> procedure_declaration  . 
+  Reduce by 6: procedure_declaration_list -> procedure_declaration  . 
+
+
+State 7:
+10: procedure_list -> procedure  . 
+  Reduce by 10: procedure_list -> procedure  . 
+
+
+State 8:
+28: declaration_statement -> DATA_TYPE  . NAME ';' 
+7: procedure_declaration -> DATA_TYPE  . NAME '(' parameter_list ')' ';' 
+  0:   On NAME to state 22
+
+
+State 9:
+8: procedure_declaration -> VOID  . NAME '(' parameter_list ')' ';' 
+  0:   On NAME to state 23
+
+
+State 10:
+11: procedure -> procedure_name  . procedure_body 
+  0:   On procedure_body to state 24
+  1:   On '{' to state 25
+
+
+State 11:
+63: DATA_TYPE -> FLOAT  . 
+  Reduce by 63: DATA_TYPE -> FLOAT  . 
+
+
+State 12:
+64: DATA_TYPE -> DOUBLE  . 
+  Reduce by 64: DATA_TYPE -> DOUBLE  . 
+
+
+State 13:
+65: DATA_TYPE -> INTEGER  . 
+  Reduce by 65: DATA_TYPE -> INTEGER  . 
+
+
+State 14:
+12: procedure_name -> NAME  . '(' parameter_list ')' 
+  0:   On '(' to state 26
+
+
+State 15:
+1: program -> declaration_statement_list procedure_declaration_list  . procedure_list 
+5: procedure_declaration_list -> procedure_declaration_list  . procedure_declaration 
+  0:   On procedure_list to state 27
+  1:   On procedure_declaration to state 19
+  2:   On procedure to state 7
+  3:   On DATA_TYPE to state 20
+  4:   On VOID to state 9
+  5:   On procedure_name to state 10
+  6:   On FLOAT to state 11
+  7:   On DOUBLE to state 12
+  8:   On INTEGER to state 13
+  9:   On NAME to state 14
+
+
+State 16:
+2: program -> declaration_statement_list procedure_list  . 
+9: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 21
+  1:   On procedure_name to state 10
+  2:   On NAME to state 14
+  Reduce by 2: program -> declaration_statement_list procedure_list  . 
+
+
+State 17:
+27: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 27: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 18:
+3: program -> procedure_declaration_list procedure_list  . 
+9: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 21
+  1:   On procedure_name to state 10
+  2:   On NAME to state 14
+  Reduce by 3: program -> procedure_declaration_list procedure_list  . 
+
+
+State 19:
+5: procedure_declaration_list -> procedure_declaration_list procedure_declaration  . 
+  Reduce by 5: procedure_declaration_list -> procedure_declaration_list procedure_declaration  . 
+
+
+State 20:
+7: procedure_declaration -> DATA_TYPE  . NAME '(' parameter_list ')' ';' 
+  0:   On NAME to state 28
+
+
+State 21:
+9: procedure_list -> procedure_list procedure  . 
+  Reduce by 9: procedure_list -> procedure_list procedure  . 
+
+
+State 22:
+28: declaration_statement -> DATA_TYPE NAME  . ';' 
+7: procedure_declaration -> DATA_TYPE NAME  . '(' parameter_list ')' ';' 
+  0:   On ';' to state 29
+  1:   On '(' to state 30
+
+
+State 23:
+8: procedure_declaration -> VOID NAME  . '(' parameter_list ')' ';' 
+  0:   On '(' to state 31
+
+
+State 24:
+11: procedure -> procedure_name procedure_body  . 
+  Reduce by 11: procedure -> procedure_name procedure_body  . 
+
+
+State 25:
+13: procedure_body -> '{'  . declaration_statement_list #0001 basic_block_list '}' 
+15: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 32
+  1:   On basic_block_list to state 33
+  2:   On declaration_statement to state 5
+  3:   On basic_block to state 34
+  4:   On DATA_TYPE to state 35
+  5:   On BASIC_BLOCK to state 36
+  6:   On FLOAT to state 11
+  7:   On DOUBLE to state 12
+  8:   On INTEGER to state 13
+
+
+State 26:
+12: procedure_name -> NAME '('  . parameter_list ')' 
+  0:   On parameter_list to state 37
+  1:   On one_or_more_parameter_list to state 38
+  2:   On parameter to state 39
+  3:   On DATA_TYPE to state 40
+  4:   On FLOAT to state 11
+  5:   On DOUBLE to state 12
+  6:   On INTEGER to state 13
+  Reduce by 17: parameter_list ->  . 
+
+
+State 27:
+1: program -> declaration_statement_list procedure_declaration_list procedure_list  . 
+9: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 21
+  1:   On procedure_name to state 10
+  2:   On NAME to state 14
+  Reduce by 1: program -> declaration_statement_list procedure_declaration_list procedure_list  . 
+
+
+State 28:
+7: procedure_declaration -> DATA_TYPE NAME  . '(' parameter_list ')' ';' 
+  0:   On '(' to state 30
+
+
+State 29:
+28: declaration_statement -> DATA_TYPE NAME ';'  . 
+  Reduce by 28: declaration_statement -> DATA_TYPE NAME ';'  . 
+
+
+State 30:
+7: procedure_declaration -> DATA_TYPE NAME '('  . parameter_list ')' ';' 
+  0:   On parameter_list to state 41
+  1:   On one_or_more_parameter_list to state 38
+  2:   On parameter to state 39
+  3:   On DATA_TYPE to state 40
+  4:   On FLOAT to state 11
+  5:   On DOUBLE to state 12
+  6:   On INTEGER to state 13
+  Reduce by 17: parameter_list ->  . 
+
+
+State 31:
+8: procedure_declaration -> VOID NAME '('  . parameter_list ')' ';' 
+  0:   On parameter_list to state 42
+  1:   On one_or_more_parameter_list to state 38
+  2:   On parameter to state 39
+  3:   On DATA_TYPE to state 40
+  4:   On FLOAT to state 11
+  5:   On DOUBLE to state 12
+  6:   On INTEGER to state 13
+  Reduce by 17: parameter_list ->  . 
+
+
+State 32:
+13: procedure_body -> '{' declaration_statement_list  . #0001 basic_block_list '}' 
+27: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0001 to state 43
+  1:   On declaration_statement to state 17
+  2:   On DATA_TYPE to state 35
+  3:   On FLOAT to state 11
+  4:   On DOUBLE to state 12
+  5:   On INTEGER to state 13
+  Reduce by 14: #0001 ->  . 
+
+
+State 33:
+15: procedure_body -> '{' basic_block_list  . '}' 
+29: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 44
+  1:   On basic_block to state 45
+  2:   On BASIC_BLOCK to state 36
+
+
+State 34:
+30: basic_block_list -> basic_block  . 
+  Reduce by 30: basic_block_list -> basic_block  . 
+
+
+State 35:
+28: declaration_statement -> DATA_TYPE  . NAME ';' 
+  0:   On NAME to state 46
+
+
+State 36:
+31: basic_block -> BASIC_BLOCK  . ':' executable_statement_list 
+  0:   On ':' to state 47
+
+
+State 37:
+12: procedure_name -> NAME '(' parameter_list  . ')' 
+  0:   On ')' to state 48
+
+
+State 38:
+16: parameter_list -> one_or_more_parameter_list  . 
+18: one_or_more_parameter_list -> one_or_more_parameter_list  . ',' parameter 
+  0:   On ',' to state 49
+  Reduce by 16: parameter_list -> one_or_more_parameter_list  . 
+
+
+State 39:
+19: one_or_more_parameter_list -> parameter  . 
+  Reduce by 19: one_or_more_parameter_list -> parameter  . 
+
+
+State 40:
+20: parameter -> DATA_TYPE  . NAME 
+  0:   On NAME to state 50
+
+
+State 41:
+7: procedure_declaration -> DATA_TYPE NAME '(' parameter_list  . ')' ';' 
+  0:   On ')' to state 51
+
+
+State 42:
+8: procedure_declaration -> VOID NAME '(' parameter_list  . ')' ';' 
+  0:   On ')' to state 52
+
+
+State 43:
+13: procedure_body -> '{' declaration_statement_list #0001  . basic_block_list '}' 
+  0:   On basic_block_list to state 53
+  1:   On basic_block to state 34
+  2:   On BASIC_BLOCK to state 36
+
+
+State 44:
+15: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 15: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 45:
+29: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 29: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 46:
+28: declaration_statement -> DATA_TYPE NAME  . ';' 
+  0:   On ';' to state 29
+
+
+State 47:
+31: basic_block -> BASIC_BLOCK ':'  . executable_statement_list 
+  0:   On executable_statement_list to state 54
+  1:   On assignment_statement_list to state 55
+  Reduce by 36: assignment_statement_list ->  . 
+
+
+State 48:
+12: procedure_name -> NAME '(' parameter_list ')'  . 
+  Reduce by 12: procedure_name -> NAME '(' parameter_list ')'  . 
+
+
+State 49:
+18: one_or_more_parameter_list -> one_or_more_parameter_list ','  . parameter 
+  0:   On parameter to state 56
+  1:   On DATA_TYPE to state 40
+  2:   On FLOAT to state 11
+  3:   On DOUBLE to state 12
+  4:   On INTEGER to state 13
+
+
+State 50:
+20: parameter -> DATA_TYPE NAME  . 
+  Reduce by 20: parameter -> DATA_TYPE NAME  . 
+
+
+State 51:
+7: procedure_declaration -> DATA_TYPE NAME '(' parameter_list ')'  . ';' 
+  0:   On ';' to state 57
+
+
+State 52:
+8: procedure_declaration -> VOID NAME '(' parameter_list ')'  . ';' 
+  0:   On ';' to state 58
+
+
+State 53:
+13: procedure_body -> '{' declaration_statement_list #0001 basic_block_list  . '}' 
+29: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 59
+  1:   On basic_block to state 45
+  2:   On BASIC_BLOCK to state 36
+
+
+State 54:
+31: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+  Reduce by 31: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+
+
+State 55:
+32: executable_statement_list -> assignment_statement_list  . 
+33: executable_statement_list -> assignment_statement_list  . return_statement ';' 
+34: executable_statement_list -> assignment_statement_list  . goto_statement 
+35: executable_statement_list -> assignment_statement_list  . if_else_statement 
+37: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+  0:   On return_statement to state 60
+  1:   On goto_statement to state 61
+  2:   On if_else_statement to state 62
+  3:   On assignment_statement to state 63
+  4:   On RETURN to state 64
+  5:   On GOTO to state 65
+  6:   On IF to state 66
+  7:   On variable to state 67
+  8:   On function_call to state 68
+  9:   On NAME to state 69
+  Reduce by 32: executable_statement_list -> assignment_statement_list  . 
+
+
+State 56:
+18: one_or_more_parameter_list -> one_or_more_parameter_list ',' parameter  . 
+  Reduce by 18: one_or_more_parameter_list -> one_or_more_parameter_list ',' parameter  . 
+
+
+State 57:
+7: procedure_declaration -> DATA_TYPE NAME '(' parameter_list ')' ';'  . 
+  Reduce by 7: procedure_declaration -> DATA_TYPE NAME '(' parameter_list ')' ';'  . 
+
+
+State 58:
+8: procedure_declaration -> VOID NAME '(' parameter_list ')' ';'  . 
+  Reduce by 8: procedure_declaration -> VOID NAME '(' parameter_list ')' ';'  . 
+
+
+State 59:
+13: procedure_body -> '{' declaration_statement_list #0001 basic_block_list '}'  . 
+  Reduce by 13: procedure_body -> '{' declaration_statement_list #0001 basic_block_list '}'  . 
+
+
+State 60:
+33: executable_statement_list -> assignment_statement_list return_statement  . ';' 
+  0:   On ';' to state 70
+
+
+State 61:
+34: executable_statement_list -> assignment_statement_list goto_statement  . 
+  Reduce by 34: executable_statement_list -> assignment_statement_list goto_statement  . 
+
+
+State 62:
+35: executable_statement_list -> assignment_statement_list if_else_statement  . 
+  Reduce by 35: executable_statement_list -> assignment_statement_list if_else_statement  . 
+
+
+State 63:
+37: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 37: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+
+
+State 64:
+41: return_statement -> RETURN  . ';' 
+42: return_statement -> RETURN  . expression ';' 
+  0:   On ';' to state 71
+  1:   On expression to state 72
+  2:   On unary_expression to state 73
+  3:   On '(' to state 74
+  4:   On atomic_expression to state 75
+  5:   On '-' to state 76
+  6:   On variable to state 77
+  7:   On constant to state 78
+  8:   On function_call to state 79
+  9:   On NAME to state 69
+  10:   On INTEGER_NUMBER to state 80
+  11:   On FLOAT_NUMBER to state 81
+
+
+State 65:
+43: goto_statement -> GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 82
+
+
+State 66:
+40: if_else_statement -> IF  . '(' expression ')' goto_statement ELSE goto_statement 
+  0:   On '(' to state 83
+
+
+State 67:
+38: assignment_statement -> variable  . ASSIGN_OP expression ';' 
+  0:   On ASSIGN_OP to state 84
+
+
+State 68:
+39: assignment_statement -> function_call  . ';' 
+  0:   On ';' to state 85
+
+
+State 69:
+66: variable -> NAME  . 
+50: function_call -> NAME  . '(' argument_list ')' 
+  0:   On '(' to state 86
+  Reduce by 66: variable -> NAME  . 
+
+
+State 70:
+33: executable_statement_list -> assignment_statement_list return_statement ';'  . 
+  Reduce by 33: executable_statement_list -> assignment_statement_list return_statement ';'  . 
+
+
+State 71:
+41: return_statement -> RETURN ';'  . 
+  Reduce by 41: return_statement -> RETURN ';'  . 
+
+
+State 72:
+42: return_statement -> RETURN expression  . ';' 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On ';' to state 87
+  1:   On LE to state 88
+  2:   On GE to state 89
+  3:   On LT to state 90
+  4:   On GT to state 91
+  5:   On NE to state 92
+  6:   On EQ to state 93
+  7:   On '+' to state 94
+  8:   On '-' to state 95
+  9:   On '*' to state 96
+  10:   On '/' to state 97
+
+
+State 73:
+51: expression -> unary_expression  . 
+  Reduce by 51: expression -> unary_expression  . 
+
+
+State 74:
+62: expression -> '('  . DATA_TYPE ')' atomic_expression 
+46: atomic_expression -> '('  . expression ')' 
+  0:   On DATA_TYPE to state 98
+  1:   On expression to state 99
+  2:   On FLOAT to state 11
+  3:   On DOUBLE to state 12
+  4:   On INTEGER to state 13
+  5:   On unary_expression to state 73
+  6:   On '(' to state 74
+  7:   On atomic_expression to state 75
+  8:   On '-' to state 76
+  9:   On variable to state 77
+  10:   On constant to state 78
+  11:   On function_call to state 79
+  12:   On NAME to state 69
+  13:   On INTEGER_NUMBER to state 80
+  14:   On FLOAT_NUMBER to state 81
+
+
+State 75:
+48: unary_expression -> atomic_expression  . 
+  Reduce by 48: unary_expression -> atomic_expression  . 
+
+
+State 76:
+49: unary_expression -> '-'  . unary_expression 
+  0:   On unary_expression to state 100
+  1:   On atomic_expression to state 75
+  2:   On '-' to state 76
+  3:   On variable to state 77
+  4:   On constant to state 78
+  5:   On '(' to state 101
+  6:   On function_call to state 79
+  7:   On NAME to state 69
+  8:   On INTEGER_NUMBER to state 80
+  9:   On FLOAT_NUMBER to state 81
+
+
+State 77:
+44: atomic_expression -> variable  . 
+  Reduce by 44: atomic_expression -> variable  . 
+
+
+State 78:
+45: atomic_expression -> constant  . 
+  Reduce by 45: atomic_expression -> constant  . 
+
+
+State 79:
+47: atomic_expression -> function_call  . 
+  Reduce by 47: atomic_expression -> function_call  . 
+
+
+State 80:
+67: constant -> INTEGER_NUMBER  . 
+  Reduce by 67: constant -> INTEGER_NUMBER  . 
+
+
+State 81:
+68: constant -> FLOAT_NUMBER  . 
+  Reduce by 68: constant -> FLOAT_NUMBER  . 
+
+
+State 82:
+43: goto_statement -> GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 102
+
+
+State 83:
+40: if_else_statement -> IF '('  . expression ')' goto_statement ELSE goto_statement 
+  0:   On expression to state 103
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 84:
+38: assignment_statement -> variable ASSIGN_OP  . expression ';' 
+  0:   On expression to state 104
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 85:
+39: assignment_statement -> function_call ';'  . 
+  Reduce by 39: assignment_statement -> function_call ';'  . 
+
+
+State 86:
+50: function_call -> NAME '('  . argument_list ')' 
+  0:   On argument_list to state 105
+  1:   On one_or_more_argument_list to state 106
+  2:   On argument to state 107
+  3:   On NAME to state 108
+  Reduce by 22: argument_list ->  . 
+
+
+State 87:
+42: return_statement -> RETURN expression ';'  . 
+  Reduce by 42: return_statement -> RETURN expression ';'  . 
+
+
+State 88:
+52: expression -> expression LE  . expression 
+  0:   On expression to state 109
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 89:
+53: expression -> expression GE  . expression 
+  0:   On expression to state 110
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 90:
+54: expression -> expression LT  . expression 
+  0:   On expression to state 111
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 91:
+55: expression -> expression GT  . expression 
+  0:   On expression to state 112
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 92:
+56: expression -> expression NE  . expression 
+  0:   On expression to state 113
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 93:
+57: expression -> expression EQ  . expression 
+  0:   On expression to state 114
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 94:
+58: expression -> expression '+'  . expression 
+  0:   On expression to state 115
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 95:
+59: expression -> expression '-'  . expression 
+  0:   On expression to state 116
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 96:
+60: expression -> expression '*'  . expression 
+  0:   On expression to state 117
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 97:
+61: expression -> expression '/'  . expression 
+  0:   On expression to state 118
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 98:
+62: expression -> '(' DATA_TYPE  . ')' atomic_expression 
+  0:   On ')' to state 119
+
+
+State 99:
+46: atomic_expression -> '(' expression  . ')' 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On ')' to state 120
+  1:   On LE to state 88
+  2:   On GE to state 89
+  3:   On LT to state 90
+  4:   On GT to state 91
+  5:   On NE to state 92
+  6:   On EQ to state 93
+  7:   On '+' to state 94
+  8:   On '-' to state 95
+  9:   On '*' to state 96
+  10:   On '/' to state 97
+
+
+State 100:
+49: unary_expression -> '-' unary_expression  . 
+  Reduce by 49: unary_expression -> '-' unary_expression  . 
+
+
+State 101:
+46: atomic_expression -> '('  . expression ')' 
+  0:   On expression to state 99
+  1:   On unary_expression to state 73
+  2:   On '(' to state 74
+  3:   On atomic_expression to state 75
+  4:   On '-' to state 76
+  5:   On variable to state 77
+  6:   On constant to state 78
+  7:   On function_call to state 79
+  8:   On NAME to state 69
+  9:   On INTEGER_NUMBER to state 80
+  10:   On FLOAT_NUMBER to state 81
+
+
+State 102:
+43: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+  Reduce by 43: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+
+
+State 103:
+40: if_else_statement -> IF '(' expression  . ')' goto_statement ELSE goto_statement 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On ')' to state 121
+  1:   On LE to state 88
+  2:   On GE to state 89
+  3:   On LT to state 90
+  4:   On GT to state 91
+  5:   On NE to state 92
+  6:   On EQ to state 93
+  7:   On '+' to state 94
+  8:   On '-' to state 95
+  9:   On '*' to state 96
+  10:   On '/' to state 97
+
+
+State 104:
+38: assignment_statement -> variable ASSIGN_OP expression  . ';' 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On ';' to state 122
+  1:   On LE to state 88
+  2:   On GE to state 89
+  3:   On LT to state 90
+  4:   On GT to state 91
+  5:   On NE to state 92
+  6:   On EQ to state 93
+  7:   On '+' to state 94
+  8:   On '-' to state 95
+  9:   On '*' to state 96
+  10:   On '/' to state 97
+
+
+State 105:
+50: function_call -> NAME '(' argument_list  . ')' 
+  0:   On ')' to state 123
+
+
+State 106:
+21: argument_list -> one_or_more_argument_list  . 
+23: one_or_more_argument_list -> one_or_more_argument_list  . ',' argument 
+  0:   On ',' to state 124
+  Reduce by 21: argument_list -> one_or_more_argument_list  . 
+
+
+State 107:
+24: one_or_more_argument_list -> argument  . 
+  Reduce by 24: one_or_more_argument_list -> argument  . 
+
+
+State 108:
+25: argument -> NAME  . 
+  Reduce by 25: argument -> NAME  . 
+
+
+State 109:
+52: expression -> expression LE expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 52: expression -> expression LE expression  . 
+
+
+State 110:
+53: expression -> expression GE expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 53: expression -> expression GE expression  . 
+
+
+State 111:
+54: expression -> expression LT expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 54: expression -> expression LT expression  . 
+
+
+State 112:
+55: expression -> expression GT expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 55: expression -> expression GT expression  . 
+
+
+State 113:
+56: expression -> expression NE expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On LE to state 88
+  1:   On GE to state 89
+  2:   On LT to state 90
+  3:   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 56: expression -> expression NE expression  . 
+
+
+State 114:
+57: expression -> expression EQ expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0:   On LE to state 88
+  1:   On GE to state 89
+  2:   On LT to state 90
+  3:   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6:   On '+' to state 94
+  7:   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 57: expression -> expression EQ expression  . 
+
+
+State 115:
+58: expression -> expression '+' expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6 (removed by precedence):   On '+' to state 94
+  7 (removed by precedence):   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 58: expression -> expression '+' expression  . 
+
+
+State 116:
+59: expression -> expression '-' expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6 (removed by precedence):   On '+' to state 94
+  7 (removed by precedence):   On '-' to state 95
+  8:   On '*' to state 96
+  9:   On '/' to state 97
+  Reduce by 59: expression -> expression '-' expression  . 
+
+
+State 117:
+60: expression -> expression '*' expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6 (removed by precedence):   On '+' to state 94
+  7 (removed by precedence):   On '-' to state 95
+  8 (removed by precedence):   On '*' to state 96
+  9 (removed by precedence):   On '/' to state 97
+  Reduce by 60: expression -> expression '*' expression  . 
+
+
+State 118:
+61: expression -> expression '/' expression  . 
+52: expression -> expression  . LE expression 
+53: expression -> expression  . GE expression 
+54: expression -> expression  . LT expression 
+55: expression -> expression  . GT expression 
+56: expression -> expression  . NE expression 
+57: expression -> expression  . EQ expression 
+58: expression -> expression  . '+' expression 
+59: expression -> expression  . '-' expression 
+60: expression -> expression  . '*' expression 
+61: expression -> expression  . '/' expression 
+  0 (removed by precedence):   On LE to state 88
+  1 (removed by precedence):   On GE to state 89
+  2 (removed by precedence):   On LT to state 90
+  3 (removed by precedence):   On GT to state 91
+  4 (removed by precedence):   On NE to state 92
+  5 (removed by precedence):   On EQ to state 93
+  6 (removed by precedence):   On '+' to state 94
+  7 (removed by precedence):   On '-' to state 95
+  8 (removed by precedence):   On '*' to state 96
+  9 (removed by precedence):   On '/' to state 97
+  Reduce by 61: expression -> expression '/' expression  . 
+
+
+State 119:
+62: expression -> '(' DATA_TYPE ')'  . atomic_expression 
+  0:   On atomic_expression to state 125
+  1:   On variable to state 77
+  2:   On constant to state 78
+  3:   On '(' to state 101
+  4:   On function_call to state 79
+  5:   On NAME to state 69
+  6:   On INTEGER_NUMBER to state 80
+  7:   On FLOAT_NUMBER to state 81
+
+
+State 120:
+46: atomic_expression -> '(' expression ')'  . 
+  Reduce by 46: atomic_expression -> '(' expression ')'  . 
+
+
+State 121:
+40: if_else_statement -> IF '(' expression ')'  . goto_statement ELSE goto_statement 
+  0:   On goto_statement to state 126
+  1:   On GOTO to state 65
+
+
+State 122:
+38: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+  Reduce by 38: assignment_statement -> variable ASSIGN_OP expression ';'  . 
+
+
+State 123:
+50: function_call -> NAME '(' argument_list ')'  . 
+  Reduce by 50: function_call -> NAME '(' argument_list ')'  . 
+
+
+State 124:
+23: one_or_more_argument_list -> one_or_more_argument_list ','  . argument 
+  0:   On argument to state 127
+  1:   On NAME to state 108
+
+
+State 125:
+62: expression -> '(' DATA_TYPE ')' atomic_expression  . 
+  Reduce by 62: expression -> '(' DATA_TYPE ')' atomic_expression  . 
+
+
+State 126:
+40: if_else_statement -> IF '(' expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 128
+
+
+State 127:
+23: one_or_more_argument_list -> one_or_more_argument_list ',' argument  . 
+  Reduce by 23: one_or_more_argument_list -> one_or_more_argument_list ',' argument  . 
+
+
+State 128:
+40: if_else_statement -> IF '(' expression ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 129
+  1:   On GOTO to state 65
+
+
+State 129:
+40: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+  Reduce by 40: if_else_statement -> IF '(' expression ')' goto_statement ELSE goto_statement  . 
+
+
+
