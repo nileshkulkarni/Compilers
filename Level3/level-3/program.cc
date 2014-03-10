@@ -95,6 +95,7 @@ Procedure * Program::get_procedure(string name)
 	
 	return NULL;
 }
+
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
 	map<string, Procedure *>::iterator i;

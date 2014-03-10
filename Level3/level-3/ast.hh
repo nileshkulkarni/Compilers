@@ -318,7 +318,23 @@ public:
     Data_Type get_data_type();
 	
 	void print_ast(ostream & file_buffer);
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+class Function_call_Ast:public Ast{
+	
+	list<Ast *> arguments;
+	string proc;
+	
+public:
+	Function_call_Ast(list<Ast *> arguments_ , string proc_);
+	~Function_call_Ast();
+	
+	Data_Type get_data_type();
+	void print_ast(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
@@ -328,13 +344,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////
 class Return_Ast:public Ast
 {
+	Ast *exp;
+
+	
 public:
 	Return_Ast();
+	Return_Ast(Ast *exp_);
 	~Return_Ast();
 
+	Data_Type get_data_type();
 	void print_ast(ostream & file_buffer);
 
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
+		Eval_Result arg = exp->evaluate(eval_env , file_buffer);
+	}
 };
 
 #endif
