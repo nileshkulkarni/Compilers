@@ -227,7 +227,6 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	{	file_buffer<<"\n";
 		result = &(current_bb->evaluate(eval_env, file_buffer));
 		
-		
 		if(result->get_result_enum() == return_result)
 			break;
 		
@@ -282,6 +281,6 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer , list<Eval_Result_Ret> 
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
 	eval_env.print(file_buffer);
-	result->set_variable_status(true);
+	//cout<<"here ?????????????? :"<<(result==NULL)<<" : "<<result->get_result_enum()<<endl;
 	return *result;
 }

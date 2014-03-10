@@ -71,6 +71,8 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 	list <Ast *>::iterator i;
 	for (i = statement_list.begin(); i != statement_list.end(); i++)
 	{
+		
+		
 		if((*i) == NULL)
 			report_error ("Ast pointer seems to be NULL", NOLINE);
 
@@ -78,8 +80,12 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 		
 		if(result->get_result_enum() == goto_result)
 			break;
+		
+		if(result->get_result_enum() == return_result)
+			break;	
 		 
 	}
-
-	return *result;
+	
+	//cout<<"Going outside of Basic_block"<<endl;
+    return *result;
 }

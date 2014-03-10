@@ -155,23 +155,15 @@ void Symbol_Table::create(Local_Environment & parameter_variables_table , list<E
 		assert((*i)->get_data_type() == (*k).data_type);
 		if((*i)->get_data_type() == int_data_type){
 			Eval_Result_Value_Int * j = new Eval_Result_Value_Int();
-			if (scope == global)
-			{
-				j->set_variable_status(true);
-				j->set_value(k->int_ret);
-			}
-
+			j->set_variable_status(true); //Note that scope is always local
+			j->set_value(k->int_ret);
 			parameter_variables_table.put_variable_value(*j, name);
 		}
 		
 		else if((*i)->get_data_type() == float_data_type){
 			Eval_Result_Value_Float * j = new Eval_Result_Value_Float();
-			if (scope == global)
-			{
-				j->set_variable_status(true);
-				j->set_value(k->float_ret);
-			}
-
+			j->set_variable_status(true);
+			j->set_value(k->float_ret);
 			parameter_variables_table.put_variable_value(*j, name);
 		}
 	}

@@ -295,6 +295,7 @@ bool Eval_Result_Value_Return::is_variable_defined()
 void Eval_Result_Value_Return::set_value(Eval_Result_Ret num){
 	
 	value  = num;
+	defined = true;
 }
 
 Eval_Result_Ret Eval_Result_Value_Return::get_value()

@@ -230,6 +230,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 	}
 
 	Eval_Result * result = interpreter_global_table.get_variable_value(variable_name);
+	result->set_variable_status(true);
 	return *result;
 }
 
@@ -612,7 +613,7 @@ Eval_Result &Expression_Ast :: evaluate(Local_Environment & eval_env, ostream & 
 		}
 		
 		result.set_value(res);
-        return result;
+		return result;
 }
 
 
@@ -696,7 +697,7 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 		}
 	
 		result.set_value(res);
-        return result;
+		return result;
 }
 
 
@@ -744,6 +745,11 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 		else if(node_data_type == int_data_type){
 			temp = new Eval_Result_Value_Int();
 		}
+		else{
+			assert(node_data_type == void_data_type);
+			temp = new Eval_Result_Value_Return;
+		}
+		
 	Eval_Result &result = *temp;
 	
 	Procedure * referred_procedure = program_object.get_procedure(proc);
@@ -752,7 +758,8 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	list<Eval_Result_Ret> evaluated_arguments;
 	list<Ast *>::iterator it;
 	for(it=arguments.begin();it!=arguments.end();it++){
-		evaluated_arguments.push_back((*it)->evaluate(eval_env , file_buffer).get_value());
+		Eval_Result_Ret t1 = (*it)->evaluate(eval_env , file_buffer).get_value();
+		evaluated_arguments.push_back(t1);
 	}
 	//cout<<"About to evaluate function_call : "<<endl;
 	Eval_Result &temp2 = referred_procedure->evaluate(file_buffer , evaluated_arguments);
