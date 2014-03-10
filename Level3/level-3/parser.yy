@@ -57,6 +57,7 @@
 
 
 %type <symbol_table> declaration_statement_list
+%type <symbol_table> parameter_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
@@ -122,11 +123,10 @@ procedure_declaration :
                           program_object.variable_in_proc_map_check(*$2);
                         
                           current_procedure= new Procedure($1,*$2);
-                          current_procedure->set_local_list(*$4)
+                          current_procedure->set_local_list(*$4);
                           program_object.set_procedure_map(*current_procedure);
                           delete $2;
-
-                      }
+					 }
                       |
 					  VOID NAME '(' parameter_list ')' ';'
                       {
@@ -137,8 +137,8 @@ procedure_declaration :
 
                           program_object.variable_in_proc_map_check(*$2);
                         
-                          current_procedure= new Procedure($1,*$2);
-                          current_procedure->set_local_list(*$4)
+                          current_procedure= new Procedure(Data_Type::void_data_type,*$2);
+                          current_procedure->set_local_list(*$4);
                           delete $2;
 
                       }
@@ -180,7 +180,10 @@ procedure_name:
          }
             
         current_procedure = P;
-        return_statement_used_f_procedure_map(*current_procedure);;
+        //return_statement_used_f_procedure_map(*current_procedure);
+     }
+;     
+     
 
 procedure_body:
 	'{' 
@@ -223,14 +226,12 @@ procedure_body:
 
 parameter_list : one_or_more_parameter_list
                {
-                    $$ = $1
-
-                }
+                    $$ = $1;
+               }
               |
               {
                 $$  = new Symbol_Table();
-
-            }
+			  }
 
 ; 
 
@@ -239,7 +240,7 @@ one_or_more_parameter_list :
 				one_or_more_parameter_list ',' parameter
                 {
                     if($1 == NULL){
-                        report_internal_error("Parameter list is null ") 
+                        report_internal_error("Parameter list is null ") ;
                     }
                     
                     $1->variable_in_symbol_list_check($3->get_variable_name());
@@ -665,17 +666,12 @@ DATA_TYPE : FLOAT{
         |DOUBLE{
             Data_Type data_type = double_data_type;             
             $$ = data_type;
-
-        
         }
 
         |INTEGER{
             Data_Type data_type = int_data_type;             
             $$ = data_type;
-
-        
-        }
-
+		}
 ;
 
 variable:
@@ -695,14 +691,9 @@ variable:
 			int line = get_line_number();
 			report_error("Variable has not been declared", line);
 		}
-
 		$$ = new Name_Ast(*$1, var_table_entry);
-
 		delete $1;
-	
-    }
-	
-			
+   }
 ;
 
 constant:
@@ -710,17 +701,12 @@ constant:
 	{
 		$$ = new Number_Ast<int>($1, int_data_type);
 		//cout<<"$1 : "<<$1<<endl;
-
-	
-    }
+	}
 	
 	|
 	FLOAT_NUMBER
 	{
 		$$ = new Number_Ast<int>($1, int_data_type);
 		//cout<<"$1 : "<<$1<<endl;
-
-	
-    }
-	
-	;
+	}
+;
