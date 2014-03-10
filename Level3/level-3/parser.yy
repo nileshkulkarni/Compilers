@@ -180,7 +180,7 @@ procedure_name:	NAME '(' parameter_list ')'
         }
 
 
-         if(P->check_parameter_list(*$3)){
+         if(!P->check_parameter_list(*$3)){
             report_error("Parameters in definitions and declartion do not match()",get_line_number());
          }
             

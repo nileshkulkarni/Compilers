@@ -99,13 +99,20 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
 			&& ((*it_local)->get_data_type() == (*it_new)->get_data_type()))
             continue;
             
+        
         return false;
 	}
+	
+	if(it_local==local_symbol_table_list.end()) {
+		cout<<"Here \n";
 
-    if(it_local==local_symbol_table_list.end() && it_new == new_symbol_table_list.end()){
-        return true;
-    }
-    return false;
+		if(it_new == new_symbol_table_list.end()){
+				cout<<"Here123 \n";
+			return true;
+		}
+	}
+	
+	    return false;
 }
 
 void Procedure::append_local_list(Symbol_Table & new_list)
