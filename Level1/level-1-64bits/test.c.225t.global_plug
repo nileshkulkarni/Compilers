@@ -1,0 +1,26 @@
+
+;; Function man (man)
+
+
+man ()
+{
+  int b;
+  int a;
+
+<bb 2>:
+  a = 4;
+  b = 3;
+  if (a > b)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+<bb 3>:
+  a = 6;
+
+<bb 4>:
+  return;
+
+}
+
+

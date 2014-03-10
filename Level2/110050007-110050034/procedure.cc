@@ -171,7 +171,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		
 		if(result->get_result_enum() == goto_result){
 			assert(result->is_variable_defined());
-			current_bb = get_bb_by_number(result->get_value()); 	
+			current_bb = get_bb_by_number(replace(result->get_value())); 	
 		}
 		else
 			current_bb = get_next_bb(*current_bb);		

@@ -1,0 +1,26 @@
+
+;; Function man (man)
+
+Released 0 names, 0.00%
+man ()
+{
+  int b;
+  int a;
+
+<bb 2>:
+  a_1 = 4;
+  b_2 = 3;
+  if (a_1 > b_2)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+<bb 3>:
+  a_3 = 6;
+
+<bb 4>:
+  return;
+
+}
+
+

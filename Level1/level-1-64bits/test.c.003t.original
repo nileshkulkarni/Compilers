@@ -1,0 +1,18 @@
+
+;; Function man (null)
+;; enabled by -tree-original
+
+
+{
+  int a = 4;
+  int b = 3;
+
+    int a = 4;
+    int b = 3;
+  if (a > b)
+    {
+      a = 6;
+    }
+}
+
+

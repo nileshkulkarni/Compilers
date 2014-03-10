@@ -71,6 +71,7 @@ bool Procedure::check_for_undefined_blocks(std::set<int> bb, std::set<int> gotoN
 
     return true;
 }
+
 void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 {
 	basic_block_list = bb_list;

@@ -57,8 +57,11 @@ Data_Type Ast::get_data_type()
 }
 
 
+string Ast::get_name(){
 
+	report_internal_error("Should not reach, Ast : print_value");
 
+}
 
 
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
@@ -181,7 +184,9 @@ void Name_Ast::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
 		file_buffer<<setprecision(4)<<R.double_ret; 
 }
 
-
+void Name_Ast::get_name(){
+    return variable_name; 
+}
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);

@@ -410,7 +410,9 @@ executable_statement_list:
 	*/
     }
 |   
-    assignment_statement_list goto_statement {/*
+    assignment_statement_list goto_statement 
+    {/*
+
 		// Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
@@ -424,7 +426,8 @@ executable_statement_list:
     */
     } 
 | 
-   assignment_statement_list if_else_statement{/*
+   assignment_statement_list if_else_statement
+   {/*
 		if ($1 != NULL)
 			$$ = $1;
 

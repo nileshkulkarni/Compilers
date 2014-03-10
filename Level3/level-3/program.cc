@@ -79,6 +79,17 @@ void Program::variable_in_proc_map_check(string variable, int line)
 		report_error("Variable name cannot be same as procedure name", line);
 }
 
+Procedure * Program::get_procedure(string name)
+{
+	map<string, Procedure *>::iterator i;
+	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+		if (i->second != NULL && i->second->get_proc_name() == name)
+				return i->second;
+	}
+	
+	return NULL;
+}
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
 	map<string, Procedure *>::iterator i;

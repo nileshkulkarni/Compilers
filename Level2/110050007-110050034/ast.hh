@@ -26,6 +26,7 @@
 
 #include<string>
 #include <assert.h>
+#define replaceRet(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
 
 
 
@@ -33,6 +34,12 @@
 #define AST_NODE_SPACE "            "
 #define AST_CONDITION_SPACE "               "
 using namespace std;
+
+
+
+
+
+
 
 class Ast;
 
@@ -90,6 +97,7 @@ class Name_Ast:public Ast
 {
 	string variable_name;
 	Symbol_Table_Entry variable_symbol_entry;
+	void printFormatted(ostream & file_buffer , Eval_Result_Ret R);
 
 public:
 	Name_Ast(string & name, Symbol_Table_Entry & var_entry);
@@ -189,8 +197,9 @@ public:
 		PLUS,
 		MINUS,
 		MULT,
-		DIV
-		
+		DIV,
+		UMINUS,
+		UPLUS	
 	};
 private:
 
@@ -204,6 +213,9 @@ public:
 
 
 	Expression_Ast(Ast * _lhs , Ast *  _rhs , OperatorType _op);
+	Expression_Ast(Ast * _atomic_exp , Data_Type _T);
+	
+	
 	~Expression_Ast();
 
 	Data_Type get_data_type();
@@ -215,9 +227,46 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 };
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+	
+class UnaryExpression_Ast:public Ast
+{
+	Ast *exp;
+	Expression_Ast::OperatorType op;
+
+public:
+	UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op);
+	~UnaryExpression_Ast();
+
+	void printOperator(ostream& file_buffer,Expression_Ast::OperatorType op);
+    
+	Data_Type get_data_type();
+	void print_ast(ostream & file_buffer);
+
+	void print_value(Local_Environment & eval_env, ostream & file_buffer);
+	
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
+
+
+
+
+
+
+
+/*
 class Type_Casted_Ast:public Ast{
-	
-	
 public:
 
 	enum OperatorType{
@@ -235,11 +284,7 @@ public:
 private:
 	Ast *ast;
 		
-		
-	
 public:
-
-
 	Type_Casted_Ast(Ast * ast , Data_Type data_type);
 	~Type_Casted_Ast();
 
@@ -251,7 +296,7 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 };
-
+*/
 
 
 
@@ -265,6 +310,8 @@ template <class T>
 class Number_Ast:public Ast
 {
 	T constant;
+	void printFormatted(ostream & file_buffer , Eval_Result_Ret R);
+
 
 public:
 	Number_Ast(T number, Data_Type constant_data_type);
@@ -283,7 +330,6 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////
 class Return_Ast:public Ast
 {
-
 public:
 	Return_Ast();
 	~Return_Ast();

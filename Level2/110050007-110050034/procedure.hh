@@ -24,6 +24,8 @@
 #ifndef PROCEDURE_HH
 #define PROCEDURE_HH
 
+#define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
+
 #include<string>
 #include<map>
 #include<list>

@@ -1,0 +1,6 @@
+
+;; Function man (man)
+
+Analyzing function body size: man
+Overall function body time: 4-2 size: 5-3
+With function call overhead time: 4-13 size: 5-5
