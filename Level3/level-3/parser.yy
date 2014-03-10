@@ -55,10 +55,14 @@
 %left '+' '-'
 %left '*' '/'
 
-
-%type <symbol_table> declaration_statement_list
 %type <symbol_table> parameter_list
+%type <symbol_entry> parameter
+%type <symbol_table> one_or_more_parameter_list
+%type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
+%type <ast_list> argument_list
+%type <ast> argument
+%type <ast_list> one_or_more_argument_list
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
@@ -156,8 +160,7 @@ procedure : procedure_name procedure_body
 
 
 
-procedure_name:
-	NAME '(' parameter_list ')'
+procedure_name:	NAME '(' parameter_list ')'
 	{
         
          Procedure *P = program_object->get_procedure(*$1);
@@ -176,7 +179,7 @@ procedure_name:
 
 
          if(P->check_parameter_list(*$3)){
-            report_error("Parameters in definitions and declartion do not match());
+            report_error("Parameters in definitions and declartion do not match()");
          }
             
         current_procedure = P;
@@ -186,28 +189,22 @@ procedure_name:
      
 
 procedure_body:
-	'{' 
-	declaration_statement_list 
-    {
+	'{'  declaration_statement_list basic_block_list '}' {
 		current_procedure->append_local_list(*$2);
         delete $2;
-    }
-	
-    basic_block_list
-	{
+
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
 
-		current_procedure->set_basic_block_list(*$4);
+		current_procedure->set_basic_block_list(*$3);
         
         //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
-		delete $4;
+		delete $3;
         	
     }
-    '}'
 |
 	'{' basic_block_list '}'
 	{
@@ -217,10 +214,10 @@ procedure_body:
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
 
-		current_procedure->set_basic_block_list(*$4);
+		current_procedure->set_basic_block_list(*$2);
         
         //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
-		delete $4;
+		delete $2;
     }
 ;
 
@@ -267,7 +264,14 @@ parameter : DATA_TYPE NAME{
 
 
 argument_list : one_or_more_argument_list
-              |
+			  {
+				$$ = $1;
+			  }
+            |
+              {
+               $$ = new list<Ast *>;
+              }
+              
 ; 
               
 
@@ -276,6 +280,7 @@ one_or_more_argument_list :one_or_more_argument_list ',' argument
                 if($1 ==NULL){
                     report_internal_error(" argument list is null");
                 }
+                $$ = $1;
                 $$->push_back($3);
 			  }
               |
@@ -285,6 +290,7 @@ one_or_more_argument_list :one_or_more_argument_list ',' argument
                     $$->push_back($1);
               }
 ;
+
 
 argument : expression
          {  
@@ -312,7 +318,7 @@ declaration_statement_list:
     }
 	
 |
-	declaration_statement_list declaration_statement
+	declaration_statement_list	declaration_statement
 	{
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
@@ -382,14 +388,10 @@ basic_block_list:
          
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-        
-	
     }
 	
-	
-	
-	
 ;
+
 
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
@@ -401,54 +403,39 @@ basic_block:
 		{
 			list<Ast *> * ast_list = new list<Ast *>;
 			$$ = new Basic_Block($1, *ast_list);
-
 		}
-
-        bbNo.insert($1);
-
-	
-    
-    }
+		bbNo.insert($1);
+	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-		$$ = $1;;
-	
-    }
+		$$ = $1;
+	}
 |
 	assignment_statement_list return_statement
 	{
 		Ast * ret = new Return_Ast();
-
 		return_statement_used_flag = true;	
         // Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
 			$$ = $1;
-
 		else
 			$$ = new list<Ast *>;
-
 		$$->push_back(ret);
-	
-    }
+	}
 |   
     assignment_statement_list goto_statement  
     {
-
 		// Current procedure has an occurrence of return statement
-
 		if ($1 != NULL)
 			$$ = $1;
-
 		else
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-    
-    
     } 
 | 
    assignment_statement_list if_else_statement
@@ -480,8 +467,8 @@ assignment_statement_list:   {
 
         $$->push_back($2);
     }
-
 ;
+
 
 assignment_statement:
 	variable ASSIGN_OP expression ';'
@@ -497,11 +484,10 @@ assignment_statement:
 
 ;
 
+
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
                   $$ =new IfElse_Ast($3,(Goto_Ast*)$5,(Goto_Ast*)$7);   
                  }
-
-
 ;
 
 
@@ -514,7 +500,6 @@ return_statement: RETURN ';'
 goto_statement: GOTO BASIC_BLOCK ';'  {
                 $$ =  new Goto_Ast($2);
                 gotoNo.insert($2);
-              
               }
 
 ; 
@@ -534,7 +519,6 @@ atomic_expression: variable{
      '(' expression ')'{
             $$ = $2;
 
-        
         }
     |
     function_call
@@ -562,9 +546,9 @@ function_call : NAME '(' argument_list ')' {
             }
 ;
 
+
 expression: unary_expression{
             $$ = $1;
-          
           }
 
     | expression LE expression{
