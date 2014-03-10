@@ -748,7 +748,8 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 		else{
 			assert(node_data_type == void_data_type);
 			temp = new Eval_Result_Value_Return;
-		}
+			temp->set_result_enum(void_result);
+	   }
 		
 	Eval_Result &result = *temp;
 	
@@ -764,6 +765,8 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	//cout<<"About to evaluate function_call : "<<endl;
 	Eval_Result &temp2 = referred_procedure->evaluate(file_buffer , evaluated_arguments);
 	result.set_value(temp2.get_value());
+		
+	
 	//cout<<"Evaluating Function_call : Done "<<endl;
 	return result;
 }
