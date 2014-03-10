@@ -217,15 +217,14 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	
 	Eval_Result * result = NULL;
 
-	file_buffer << PROC_SPACE << "Evaluating Procedure " << name << "\n";
+	file_buffer << PROC_SPACE << "Evaluating Procedure << " << name << " >>\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
 	eval_env.print(file_buffer);
 	file_buffer << "\n";
 	
 	Basic_Block * current_bb = &(get_start_basic_block());
 	while (current_bb)
-	{	file_buffer<<"\n";
-		result = &(current_bb->evaluate(eval_env, file_buffer));
+	{	result = &(current_bb->evaluate(eval_env, file_buffer));
 		
 		if(result->get_result_enum() == return_result)
 			break;
@@ -239,7 +238,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	}
 
 	file_buffer << "\n\n";
-	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name << " >>\n";
 	eval_env.print(file_buffer);
 	result->set_variable_status(true);
 
@@ -256,7 +255,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer , list<Eval_Result_Ret> 
 	
 	Eval_Result * result = NULL;
 
-	file_buffer << PROC_SPACE << "Evaluating Procedure " << name << "\n";
+	file_buffer << PROC_SPACE << "Evaluating Procedure << " << name << " >>\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
 	eval_env.print(file_buffer);
 	file_buffer << "\n";
@@ -279,7 +278,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer , list<Eval_Result_Ret> 
 	}
 
 	file_buffer << "\n\n";
-	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name <<" >>\n";
 	eval_env.print(file_buffer);
 	//cout<<"here ?????????????? :"<<(result==NULL)<<" : "<<result->get_result_enum()<<endl;
 	return *result;

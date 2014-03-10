@@ -739,6 +739,7 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	Eval_Result *temp;
 		if(node_data_type == float_data_type){
 			temp = new Eval_Result_Value_Float();
+			
 		}
 		else if(node_data_type == double_data_type){
 			temp = new Eval_Result_Value_Double();
@@ -766,7 +767,9 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	//cout<<"About to evaluate function_call : "<<endl;
 	Eval_Result &temp2 = referred_procedure->evaluate(file_buffer , evaluated_arguments);
 	result.set_value(temp2.get_value());
-		
+	if(node_data_type == float_data_type || node_data_type == int_data_type){
+		file_buffer<<AST_NODE_SPACE <<"return : " << replace(result.get_value())<< " \n";
+	}
 	
 	//cout<<"Evaluating Function_call : Done "<<endl;
 	return result;
