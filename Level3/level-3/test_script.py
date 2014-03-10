@@ -27,7 +27,7 @@ for f in cfgFiles:
     os.system(command) 
     command = "./cfglp -ast -d " + f + " > generated " 
     os.system(command)
-    os.system("diff -b -B -w expected generated");
+    os.system("diff -b -B  expected generated");
 '''
 error_files=[]
 for f in files:

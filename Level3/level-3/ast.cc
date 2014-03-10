@@ -727,6 +727,7 @@ void Function_call_Ast::print_ast(ostream & file_buffer){
 	list<Ast *>::iterator it;
 	for(it = arguments.begin();it != arguments.end(); it++){
 		file_buffer<<"\n";
+		file_buffer<<AST_NODE_SPACE;
 		(*it)->print_ast(file_buffer);
 	}
 	file_buffer<<")";
