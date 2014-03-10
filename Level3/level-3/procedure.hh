@@ -57,7 +57,8 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	list<Basic_Block *> basic_block_list;
-
+    set<int> bbs;
+    set<int> gotos;
 public:
 	Procedure(Data_Type proc_return_type, string proc_name);
 	~Procedure();
