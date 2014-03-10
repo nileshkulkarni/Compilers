@@ -136,28 +136,36 @@ program:
 procedure_declaration_list :procedure_declaration_list procedure_declaration 
 							|	
 							procedure_declaration
-                                
-
-
-                            
 ;
 
 
 
 procedure_declaration :
                       DATA_TYPE NAME '(' parameter_list ')' ';'{
-                      // check if the procedure already their in the list?
-                      //already check for the name in declaration list in NAME
-                      // not sure where to put the name in symbol table or in in proc_map
-                      program_object.variable_in_proc_map_check($2->get_name(),get_line_number());
+                      if(program_object.variable_in_symbol_list_check(*$2)){
+                            report_error("Variable name matched procedure", get_line_number());
+                      
+                      }
+
+                      program_object.variable_in_proc_map_check(*$2);
                     
-                      Procedure *P = new Procedure($1,$2->get_name());
-                      P->set_local_list($4)
+                      current_procedure= new Procedure($1,*$2);
+                      current_procedure->set_local_list(*$4)
                       delete $2;
 
-                    }
+                      }
                       |
 					  VOID NAME '(' parameter_list ')' ';'{
+                      if(program_object.variable_in_symbol_list_check(*$2)){
+                            report_error("Variable name matched procedure", get_line_number());
+                      
+                      }
+
+                      program_object.variable_in_proc_map_check(*$2);
+                    
+                      current_procedure= new Procedure($1,*$2);
+                      current_procedure->set_local_list(*$4)
+                      delete $2;
 
                       }
 ;
@@ -165,24 +173,10 @@ procedure_declaration :
 
 procedure_list: procedure_list procedure
               |
-              procedure{
-
-                          
-             }
+              procedure
 ;
 
 procedure : procedure_name procedure_body
-          {
-                // check if the procedure already exist in the map
-                 Procedure* P = program_object->get_procedure(                
-                 if(P == NULL){
-                    report_error("Procedure correspoding to the name not found\n");
-                 }
-
-                P-> 
-                // set the basic block list of the process here
-                 
-          }
 ;
 
 
@@ -191,19 +185,26 @@ procedure : procedure_name procedure_body
 procedure_name:
 	NAME '(' parameter_list ')'
 	{
-		cout<<"comes in procedure _name: "<<endl;
-		//current_procedure = new Procedure(void_data_type, *$1);
-	
+         Procedure *P = program_object->get_procedure(*$1);
+         if(P == NULL){
+            report_error("Procedure correspoding to the name not found\n");
+         }
+
+         if(P->check_parameter_list(*$3)){
+            report_error("Parameters in definitions and declartion do not match());
+         }
+            
+        current_procedure = P;
     }
 ;
 
 procedure_body:
 	'{' 
 	declaration_statement_list 
-    {/*
-		current_procedure->set_local_list(*$2);
+    {
+		current_procedure->append_local_list(*$2);
         delete $2;
-	*/
+	
     }
 	
     basic_block_list
@@ -268,18 +269,45 @@ procedure_body:
 
 
 parameter_list : one_or_more_parameter_list
+               {
+                    $$ = $1
+
+                }
               |
+              {
+                $$  = new Symbol_Table();
+
+            }
+
 ; 
 
  
 one_or_more_parameter_list :
 				one_or_more_parameter_list ',' parameter
+                {
+                    if($1 == NULL){
+                        report_internal_error("Parameter list is null ") 
+                    }
+                    
+                    $$->variable_in_symbol_list_check($3->get_variable_name());
+                    if(current_procedure->get_proc_name() == $3->get_variable_name()){
+                        report_error("Variable name cannot be same as the name of the function",get_line_number()); 
+                    }
+
+                    $$->push_symbol($3);
+                }   
 				|
-				parameter
+				parameter{
+                    $$  = new Symbol_Table();
+                    $$->push_symbol($1);
+                }
 ;
 
 
-parameter : DATA_TYPE NAME
+parameter : DATA_TYPE NAME{
+            $$ = new Symbol_Table_Entry(*$2,$1);             
+            delete $2;
+    }
 ;
 
 

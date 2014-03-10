@@ -32,6 +32,7 @@ using namespace std;
 class Symbol_Table;
 class Symbol_Table_Entry;
 class Local_Environment;
+typedef list<Symbol_Table_Entry *> symbol_table_list;
 typedef enum
 {
 	void_data_type,
@@ -63,7 +64,7 @@ public:
 	bool variable_in_symbol_list_check(string variable);
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void global_list_in_proc_map_check(int line);
-
+    symbol_table_list get_symbol_table_list(); 
 	void create(Local_Environment & local_global_variables_table);
 };
 

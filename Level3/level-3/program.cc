@@ -73,6 +73,11 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 	return global_symbol_table.get_symbol_table_entry(variable_name);
 }
 
+void Program::function_in_proc_map_check(string variable, int line)
+{
+	if(procedure_map[variable] != NULL)
+		report_error("Function overloading is not allowed, name cannot be same as previously declared procedure name", line);
+}
 void Program::variable_in_proc_map_check(string variable, int line)
 {
 	if(procedure_map[variable] != NULL)

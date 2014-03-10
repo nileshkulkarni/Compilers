@@ -57,7 +57,9 @@ void Symbol_Table::push_symbol(Symbol_Table_Entry * variable)
 {
 	variable_table.push_back(variable);
 }
-
+void Symbol_Table ::get_symbol_table_list(){
+    return variable_table; 
+}
 void Symbol_Table::global_list_in_proc_map_check(int line)
 {
 	list<Symbol_Table_Entry *>::iterator i;

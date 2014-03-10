@@ -56,9 +56,9 @@ public:
 	Procedure * get_main_procedure(ostream & file_buffer);
 
 	Eval_Result & evaluate();
-
 	bool variable_in_symbol_list_check(string variable);
 	void variable_in_proc_map_check(string symbol, int line);
+	void function_in_proc_map_check(string symbol, int line);
 };
 
 #endif

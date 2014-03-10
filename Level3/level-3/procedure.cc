@@ -76,7 +76,30 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 {
 	basic_block_list = bb_list;
 }
+bool Procedure::check_parameter_list(Symbol_Table& new_list){
+    local_symbol_table_list = local_symbol_table.get_symbol_table_list();
+    new_symbol_table_list = new_symbol_table_list.get_symbol_table_list();
 
+    symbol_table_list::iterator it_local = local_symbol_table_list;
+    symbol_table_list::iterator it_new = new_symbol_table_list.begin();
+
+    for(;it_local!=local_symbol_table_list.end() || it_new !=new_symbol_table_list.end();it_local++,it_new++){
+        //should match at every instant
+        if(((*it_local)->get_variable_name() == (*it_new)->get_variable_name()) && ((*it_local)->get_data_type() == (*it_new)->get_data_type())){
+            continue;
+        return false;
+    }
+
+    if(it_local==local_symbol_table_list && it_new == new_symbol_table_list.end()){
+        return true;
+    }
+    return false;
+}
+void Procedure::append_local_list(Symbol_Table & new_list)
+{
+   local_symbol_table.append_local_list(new_list); 
+
+}
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;

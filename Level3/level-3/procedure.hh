@@ -39,6 +39,16 @@ using namespace std;
 
 extern std::set<int> bbNo;
 extern std::set<int> gotoNo;
+
+typedef struct {
+    Data_Type data_type;
+    string name; 
+
+} parameter;
+
+typedef list<parameter> parameter_list;
+
+
 class Procedure;
 
 class Procedure
@@ -61,6 +71,7 @@ public:
 	void print_ast(ostream & file_buffer);
 	bool check_for_undefined_blocks(std::set<int> ,std::set<int>);
 
+    bool Procedure::check_parameter_list(Symbol_Table& new_list);
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	
 	Basic_Block *get_bb_by_number(int n);
