@@ -72,14 +72,12 @@ public:
 	bool check_for_undefined_blocks(std::set<int> ,std::set<int>);
 
     bool Procedure::check_parameter_list(Symbol_Table& new_list);
+	
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
-	
 	Basic_Block *get_bb_by_number(int n);
-	
 	Basic_Block & get_start_basic_block();
-
 	Eval_Result & evaluate(ostream & file_buffer);
-
+	
 	bool variable_in_symbol_list_check(string variable);
 };
 

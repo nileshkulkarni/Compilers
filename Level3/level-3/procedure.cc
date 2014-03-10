@@ -76,6 +76,7 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 {
 	basic_block_list = bb_list;
 }
+
 bool Procedure::check_parameter_list(Symbol_Table& new_list){
     local_symbol_table_list = local_symbol_table.get_symbol_table_list();
     new_symbol_table_list = new_symbol_table_list.get_symbol_table_list();
@@ -95,11 +96,13 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
     }
     return false;
 }
+
 void Procedure::append_local_list(Symbol_Table & new_list)
 {
    local_symbol_table.append_local_list(new_list); 
 
 }
+
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;

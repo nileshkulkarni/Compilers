@@ -696,6 +696,8 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 
 
 
+
+
 ////////////////////////////////////////////////////////////
 Function_call_Ast::Function_call_Ast(list<Ast *> arguments_ , string proc_){
 	arguments = arguments_;
@@ -726,10 +728,17 @@ Function_call_Ast::void print_ast(ostream & file_buffer){
 
 Function_call_Ast::Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
 	
+	Eval_Result & result = *new Eval_Result_Value();
+	
 	procedure * referred_procedure = program_object.get_procedure(proc);
 	assert(referred_procedure!=NULL);
-//	referred_procedure->evaluate(file_buffer);
 	
+	list<Eval_Result_Ret> evaluated_arguments;
+	auto it;
+	for(it=arguments.begin();it!=arguments.end();it++){
+		evaluated_arguments.push_back(*it->evaluate()->get_value());
+	}
+//	referred_procedure->evaluate(file_buffer);
 }
 
 

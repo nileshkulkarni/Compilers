@@ -57,9 +57,11 @@ void Symbol_Table::push_symbol(Symbol_Table_Entry * variable)
 {
 	variable_table.push_back(variable);
 }
+
 void Symbol_Table ::get_symbol_table_list(){
     return variable_table; 
 }
+
 void Symbol_Table::global_list_in_proc_map_check(int line)
 {
 	list<Symbol_Table_Entry *>::iterator i;
@@ -93,6 +95,14 @@ Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
 
 	report_error("variable symbol entry doesn't exist", NOLINE);
 }
+
+
+void Symbol_Table::append_local_list(Symbol_Table & new_list){
+	
+	auto it = variable_table.begin();
+	variable_table.insert(it , new_list.get_symbol_table_list().begin() , new_list.get_symbol_table_list().end());
+}
+
 
 void Symbol_Table::create(Local_Environment & local_global_variables_table)
 {

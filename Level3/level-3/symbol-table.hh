@@ -64,6 +64,7 @@ public:
 	bool variable_in_symbol_list_check(string variable);
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void global_list_in_proc_map_check(int line);
+	void append_local_list(Symbol_Table & new_list); 
     symbol_table_list get_symbol_table_list(); 
 	void create(Local_Environment & local_global_variables_table);
 };
