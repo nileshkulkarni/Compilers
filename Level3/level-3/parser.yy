@@ -139,10 +139,8 @@ procedure_declaration :
                                 report_error("Variable name matched procedure", get_line_number());
                           
                           }
-
-                          program_object.variable_in_proc_map_check(*$2 , get_line_number());
-                        
-                          current_procedure= new Procedure(Data_Type::void_data_type,*$2);
+						  program_object.variable_in_proc_map_check(*$2 , get_line_number());
+						  current_procedure= new Procedure(Data_Type::void_data_type,*$2);
                           current_procedure->set_local_list(*$4);
                           program_object.set_procedure_map(*current_procedure);
                           delete $2;
@@ -164,8 +162,8 @@ procedure : procedure_name procedure_body
 
 procedure_name:	NAME '(' parameter_list ')'
 	{
-        
-         Procedure *P = program_object.get_procedure(*$1);
+		 Procedure *P = program_object.get_procedure(*$1);
+         
          if((*$1) == "main"){
             if(P !=NULL){
                 report_error("Main function declared twice",get_line_number());
@@ -175,6 +173,7 @@ procedure_name:	NAME '(' parameter_list ')'
             program_object.set_procedure_map(*main);
             P = main;
         }
+        
         else if(P == NULL){
                 report_error("Procedure correspoding to the name not found\n",get_line_number());
         }
@@ -191,22 +190,23 @@ procedure_name:	NAME '(' parameter_list ')'
      
 
 procedure_body:
-	'{'  declaration_statement_list basic_block_list '}' {
-		current_procedure->append_local_list(*$2);
-        delete $2;
-
-		if (return_statement_used_flag == false)
+	'{'  declaration_statement_list
 		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
+			current_procedure->append_local_list(*$2);
+			//delete $2;
 		}
-
-		current_procedure->set_basic_block_list(*$3);
-        
-        //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
-		delete $3;
-        	
-    }
+		
+		basic_block_list '}' 
+		{
+			if (return_statement_used_flag == false)
+			{
+				int line = get_line_number();
+				report_error("Atleast 1 basic block should have a return statement", line);
+			}
+			current_procedure->set_basic_block_list(*$4);
+			//int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+			//delete $4;
+	   }
 |
 	'{' basic_block_list '}'
 	{
@@ -219,7 +219,7 @@ procedure_body:
 		current_procedure->set_basic_block_list(*$2);
         
         //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
-		delete $2;
+		//delete $2;
     }
 ;
 
@@ -306,15 +306,15 @@ declaration_statement_list:
 	{
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
-
-		string var_name = $1->get_variable_name();
 		
+		string var_name = $1->get_variable_name();
+			
 		if (current_procedure && current_procedure->get_proc_name() == var_name)
 		{
 			int line = get_line_number();
 			report_error("Variable name cannot be same as procedure name", line);
 		}
-
+			
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
     }
@@ -324,7 +324,6 @@ declaration_statement_list:
 	{
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
-
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($2->get_variable_name(), line);
 
@@ -345,7 +344,6 @@ declaration_statement_list:
 
 			$$ = $1;
 		}
-
 		else
 			$$ = new Symbol_Table();
 
@@ -359,8 +357,7 @@ declaration_statement:
 	{
 		$$ = new Symbol_Table_Entry(*$2, $1);
 		delete $2;
-	
-    }
+	}
 	
 ;
 

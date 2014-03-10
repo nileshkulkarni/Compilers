@@ -104,10 +104,7 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
 	}
 	
 	if(it_local==local_symbol_table_list.end()) {
-		cout<<"Here \n";
-
 		if(it_new == new_symbol_table_list.end()){
-				cout<<"Here123 \n";
 			return true;
 		}
 	}
@@ -118,6 +115,7 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
 void Procedure::append_local_list(Symbol_Table & new_list)
 {
    local_symbol_table.append_local_list(new_list); 
+	
 
 }
 
@@ -144,7 +142,7 @@ Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 
 void Procedure::print_ast(ostream & file_buffer)
 {
-	file_buffer << PROC_SPACE << "Procedure: main" << "\n"; //CHANGE
+	file_buffer << PROC_SPACE << "Procedure: " <<name<< "\n"; //CHANGE
 	list<Basic_Block *>::iterator i;
 	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 		(*i)->print_bb(file_buffer);

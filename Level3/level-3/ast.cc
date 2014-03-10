@@ -717,13 +717,13 @@ Data_Type Function_call_Ast::get_data_type(){
 }
 	
 void Function_call_Ast::print_ast(ostream & file_buffer){
-	file_buffer<<"FN CALL: "<<proc<<"(";
+	file_buffer<<AST_SPACE<<"FN CALL: "<<proc<<"(";
 	list<Ast *>::iterator it;
 	for(it = arguments.begin();it != arguments.end(); it++){
 		file_buffer<<"\n";
 		(*it)->print_ast(file_buffer);
 	}
-	file_buffer<<")"<<endl;
+	file_buffer<<")";
 }
 	
 
@@ -787,7 +787,7 @@ void Return_Ast::print_ast(ostream & file_buffer){
 	
 	file_buffer << AST_SPACE << "Return ";
 	if(node_data_type == void_data_type){
-		file_buffer<<"NOTHING>\n";
+		file_buffer<<"<NOTHING>\n";
 		return;
 	}
 	file_buffer<<"\n";

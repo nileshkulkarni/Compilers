@@ -75,12 +75,13 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 
 void Program::function_in_proc_map_check(string variable, int line)
 {
-	if(procedure_map[variable] != NULL)
+	if(procedure_map.find(variable) != procedure_map.end())
 		report_error("Function overloading is not allowed, name cannot be same as previously declared procedure name", line);
 }
+
 void Program::variable_in_proc_map_check(string variable, int line)
 {
-	if(procedure_map[variable] != NULL)
+	if(procedure_map.find(variable) != procedure_map.end())
 		report_error("Variable name cannot be same as procedure name", line);
 }
 
@@ -114,6 +115,17 @@ void Program::print_ast()
 	ostream & ast_buffer = command_options.get_ast_buffer();
 
 	ast_buffer << "Program:\n";
+	
+	map<string, Procedure *>::iterator it;
+	for(it = procedure_map.begin(); it!=procedure_map.end(); it++){
+		//cout<<"it->first is :"<<it->first<<" : "<<(it->second==NULL)<<endl;
+		if(it->first == "main") continue;
+		if(it->second == NULL) {
+			cout<<"procedure "<<it->first<<" is NULL"<<endl;
+			continue;
+		}
+		(it->second)->print_ast(ast_buffer);
+	}	
 
 	Procedure * main = get_main_procedure(ast_buffer);
 	if (main == NULL)

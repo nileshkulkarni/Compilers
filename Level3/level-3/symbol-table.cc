@@ -74,6 +74,7 @@ void Symbol_Table::global_list_in_proc_map_check(int line)
 
 bool Symbol_Table::variable_in_symbol_list_check(string variable)
 {
+	//cout<<"variable_table size is "<< variable_table.size()<<"\n";
 	list<Symbol_Table_Entry *>::iterator i;
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
@@ -99,8 +100,16 @@ Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
 
 void Symbol_Table::append_local_list(Symbol_Table & new_list){
 	
-	list<Symbol_Table_Entry *>::iterator it = variable_table.end();
-	variable_table.insert(it , new_list.get_symbol_table_list().begin() , new_list.get_symbol_table_list().end());
+
+	list<Symbol_Table_Entry *> new_symbol_table_list = new_list.get_symbol_table_list();
+	//cout<<"Before appending variable table size is" << variable_table.size()<<"\n";	
+	//cout<<"Before appending variable new list table size is" <<new_symbol_table_list.size()<<"\n";	
+
+
+	list<Symbol_Table_Entry *>::iterator it = variable_table.begin();
+	variable_table.insert(it ,  new_symbol_table_list.begin() , new_symbol_table_list.end());
+
+	//cout<<"After appending variable table size is" << variable_table.size()<<"\n";	
 }
 
 
