@@ -82,15 +82,14 @@
 
 %%
 program:
-
+	
 	declaration_statement_list  
-	{
+    procedure_declaration_list 	
+    {
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				
         // No return statement in the current procedure till now
-	
-    }
-    procedure_declaration_list 	
+	}
     procedure_list
         
 
@@ -111,6 +110,9 @@ program:
 ;
 
 
+
+
+
 procedure_declaration_list :procedure_declaration_list procedure_declaration 
 							|	
 							procedure_declaration
@@ -124,8 +126,7 @@ procedure_declaration :
                           
                           }
 
-                          program_object.variable_in_proc_map_check(*$2);
-                        
+                          program_object.variable_in_proc_map_check(*$2 , get_line_number());
                           current_procedure= new Procedure($1,*$2);
                           current_procedure->set_local_list(*$4);
                           program_object.set_procedure_map(*current_procedure);
@@ -139,10 +140,11 @@ procedure_declaration :
                           
                           }
 
-                          program_object.variable_in_proc_map_check(*$2);
+                          program_object.variable_in_proc_map_check(*$2 , get_line_number());
                         
                           current_procedure= new Procedure(Data_Type::void_data_type,*$2);
                           current_procedure->set_local_list(*$4);
+                          program_object.set_procedure_map(*current_procedure);
                           delete $2;
 
                       }
@@ -163,23 +165,23 @@ procedure : procedure_name procedure_body
 procedure_name:	NAME '(' parameter_list ')'
 	{
         
-         Procedure *P = program_object->get_procedure(*$1);
+         Procedure *P = program_object.get_procedure(*$1);
          if((*$1) == "main"){
             if(P !=NULL){
                 report_error("Main function declared twice",get_line_number());
             }
             
             Procedure *main = new Procedure(Data_Type::void_data_type,"main");
-            program_object->set_procedure_map(*main);
+            program_object.set_procedure_map(*main);
             P = main;
         }
         else if(P == NULL){
-                report_error("Procedure correspoding to the name not found\n");
+                report_error("Procedure correspoding to the name not found\n",get_line_number());
         }
 
 
          if(P->check_parameter_list(*$3)){
-            report_error("Parameters in definitions and declartion do not match()");
+            report_error("Parameters in definitions and declartion do not match()",get_line_number());
          }
             
         current_procedure = P;
@@ -541,7 +543,8 @@ unary_expression: atomic_expression{
 
 function_call : NAME '(' argument_list ')' {
                 
-                Ast* func = new Function_call_Ast($1,$3);
+                string s(*($1));
+                Ast* func = new Function_call_Ast(*($3), s);
                 $$ = func;
             }
 ;

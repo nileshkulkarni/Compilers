@@ -24,8 +24,9 @@
 #ifndef AST_HH
 #define AST_HH
 
-#include<string>
+#include <string>
 #include <assert.h>
+
 #define replaceRet(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
 
 
@@ -34,7 +35,6 @@
 #define AST_NODE_SPACE "            "
 #define AST_CONDITION_SPACE "               "
 using namespace std;
-
 
 
 
@@ -355,10 +355,7 @@ public:
 	Data_Type get_data_type();
 	void print_ast(ostream & file_buffer);
 
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result ret = exp->evaluate(eval_env , file_buffer);
-		return ret;
-	}
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 #endif

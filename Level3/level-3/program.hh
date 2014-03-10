@@ -24,9 +24,9 @@
 #ifndef PROGRAM_HH
 #define PROGRAM_HH
 
-#include<string>
-#include<map>
-#include<list>
+#include <string>
+#include <map>
+#include <list>
 
 #define GLOB_SPACE "   "
 

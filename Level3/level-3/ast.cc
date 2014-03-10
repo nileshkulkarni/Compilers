@@ -26,12 +26,14 @@
 
 using namespace std;
 
-#include"user-options.hh"
-#include"error-display.hh"
-#include"local-environment.hh"
-
-#include"symbol-table.hh"
-#include"ast.hh"
+#include "user-options.hh"
+#include "error-display.hh"
+#include "local-environment.hh"
+#include "symbol-table.hh"
+#include "ast.hh"
+#include "basic-block.hh"
+#include "procedure.hh"
+#include "program.hh"
 #include <iomanip>
 
 #define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
@@ -671,7 +673,6 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 		else if(node_data_type == int_data_type){
 			temp = new Eval_Result_Value_Int();
 		}
-		
 		Eval_Result &result = *temp;
 		Eval_Result_Ret res;
 		res.data_type = node_data_type;
@@ -702,7 +703,7 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 Function_call_Ast::Function_call_Ast(list<Ast *> arguments_ , string proc_){
 	arguments = arguments_;
 	proc = proc_;
-	procedure * referred_procedure = program_object.get_procedure(proc);
+	Procedure * referred_procedure = program_object.get_procedure(proc);
 	assert(referred_procedure!=NULL);
 	node_data_type = referred_procedure->get_return_type();
 }
@@ -711,14 +712,14 @@ Function_call_Ast::~Function_call_Ast(){
 }
 
 	
-Function_call_Ast::Data_Type get_data_type(){
+Data_Type Function_call_Ast::get_data_type(){
 	return node_data_type;
 }
 	
-Function_call_Ast::void print_ast(ostream & file_buffer){
+void Function_call_Ast::print_ast(ostream & file_buffer){
 	file_buffer<<"FN CALL: "<<proc<<"(";
 	list<Ast *>::iterator it;
-	for(it = arguments.begin();it! = arguments.end(); it++){
+	for(it = arguments.begin();it != arguments.end(); it++){
 		file_buffer<<"\n";
 		(*it)->print_ast(file_buffer);
 	}
@@ -726,17 +727,27 @@ Function_call_Ast::void print_ast(ostream & file_buffer){
 }
 	
 
-Function_call_Ast::Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
+Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
 	
-	Eval_Result & result = *new Eval_Result_Value();
-	
-	procedure * referred_procedure = program_object.get_procedure(proc);
+	Eval_Result *temp;
+		if(node_data_type == float_data_type){
+			temp = new Eval_Result_Value_Float();
+		}
+		else if(node_data_type == double_data_type){
+			temp = new Eval_Result_Value_Double();
+		}
+		else if(node_data_type == int_data_type){
+			temp = new Eval_Result_Value_Int();
+		}
+	Eval_Result &result = *temp;
+		
+	Procedure * referred_procedure = program_object.get_procedure(proc);
 	assert(referred_procedure!=NULL);
 	
 	list<Eval_Result_Ret> evaluated_arguments;
-	auto it;
+	list<Ast *>::iterator it;
 	for(it=arguments.begin();it!=arguments.end();it++){
-		evaluated_arguments.push_back(*it->evaluate()->get_value());
+		evaluated_arguments.push_back((*it)->evaluate(eval_env , file_buffer).get_value());
 	}
 //	referred_procedure->evaluate(file_buffer);
 }
@@ -766,11 +777,17 @@ Return_Ast::~Return_Ast()
 {}
 
 
+Data_Type Return_Ast::get_data_type(){
+	return node_data_type;
+}
+
+
+
 void Return_Ast::print_ast(ostream & file_buffer){
 	
 	file_buffer << AST_SPACE << "Return ";
 	if(node_data_type == void_data_type){
-		file_buffer<<<"NOTHING>\n";
+		file_buffer<<"NOTHING>\n";
 		return;
 	}
 	file_buffer<<"\n";
@@ -785,7 +802,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 	
 	if(node_data_type != void_data_type){
 		assert(exp!=NULL);
-		ret = (exp->evaluate())->get_value();
+		ret = (exp->evaluate(eval_env, file_buffer)).get_value();
 	}
 	else{
 		assert(exp==NULL);
