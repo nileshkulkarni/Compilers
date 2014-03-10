@@ -290,9 +290,10 @@ bool Eval_Result_Value_Return::is_variable_defined()
 {
 	return defined;
 }
-void Eval_Result_Value_Return::set_value(Eval_Result_Ret num)
-{
+
+void Eval_Result_Value_Return::set_value(Eval_Result_Ret num){
 	
+	value  = num;
 }
 
 Eval_Result_Ret Eval_Result_Value_Return::get_value()
@@ -301,6 +302,7 @@ Eval_Result_Ret Eval_Result_Value_Return::get_value()
 	res.data_type = return_data_type;
 	return res;
 }
+
 void Eval_Result_Value_Return::set_result_enum(Result_Enum res)
 {
 	result_type = res;

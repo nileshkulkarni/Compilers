@@ -62,7 +62,6 @@ struct Eval_Result_Ret{
 	double double_ret;
 	Data_Type data_type;
 	
-	
 	Eval_Result_Ret(){
 		int_ret =-1;
 	}
@@ -203,9 +202,10 @@ public:
 
 class Eval_Result_Value_Return:public Eval_Result_Value
 {
+	Eval_Result_Ret value;
 	bool defined;
 public:
-	Eval_Result_Value_Return();
+	Eval_Result_Value_Return();  //makes a void_data_type
 	~Eval_Result_Value_Return();
 
 	void set_value(Eval_Result_Ret number);

@@ -187,6 +187,7 @@ void Name_Ast::printFormatted(ostream & file_buffer , Eval_Result_Ret R){
 void Name_Ast::get_name(){
     return variable_name; 
 }
+
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);
@@ -708,7 +709,9 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 Function_call_Ast::Function_call_Ast(list<Ast *> arguments_ , string proc_){
 	arguments = arguments_;
 	proc = proc_;
-	//set node_data_type
+	procedure * referred_procedure = program_object.get_procedure(proc);
+	assert(referred_procedure!=NULL);
+	node_data_type = referred_procedure->get_return_type();
 }
 
 Function_call_Ast::~Function_call_Ast(){
@@ -730,7 +733,13 @@ Function_call_Ast::void print_ast(ostream & file_buffer){
 }
 	
 
-Function_call_Ast::Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+Function_call_Ast::Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	
+	procedure * referred_procedure = program_object.get_procedure(proc);
+	assert(referred_procedure!=NULL);
+//	referred_procedure->evaluate(file_buffer);
+	
+}
 
 
 
@@ -740,12 +749,14 @@ Function_call_Ast::Eval_Result & evaluate(Local_Environment & eval_env, ostream 
 
 
 //////////////////////////////////////////////////////////////////////////////
-Return_Ast::Return_Ast()
-{
+Return_Ast::Return_Ast(){
+	
 	node_data_type = void_data_type;
 }
 
 Return_Ast::Return_Ast(Ast *exp_){
+	
+	assert(exp_!=NULL);
 	exp = exp_;
 	node_data_type = exp->get_data_type();
 }
@@ -755,9 +766,8 @@ Return_Ast::~Return_Ast()
 {}
 
 
-
-void Return_Ast::print_ast(ostream & file_buffer)
-{
+void Return_Ast::print_ast(ostream & file_buffer){
+	
 	file_buffer << AST_SPACE << "Return ";
 	if(node_data_type == void_data_type){
 		file_buffer<<<"NOTHING>\n";
@@ -768,9 +778,21 @@ void Return_Ast::print_ast(ostream & file_buffer)
 }
 
 
-Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
-{
+Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	
 	Eval_Result & result = *new Eval_Result_Value_Return();
+	Eval_Result_Ret ret;
+	
+	if(node_data_type != void_data_type){
+		assert(exp!=NULL);
+		ret = (exp->evaluate())->get_value();
+	}
+	else{
+		assert(exp==NULL);
+		ret.data_type = void_data_type;
+	}
+	
+	result.set_value(ret);
 	print_ast(file_buffer);
 	return result;
 }
