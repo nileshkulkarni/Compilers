@@ -55,6 +55,14 @@ string Procedure::get_proc_name()
 {
 	return name;
 }
+void Procedure :: add_goto(int bb){
+    gotos.insert(bb);        
+
+}
+void Procedure :: add_bb(int bb){
+      bbs.insert(bb);  
+
+}
 bool Procedure::check_for_undefined_blocks(std::set<int> bb, std::set<int> gotoNo){
     std::set<int>::iterator it;
     for(it = gotoNo.begin();it!=gotoNo.end();it++){

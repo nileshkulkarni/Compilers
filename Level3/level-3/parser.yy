@@ -101,35 +101,8 @@ program:
 |
 
 	procedure_declaration_list  procedure_list
-    /*procedure_name
-	{
-		program_object.set_global_table(*$1);
-		return_statement_used_flag = false;				
-        // No return statement in the current procedure till now
-	
-    }
-	procedure_body
-	{
-		program_object.set_procedure_map(*current_procedure);
-		if ($1)
-			$1->global_list_in_proc_map_check(get_line_number());
-		delete $1;
-
-	
-    }*/
 |
     procedure_list
-/*	procedure_name
-	{
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	
-    }
-	procedure_body
-	{
-		program_object.set_procedure_map(*current_procedure);
-	
-    }
-    */
 ;
 
 
@@ -138,34 +111,35 @@ procedure_declaration_list :procedure_declaration_list procedure_declaration
 							procedure_declaration
 ;
 
-
-
 procedure_declaration :
-                      DATA_TYPE NAME '(' parameter_list ')' ';'{
-                      if(program_object.variable_in_symbol_list_check(*$2)){
-                            report_error("Variable name matched procedure", get_line_number());
-                      
-                      }
+                      DATA_TYPE NAME '(' parameter_list ')' ';'
+                      {
+                          if(program_object.variable_in_symbol_list_check(*$2)){
+                                report_error("Variable name matched procedure", get_line_number());
+                          
+                          }
 
-                      program_object.variable_in_proc_map_check(*$2);
-                    
-                      current_procedure= new Procedure($1,*$2);
-                      current_procedure->set_local_list(*$4)
-                      delete $2;
+                          program_object.variable_in_proc_map_check(*$2);
+                        
+                          current_procedure= new Procedure($1,*$2);
+                          current_procedure->set_local_list(*$4)
+                          program_object.set_procedure_map(*current_procedure);
+                          delete $2;
 
                       }
                       |
-					  VOID NAME '(' parameter_list ')' ';'{
-                      if(program_object.variable_in_symbol_list_check(*$2)){
-                            report_error("Variable name matched procedure", get_line_number());
-                      
-                      }
+					  VOID NAME '(' parameter_list ')' ';'
+                      {
+                          if(program_object.variable_in_symbol_list_check(*$2)){
+                                report_error("Variable name matched procedure", get_line_number());
+                          
+                          }
 
-                      program_object.variable_in_proc_map_check(*$2);
-                    
-                      current_procedure= new Procedure($1,*$2);
-                      current_procedure->set_local_list(*$4)
-                      delete $2;
+                          program_object.variable_in_proc_map_check(*$2);
+                        
+                          current_procedure= new Procedure($1,*$2);
+                          current_procedure->set_local_list(*$4)
+                          delete $2;
 
                       }
 ;
@@ -185,18 +159,28 @@ procedure : procedure_name procedure_body
 procedure_name:
 	NAME '(' parameter_list ')'
 	{
+        
          Procedure *P = program_object->get_procedure(*$1);
-         if(P == NULL){
-            report_error("Procedure correspoding to the name not found\n");
-         }
+         if((*$1) == "main"){
+            if(P !=NULL){
+                report_error("Main function declared twice",get_line_number());
+            }
+            
+            Procedure *main = new Procedure(Data_Type::void_data_type,"main");
+            program_object->set_procedure_map(*main);
+            P = main;
+        }
+        else if(P == NULL){
+                report_error("Procedure correspoding to the name not found\n");
+        }
+
 
          if(P->check_parameter_list(*$3)){
             report_error("Parameters in definitions and declartion do not match());
          }
             
         current_procedure = P;
-    }
-;
+        return_statement_used_f_procedure_map(*current_procedure);;
 
 procedure_body:
 	'{' 
@@ -204,11 +188,10 @@ procedure_body:
     {
 		current_procedure->append_local_list(*$2);
         delete $2;
-	
     }
 	
     basic_block_list
-	{/*
+	{
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -217,56 +200,26 @@ procedure_body:
 
 		current_procedure->set_basic_block_list(*$4);
         
-        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+        //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
 		delete $4;
-	*/
+        	
     }
     '}'
-	{/*
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
-
-		current_procedure->set_basic_block_list(*$4);
-        
-        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
-		delete $4;
-	*/
-    }
 |
 	'{' basic_block_list '}'
 	{
-			cout<<"comes in procedure _name: "<<endl;
-
-	/*
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
 
-		current_procedure->set_basic_block_list(*$2);
-
-		delete $2;
-	*/
+		current_procedure->set_basic_block_list(*$4);
+        
+        //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+		delete $4;
     }
 ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 parameter_list : one_or_more_parameter_list
                {
@@ -289,12 +242,13 @@ one_or_more_parameter_list :
                         report_internal_error("Parameter list is null ") 
                     }
                     
-                    $$->variable_in_symbol_list_check($3->get_variable_name());
+                    $1->variable_in_symbol_list_check($3->get_variable_name());
                     if(current_procedure->get_proc_name() == $3->get_variable_name()){
                         report_error("Variable name cannot be same as the name of the function",get_line_number()); 
                     }
 
-                    $$->push_symbol($3);
+                    $1->push_symbol($3);
+                    $$ = $1;
                 }   
 				|
 				parameter{
@@ -317,11 +271,24 @@ argument_list : one_or_more_argument_list
               
 
 one_or_more_argument_list :one_or_more_argument_list ',' argument
+             {
+                if($1 ==NULL){
+                    report_internal_error(" argument list is null");
+                }
+                $$->push_back($3);
+			  }
               |
               argument
+              { 
+			        $$ = new list<Ast *>;
+                    $$->push_back($1);
+              }
 ;
 
 argument : expression
+         {  
+            $$ =$1;
+         }   
 ;
 
 
@@ -587,7 +554,11 @@ unary_expression: atomic_expression{
 ;
 
 
-function_call : FnNAME '(' argument_list ')' 
+function_call : NAME '(' argument_list ')' {
+                
+                Ast* func = new Function_call_Ast($1,$3);
+                $$ = func;
+            }
 ;
 
 expression: unary_expression{

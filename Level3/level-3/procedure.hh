@@ -57,7 +57,8 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	list<Basic_Block *> basic_block_list;
-
+    set<int> bbs;
+    set<int> gotos;
 public:
 	Procedure(Data_Type proc_return_type, string proc_name);
 	~Procedure();
@@ -68,10 +69,12 @@ public:
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
+    void append_local_list(Symbol_Table & new_list); // appends the current procedure's symbol table with the new symbol table
 	void print_ast(ostream & file_buffer);
 	bool check_for_undefined_blocks(std::set<int> ,std::set<int>);
 
-    bool Procedure::check_parameter_list(Symbol_Table& new_list);
+    bool check_parameter_list(Symbol_Table& new_list);
+	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	Basic_Block *get_bb_by_number(int n);
