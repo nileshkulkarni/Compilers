@@ -195,6 +195,7 @@ procedure_name:
          }
             
         current_procedure = P;
+        return_statement_used_flag = false;
     }
 ;
 
@@ -204,11 +205,10 @@ procedure_body:
     {
 		current_procedure->append_local_list(*$2);
         delete $2;
-	
     }
 	
     basic_block_list
-	{/*
+	{
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -219,7 +219,7 @@ procedure_body:
         
         int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
 		delete $4;
-	*/
+        	
     }
     '}'
 	{/*
