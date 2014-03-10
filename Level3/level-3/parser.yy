@@ -101,8 +101,35 @@ program:
 |
 
 	procedure_declaration_list  procedure_list
+    /*procedure_name
+	{
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = false;				
+        // No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+		delete $1;
+
+	
+    }*/
 |
     procedure_list
+/*	procedure_name
+	{
+		return_statement_used_flag = false;				// No return statement in the current procedure till now
+	
+    }
+	procedure_body
+	{
+		program_object.set_procedure_map(*current_procedure);
+	
+    }
+    */
 ;
 
 
@@ -180,6 +207,19 @@ procedure_body:
     }
 	
     basic_block_list
+	{/*
+		if (return_statement_used_flag == false)
+		{
+			int line = get_line_number();
+			report_error("Atleast 1 basic block should have a return statement", line);
+		}
+
+		current_procedure->set_basic_block_list(*$4);
+        
+        int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+		delete $4;
+	*/
+    }
     '}'
 	{/*
 		if (return_statement_used_flag == false)
@@ -273,7 +313,6 @@ declaration_statement_list:
 
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
-	
     }
 	
 |
@@ -307,7 +346,6 @@ declaration_statement_list:
 			$$ = new Symbol_Table();
 
 		$$->push_symbol($2);
-	
     }
 	
 ;
@@ -335,7 +373,6 @@ basic_block_list:
 
 		$$ = $1;
 		$$->push_back($2);
-	
     }
 	
 |
@@ -376,7 +413,6 @@ basic_block:
 	
     
     }
-	
 ;
 
 executable_statement_list:
@@ -447,7 +483,6 @@ assignment_statement_list:   {
             $$ = $1;
 
         $$->push_back($2);
-    
     }
 
 ;
@@ -459,7 +494,6 @@ assignment_statement:
 
 		int line = get_line_number();
 		$$->check_ast(line);
-	
     }
 	
     |
@@ -506,7 +540,6 @@ atomic_expression: variable{
 
         
         }
-
     |
     function_call
 ;
