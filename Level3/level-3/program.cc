@@ -119,7 +119,6 @@ void Program::print_ast()
 	map<string, Procedure *>::iterator it;
 	for(it = procedure_map.begin(); it!=procedure_map.end(); it++){
 		//cout<<"it->first is :"<<it->first<<" : "<<(it->second==NULL)<<endl;
-		if(it->first == "main") continue;
 		if(it->second == NULL) {
 			cout<<"procedure "<<it->first<<" is NULL"<<endl;
 			continue;
@@ -133,7 +132,7 @@ void Program::print_ast()
 
 	else
 	{
-		main->print_ast(ast_buffer);
+		//main->print_ast(ast_buffer);
 	}
 }
 

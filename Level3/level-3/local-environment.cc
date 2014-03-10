@@ -77,6 +77,7 @@ void Eval_Result_Value_Int::set_value(Eval_Result_Ret number)
 	assert(number.data_type == int_data_type);
 	defined = true;
 }
+
 Eval_Result_Ret Eval_Result_Value_Int::get_value()
 {
 	return value;
@@ -298,9 +299,7 @@ void Eval_Result_Value_Return::set_value(Eval_Result_Ret num){
 
 Eval_Result_Ret Eval_Result_Value_Return::get_value()
 {
-	Eval_Result_Ret res;
-	res.data_type = return_data_type;
-	return res;
+	return value;
 }
 
 void Eval_Result_Value_Return::set_result_enum(Result_Enum res)

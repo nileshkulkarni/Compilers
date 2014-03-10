@@ -112,6 +112,7 @@ bool Assignment_Ast::check_ast(int line)
 		return true;
 	}
 
+	cout<<lhs->get_data_type() <<" : "<<rhs->get_data_type()<<endl;
 	report_error("Assignment statement data type not compatible", line);
 }
 
@@ -164,7 +165,7 @@ Data_Type Name_Ast::get_data_type()
 
 void Name_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << "Name : " << variable_name;
+	file_buffer <<  "Name : " << variable_name;
 }
 
 
@@ -196,6 +197,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
     else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
 		
+		//cout<<"enum is "<<loc_var_val->get_result_enum()<<endl;
 		if ((loc_var_val->get_result_enum() == int_result) || (loc_var_val->get_result_enum() == float_result)){
 			printFormatted(file_buffer , loc_var_val->get_value());
 		}
@@ -233,6 +235,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 
 void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result)
 {
+//	cout<<"comes here"<<endl;
 	Eval_Result_Value * i;
 	if (result.get_result_enum() == int_result)
 	{
@@ -250,6 +253,8 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 		eval_env.put_variable_value(*i, variable_name);
 	else
 		interpreter_global_table.put_variable_value(*i, variable_name);
+		
+//	cout<<"goes from here"<<endl;	
 }
 
 Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -717,7 +722,7 @@ Data_Type Function_call_Ast::get_data_type(){
 }
 	
 void Function_call_Ast::print_ast(ostream & file_buffer){
-	file_buffer<<AST_SPACE<<"FN CALL: "<<proc<<"(";
+	file_buffer<<"\n"<<AST_SPACE<<"FN CALL: "<<proc<<"(";
 	list<Ast *>::iterator it;
 	for(it = arguments.begin();it != arguments.end(); it++){
 		file_buffer<<"\n";
@@ -740,7 +745,7 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 			temp = new Eval_Result_Value_Int();
 		}
 	Eval_Result &result = *temp;
-		
+	
 	Procedure * referred_procedure = program_object.get_procedure(proc);
 	assert(referred_procedure!=NULL);
 	
@@ -749,7 +754,11 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	for(it=arguments.begin();it!=arguments.end();it++){
 		evaluated_arguments.push_back((*it)->evaluate(eval_env , file_buffer).get_value());
 	}
-//	referred_procedure->evaluate(file_buffer);
+	//cout<<"About to evaluate function_call : "<<endl;
+	Eval_Result &temp2 = referred_procedure->evaluate(file_buffer , evaluated_arguments);
+	result.set_value(temp2.get_value());
+	//cout<<"Evaluating Function_call : Done "<<endl;
+	return result;
 }
 
 
@@ -785,13 +794,13 @@ Data_Type Return_Ast::get_data_type(){
 
 void Return_Ast::print_ast(ostream & file_buffer){
 	
-	file_buffer << AST_SPACE << "Return ";
+	file_buffer << AST_SPACE << "RETURN ";
 	if(node_data_type == void_data_type){
 		file_buffer<<"<NOTHING>\n";
 		return;
 	}
-	file_buffer<<"\n";
 	exp->print_ast(file_buffer);
+	file_buffer<<"\n";
 }
 
 
@@ -799,16 +808,10 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 	
 	Eval_Result & result = *new Eval_Result_Value_Return();
 	Eval_Result_Ret ret;
-	
-	if(node_data_type != void_data_type){
-		assert(exp!=NULL);
-		ret = (exp->evaluate(eval_env, file_buffer)).get_value();
-	}
-	else{
-		assert(exp==NULL);
-		ret.data_type = void_data_type;
-	}
-	
+	if(exp!=NULL)
+		ret =(exp->evaluate(eval_env,file_buffer)).get_value();
+	else
+		ret.data_type = void_data_type; 
 	result.set_value(ret);
 	print_ast(file_buffer);
 	return result;

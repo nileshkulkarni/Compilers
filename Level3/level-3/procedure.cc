@@ -87,13 +87,13 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 }
 
 bool Procedure::check_parameter_list(Symbol_Table& new_list){
-    symbol_table_list local_symbol_table_list  = local_symbol_table.get_symbol_table_list();
+    symbol_table_list parameter_symbol_table_list  = parameter_symbol_table.get_symbol_table_list();
     symbol_table_list new_symbol_table_list = new_list.get_symbol_table_list();
 
-    symbol_table_list::iterator it_local = local_symbol_table_list.begin();
+    symbol_table_list::iterator it_local = parameter_symbol_table_list.begin();
     symbol_table_list::iterator it_new = new_symbol_table_list.begin();
 
-    for(;it_local!=local_symbol_table_list.end() || it_new !=new_symbol_table_list.end();it_local++,it_new++){
+    for(;it_local!=parameter_symbol_table_list.end() || it_new !=new_symbol_table_list.end();it_local++,it_new++){
         //should match at every instant
         if(((*it_local)->get_variable_name() == (*it_new)->get_variable_name()) 
 			&& ((*it_local)->get_data_type() == (*it_new)->get_data_type()))
@@ -103,7 +103,7 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
         return false;
 	}
 	
-	if(it_local==local_symbol_table_list.end()) {
+	if(it_local==parameter_symbol_table_list.end()) {
 		if(it_new == new_symbol_table_list.end()){
 			return true;
 		}
@@ -112,18 +112,27 @@ bool Procedure::check_parameter_list(Symbol_Table& new_list){
 	    return false;
 }
 
+/*
 void Procedure::append_local_list(Symbol_Table & new_list)
 {
    local_symbol_table.append_local_list(new_list); 
-	
-
 }
+*/
 
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;
 	local_symbol_table.set_table_scope(local);
 }
+
+
+void Procedure::set_parameter_list(Symbol_Table & new_list)
+{
+	parameter_symbol_table = new_list;
+	parameter_symbol_table.set_table_scope(local);
+}
+
+
 
 Data_Type Procedure::get_return_type()
 {
@@ -132,13 +141,23 @@ Data_Type Procedure::get_return_type()
 
 bool Procedure::variable_in_symbol_list_check(string variable)
 {
-	return local_symbol_table.variable_in_symbol_list_check(variable);
+	assert(!(local_symbol_table.variable_in_symbol_list_check(variable) 
+	&& parameter_symbol_table.variable_in_symbol_list_check(variable))); //Not present in both
+	return (local_symbol_table.variable_in_symbol_list_check(variable) 
+	|| parameter_symbol_table.variable_in_symbol_list_check(variable));
 }
+
 
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 {
-	return local_symbol_table.get_symbol_table_entry(variable_name);
+	if(local_symbol_table.variable_in_symbol_list_check(variable_name))
+	 return	local_symbol_table.get_symbol_table_entry(variable_name);
+	if(parameter_symbol_table.variable_in_symbol_list_check(variable_name))
+	 return	parameter_symbol_table.get_symbol_table_entry(variable_name);
+ 
+  report_internal_error("Invalid Use of get_symbol_table_entry \n");			
 }
+
 
 void Procedure::print_ast(ostream & file_buffer)
 {
@@ -223,7 +242,46 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
 	eval_env.print(file_buffer);
+	result->set_variable_status(true);
 
 	return *result;
 }
 
+
+
+Eval_Result & Procedure::evaluate(ostream & file_buffer , list<Eval_Result_Ret> arguments)
+{
+	Local_Environment & eval_env = *new Local_Environment();
+	local_symbol_table.create(eval_env);
+	parameter_symbol_table.create(eval_env , arguments);
+	
+	Eval_Result * result = NULL;
+
+	file_buffer << PROC_SPACE << "Evaluating Procedure " << name << "\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
+	eval_env.print(file_buffer);
+	file_buffer << "\n";
+	
+	Basic_Block * current_bb = &(get_start_basic_block());
+	while (current_bb)
+	{	file_buffer<<"\n";
+		result = &(current_bb->evaluate(eval_env, file_buffer));
+		
+		
+		if(result->get_result_enum() == return_result)
+			break;
+		
+		if(result->get_result_enum() == goto_result){
+			assert(result->is_variable_defined());
+			current_bb = get_bb_by_number(replace(result->get_value())); 	
+		}
+		else
+			current_bb = get_next_bb(*current_bb);		
+	}
+
+	file_buffer << "\n\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
+	eval_env.print(file_buffer);
+	result->set_variable_status(true);
+	return *result;
+}

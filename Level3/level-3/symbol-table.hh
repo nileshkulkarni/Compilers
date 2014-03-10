@@ -32,6 +32,7 @@ using namespace std;
 class Symbol_Table;
 class Symbol_Table_Entry;
 class Local_Environment;
+struct Eval_Result_Ret;
 typedef list<Symbol_Table_Entry *> symbol_table_list;
 typedef enum
 {
@@ -67,6 +68,8 @@ public:
 	void append_local_list(Symbol_Table & new_list); 
     symbol_table_list get_symbol_table_list(); 
 	void create(Local_Environment & local_global_variables_table);
+	void create(Local_Environment & local_global_variables_table , list<Eval_Result_Ret> arguments);
+
 };
 
 class Symbol_Table_Entry

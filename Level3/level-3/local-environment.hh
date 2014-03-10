@@ -33,6 +33,20 @@
 
 
 
+struct Eval_Result_Ret{
+	int int_ret;
+	float float_ret;
+	double double_ret;
+	Data_Type data_type;
+	
+	Eval_Result_Ret(){
+		int_ret =-1;
+	}
+	
+};
+
+
+
 
 using namespace std;
 
@@ -48,26 +62,8 @@ typedef enum
 
 
 
-
-
-
-
 class Eval_Result;
 class Local_Environment;
-
-
-struct Eval_Result_Ret{
-	int int_ret;
-	float float_ret;
-	double double_ret;
-	Data_Type data_type;
-	
-	Eval_Result_Ret(){
-		int_ret =-1;
-	}
-	
-};
-
 
 
 

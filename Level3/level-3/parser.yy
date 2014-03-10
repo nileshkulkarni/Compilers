@@ -76,6 +76,7 @@
 %type <ast> unary_expression
 %type <ast> expression
 %type <ast> constant
+%type <ast> return_statement
 %type <data_type> DATA_TYPE 
 %start program
 
@@ -119,7 +120,7 @@ procedure_declaration_list :procedure_declaration_list procedure_declaration
 ;
 
 procedure_declaration :
-                      DATA_TYPE NAME '(' parameter_list ')' ';'
+                      DATA_TYPE NAME '(' 
                       {
                           if(program_object.variable_in_symbol_list_check(*$2)){
                                 report_error("Variable name matched procedure", get_line_number());
@@ -128,12 +129,15 @@ procedure_declaration :
 
                           program_object.variable_in_proc_map_check(*$2 , get_line_number());
                           current_procedure= new Procedure($1,*$2);
-                          current_procedure->set_local_list(*$4);
+                      
+                     }
+                     parameter_list ')' ';' {
+						  current_procedure->set_parameter_list(*$5);
                           program_object.set_procedure_map(*current_procedure);
                           delete $2;
-					 }
+					}
                       |
-					  VOID NAME '(' parameter_list ')' ';'
+					  VOID NAME '(' 
                       {
                           if(program_object.variable_in_symbol_list_check(*$2)){
                                 report_error("Variable name matched procedure", get_line_number());
@@ -141,11 +145,13 @@ procedure_declaration :
                           }
 						  program_object.variable_in_proc_map_check(*$2 , get_line_number());
 						  current_procedure= new Procedure(Data_Type::void_data_type,*$2);
-                          current_procedure->set_local_list(*$4);
+                        
+                      }
+                      parameter_list ')' ';'{
+						  current_procedure->set_parameter_list(*$5);
                           program_object.set_procedure_map(*current_procedure);
                           delete $2;
-
-                      }
+					  }
 ;
 
 
@@ -192,7 +198,7 @@ procedure_name:	NAME '(' parameter_list ')'
 procedure_body:
 	'{'  declaration_statement_list
 		{
-			current_procedure->append_local_list(*$2);
+			current_procedure->set_local_list(*$2);
 			//delete $2;
 		}
 		
@@ -246,7 +252,8 @@ one_or_more_parameter_list :
                     if(current_procedure->get_proc_name() == $3->get_variable_name()){
                         report_error("Variable name cannot be same as the name of the function",get_line_number()); 
                     }
-
+                    
+                   
                     $1->push_symbol($3);
                     $$ = $1;
                 }   
@@ -415,7 +422,7 @@ executable_statement_list:
 |
 	assignment_statement_list return_statement
 	{
-		Ast * ret = new Return_Ast();
+		Ast * ret = $2;
 		return_statement_used_flag = true;	
         // Current procedure has an occurrence of return statement
 
@@ -473,7 +480,6 @@ assignment_statement:
 	variable ASSIGN_OP expression ';'
 	{
 		$$ = new Assignment_Ast($1, $3);
-
 		int line = get_line_number();
 		$$->check_ast(line);
     }
@@ -490,9 +496,14 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement{
 ;
 
 
-return_statement: RETURN ';'
+return_statement: RETURN ';'{
+					$$ = new Return_Ast();
+					
+				}
 				|
-				   RETURN expression ';'
+				   RETURN expression ';'{
+						$$ = new Return_Ast($2);
+				   }
 ;
 
             
@@ -690,7 +701,7 @@ constant:
 	|
 	FLOAT_NUMBER
 	{
-		$$ = new Number_Ast<int>($1, int_data_type);
+		$$ = new Number_Ast<float>($1, float_data_type);
 		//cout<<"$1 : "<<$1<<endl;
 	}
 ;

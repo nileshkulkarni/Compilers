@@ -104,8 +104,6 @@ void Symbol_Table::append_local_list(Symbol_Table & new_list){
 	list<Symbol_Table_Entry *> new_symbol_table_list = new_list.get_symbol_table_list();
 	//cout<<"Before appending variable table size is" << variable_table.size()<<"\n";	
 	//cout<<"Before appending variable new list table size is" <<new_symbol_table_list.size()<<"\n";	
-
-
 	list<Symbol_Table_Entry *>::iterator it = variable_table.begin();
 	variable_table.insert(it ,  new_symbol_table_list.begin() , new_symbol_table_list.end());
 
@@ -144,6 +142,48 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 		}
 	}
 }
+
+
+void Symbol_Table::create(Local_Environment & parameter_variables_table , list<Eval_Result_Ret> arguments)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	list<Eval_Result_Ret>::iterator k;
+
+	for (i = variable_table.begin(), k = arguments.begin(); (i != variable_table.end()) && (k != arguments.end()); i++,k++)
+	{
+		string name = (*i)->get_variable_name();	
+		assert((*i)->get_data_type() == (*k).data_type);
+		if((*i)->get_data_type() == int_data_type){
+			Eval_Result_Value_Int * j = new Eval_Result_Value_Int();
+			if (scope == global)
+			{
+				j->set_variable_status(true);
+				j->set_value(k->int_ret);
+			}
+
+			parameter_variables_table.put_variable_value(*j, name);
+		}
+		
+		else if((*i)->get_data_type() == float_data_type){
+			Eval_Result_Value_Float * j = new Eval_Result_Value_Float();
+			if (scope == global)
+			{
+				j->set_variable_status(true);
+				j->set_value(k->float_ret);
+			}
+
+			parameter_variables_table.put_variable_value(*j, name);
+		}
+	}
+}
+
+
+
+
+
+
+
+
 
 /////////////////////////////////////////////////////////////
 
