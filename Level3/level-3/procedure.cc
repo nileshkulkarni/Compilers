@@ -238,6 +238,9 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	}
 
 	file_buffer << "\n\n";
+	
+	
+	 
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name << " >>\n";
 	eval_env.print(file_buffer);
 	result->set_variable_status(true);
@@ -276,7 +279,18 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer , list<Eval_Result_Ret> 
 		else
 			current_bb = get_next_bb(*current_bb);		
 	}
-
+	
+	Eval_Result_Value_Int ri;
+	Eval_Result_Value_Float rf;
+	
+	if(result->get_value().data_type == int_data_type){
+		ri.set_value(result->get_value());
+		eval_env.put_variable_value(ri , "return");
+	}
+	else if(result->get_value().data_type == float_data_type){
+		rf.set_value(result->get_value());
+		eval_env.put_variable_value(rf , "return");
+	}
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name <<" >>\n";
 	eval_env.print(file_buffer);

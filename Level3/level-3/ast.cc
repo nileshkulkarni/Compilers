@@ -368,18 +368,23 @@ void IfElse_Ast ::  print_ast(ostream & file_buffer){
 }
 
 Eval_Result & IfElse_Ast:: evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
-        
+		
         Eval_Result_Value_Goto & ret = *new Eval_Result_Value_Goto();
-        
-        
-        
        // file_buffer<<"here and there : "<<result.get_value()<<endl;
         
-        print_ast(file_buffer);
+        file_buffer << AST_SPACE << "If_Else statement:	" ;
+		condition->print_ast(file_buffer);
+		file_buffer<<"\n";
+		
+		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
+        
+		
+		file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
+		file_buffer<<"\n";
+		file_buffer<<AST_NODE_SPACE<<"False Successor: "<<elseGoto->get_bb(); 
+		file_buffer<<"\n";
         
         
-        file_buffer<<"\n";
         if((result.get_value()).int_ret != 0){
 			file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<ifGoto->get_bb()<<")";
 			ret.set_value(ifGoto->get_bb());
@@ -766,11 +771,21 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 	}
 	//cout<<"About to evaluate function_call : "<<endl;
 	Eval_Result &temp2 = referred_procedure->evaluate(file_buffer , evaluated_arguments);
-	result.set_value(temp2.get_value());
-	if(node_data_type == float_data_type || node_data_type == int_data_type){
-		file_buffer<<AST_NODE_SPACE <<"return : " << replace(result.get_value())<< " \n";
-	}
 	
+	if(temp2.get_value().data_type != void_data_type)
+		result.set_value(temp2.get_value());
+
+/*	
+	if(node_data_type == float_data_type || node_data_type == int_data_type){
+		file_buffer<<AST_NODE_SPACE <<"return : ";
+		if(node_data_type == float_data_type)
+			file_buffer<<result.get_value().float_ret;
+		else
+			file_buffer<<result.get_value().int_ret;
+				
+		file_buffer<<" \n";
+	}
+*/	
 	//cout<<"Evaluating Function_call : Done "<<endl;
 	return result;
 }
@@ -786,6 +801,7 @@ Eval_Result &  Function_call_Ast::evaluate(Local_Environment & eval_env, ostream
 Return_Ast::Return_Ast(){
 	
 	node_data_type = void_data_type;
+	exp = NULL;
 }
 
 Return_Ast::Return_Ast(Ast *exp_){
@@ -825,7 +841,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 	if(exp!=NULL)
 		ret =(exp->evaluate(eval_env,file_buffer)).get_value();
 	else
-		ret.data_type = void_data_type; 
+		ret.data_type = void_data_type;
 	result.set_value(ret);
 	print_ast(file_buffer);
 	return result;
