@@ -99,7 +99,7 @@ Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
 
 void Symbol_Table::append_local_list(Symbol_Table & new_list){
 	
-	auto it = variable_table.begin();
+	list<Symbol_Table_Entry *>::iterator it = variable_table.end();
 	variable_table.insert(it , new_list.get_symbol_table_list().begin() , new_list.get_symbol_table_list().end());
 }
 

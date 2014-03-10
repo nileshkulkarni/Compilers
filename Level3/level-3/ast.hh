@@ -356,7 +356,8 @@ public:
 	void print_ast(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){
-		Eval_Result arg = exp->evaluate(eval_env , file_buffer);
+		Eval_Result ret = exp->evaluate(eval_env , file_buffer);
+		return ret;
 	}
 };
 

@@ -717,7 +717,7 @@ Function_call_Ast::Data_Type get_data_type(){
 	
 Function_call_Ast::void print_ast(ostream & file_buffer){
 	file_buffer<<"FN CALL: "<<proc<<"(";
-	auto iterator it;
+	list<Ast *>::iterator it;
 	for(it = arguments.begin();it! = arguments.end(); it++){
 		file_buffer<<"\n";
 		(*it)->print_ast(file_buffer);
