@@ -22,12 +22,27 @@ print("Done generating cfg files\n");
 
 for f in cfgFiles:
     print("Testing file  " + f ); 
+    command = "./cfglp64  -tokens -d " + f + " > expected " 
+    os.system(command) 
+    command = "./cfglp -tokens -d " + f + " > generated " 
+    os.system(command)
+    os.system("diff -b -B  expected generated");
+
+    command = "./cfglp64  -ast -d " + f + " > expected " 
+    os.system(command) 
+    command = "./cfglp -ast -d " + f + " > generated " 
+    os.system(command)
+    os.system("diff -b -B  expected generated");
 
     command = "./cfglp64  -eval -d " + f + " > expected " 
     os.system(command) 
     command = "./cfglp -eval -d " + f + " > generated " 
     os.system(command)
     os.system("diff -b -B  expected generated");
+    
+    #print("-------------------------------------------------------------------\n");
+    
+    #os.system("diff -b -B generated expected");
 '''
 error_files=[]
 for f in files:

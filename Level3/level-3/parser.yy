@@ -171,6 +171,7 @@ procedure_name:	NAME '(' parameter_list ')'
 	{
 		 Procedure *P = program_object.get_procedure(*$1);
          
+         /*
          if((*$1) == "main"){
             if(P !=NULL){
                 report_error("Main function declared twice",get_line_number());
@@ -180,8 +181,8 @@ procedure_name:	NAME '(' parameter_list ')'
             program_object.set_procedure_map(*main);
             P = main;
         }
-        
-        else if(P == NULL){
+        */
+        if(P == NULL){
                 report_error("Procedure correspoding to the name not found\n",get_line_number());
         }
 
