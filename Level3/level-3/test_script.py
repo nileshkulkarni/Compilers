@@ -28,6 +28,10 @@ for f in cfgFiles:
     command = "./cfglp -eval -d " + f + " > generated " 
     os.system(command)
     os.system("diff -b -B  expected generated");
+    
+    print("-------------------------------------------------------------------\n");
+    
+    os.system("diff -b -B generated expected");
 '''
 error_files=[]
 for f in files:
