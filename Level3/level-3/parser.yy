@@ -225,7 +225,7 @@ procedure_body:
 
 		current_procedure->set_basic_block_list(*$2);
         
-        //int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+        int bbNotExist = current_procedure->check_for_undefined_blocks();
 		//delete $2;
     }
 ;
@@ -392,7 +392,7 @@ basic_block_list:
 			int line = get_line_number();
 			report_error("Basic block doesn't exist", line);
 		}
-         
+        current_procedure->add_bb($1->get_bb_number()); 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
     }
@@ -521,6 +521,7 @@ return_statement: RETURN ';'{
 
             
 goto_statement: GOTO BASIC_BLOCK ';'  {
+                current_procedure->add_goto($2); 
                 $$ =  new Goto_Ast($2);
                 gotoNo.insert($2);
               }
