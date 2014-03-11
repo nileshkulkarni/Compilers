@@ -21,7 +21,8 @@ for f in correct_files:
 print("Done generating cfg files\n");
 
 for f in cfgFiles:
-    print("Testing file  " + f ); 
+    print("Testing file  " + f );
+
     command = "./cfglp64  -tokens -d " + f + " > expected " 
     os.system(command) 
     command = "./cfglp -tokens -d " + f + " > generated " 
