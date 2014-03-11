@@ -57,12 +57,10 @@ string Procedure::get_proc_name()
 }
 
 void Procedure :: add_goto(int bb1){
-	cout<<"Adding : "<<bb1<<" to goto"<<endl;
     gotoNo.insert(bb1);        
 }
 
 void Procedure :: add_bb(int bb1){
-      cout<<"Adding "<<bb1<<" to BB"<<endl;
       bb.insert(bb1);  
 }
 
