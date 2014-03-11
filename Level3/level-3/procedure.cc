@@ -133,6 +133,10 @@ void Procedure::set_parameter_list(Symbol_Table & new_list)
 }
 
 
+void Procedure::set_return_type(Data_Type d )
+{
+	return_type =d;
+}
 
 Data_Type Procedure::get_return_type()
 {
@@ -212,6 +216,7 @@ Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 
 Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {
+    /*
 	Local_Environment & eval_env = *new Local_Environment();
 	local_symbol_table.create(eval_env);
 	
@@ -246,6 +251,10 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	result->set_variable_status(true);
 
 	return *result;
+    */
+    list<Eval_Result_Ret> arguments;
+
+    return evaluate(file_buffer,arguments);
 }
 
 

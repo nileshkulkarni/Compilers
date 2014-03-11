@@ -71,6 +71,7 @@ public:
 	void set_parameter_list(Symbol_Table & new_list);
 
 	Data_Type get_return_type();
+	void set_return_type(Data_Type );
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
  //   void append_local_list(Symbol_Table & new_list); // appends the current procedure's symbol table with the new symbol table

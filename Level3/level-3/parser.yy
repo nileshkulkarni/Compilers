@@ -1,4 +1,4 @@
-
+	
 /*********************************************************************************************
 
                                 cfglp : A CFG Language Processor
@@ -122,6 +122,7 @@ procedure_declaration_list :procedure_declaration_list procedure_declaration
 procedure_declaration :
                       DATA_TYPE NAME '(' 
                       {
+						
                           if(program_object.variable_in_symbol_list_check(*$2)){
                                 report_error("Variable name matched procedure", get_line_number());
                           
@@ -502,6 +503,18 @@ return_statement: RETURN ';'{
 				}
 				|
 				   RETURN expression ';'{
+                        assert($2!=NULL);
+						if(current_procedure->get_proc_name() == "main"){
+                            if(current_procedure->get_return_type() != void_data_type){
+                                    if($2->get_data_type() != current_procedure->get_return_type()){
+                                        report_error("Main returning two different kinds of data ", get_line_number());
+                                    }
+                                    
+                            }
+                            else{
+                                current_procedure->set_return_type($2->get_data_type());
+                            }
+                        }
 						$$ = new Return_Ast($2);
 				   }
 ;
