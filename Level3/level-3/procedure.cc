@@ -57,10 +57,12 @@ string Procedure::get_proc_name()
 }
 
 void Procedure :: add_goto(int bb1){
+	cout<<"Adding : "<<bb1<<" to goto"<<endl;
     gotoNo.insert(bb1);        
 }
 
 void Procedure :: add_bb(int bb1){
+      cout<<"Adding "<<bb1<<" to BB"<<endl;
       bb.insert(bb1);  
 }
 
@@ -73,12 +75,9 @@ bool Procedure::check_for_undefined_blocks(){
             sprintf(error_string,"%s :: cfglp error : bb %d doesn't exist",file_name.c_str(),*it);
             print_error(string(error_string),1); 
             return false;
-        
         }
-
-    }
-
-    return true;
+	}
+	return true;
 }
 
 void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)

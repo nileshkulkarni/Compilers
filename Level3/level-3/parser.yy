@@ -211,7 +211,7 @@ procedure_body:
 				report_error("Atleast 1 basic block should have a return statement", line);
 			}
 			current_procedure->set_basic_block_list(*$4);
-			//int bbNotExist = current_procedure->check_for_undefined_blocks(bbNo,gotoNo);
+			int bbNotExist = current_procedure->check_for_undefined_blocks();
 			//delete $4;
 	   }
 |
@@ -224,9 +224,8 @@ procedure_body:
 		}
 
 		current_procedure->set_basic_block_list(*$2);
-        
         int bbNotExist = current_procedure->check_for_undefined_blocks();
-		//delete $2;
+	    	//delete $2;
     }
 ;
 
@@ -392,8 +391,7 @@ basic_block_list:
 			int line = get_line_number();
 			report_error("Basic block doesn't exist", line);
 		}
-        current_procedure->add_bb($1->get_bb_number()); 
-		$$ = new list<Basic_Block *>;
+        $$ = new list<Basic_Block *>;
 		$$->push_back($1);
     }
 	
@@ -412,6 +410,7 @@ basic_block:
 			$$ = new Basic_Block($1, *ast_list);
 		}
 		bbNo.insert($1);
+		current_procedure->add_bb($1); 
 	}
 ;
 
