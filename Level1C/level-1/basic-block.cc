@@ -90,7 +90,7 @@ void Basic_Block::generate_code(ostream &file_buffer,Symbol_Table local_symbol_t
 	
 	list<Ast*> ::iterator it;
 	for(it = statement_list.begin();it!=statement_list.end();it++){
-		//(*it)->generate_code(file_buffer);
+		(*it)->generate_code(file_buffer,local_symbol_table);
 		file_buffer<<"\n";
 	}
 

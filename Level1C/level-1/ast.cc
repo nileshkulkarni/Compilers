@@ -134,7 +134,7 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 
 string Assignment_Ast::generate_code(ostream &file_buffer,Symbol_Table local_symbol_table){
 	
-	((Expression_Ast*)rhs)->initialise_reg_map();
+	//((Expression_Ast*)rhs)->initialise_reg_map();
 	string reg1 = rhs->generate_code(file_buffer,local_symbol_table);
 	string reg2 = lhs->generate_code(file_buffer,local_symbol_table);
 	file_buffer<<"\n";
@@ -230,10 +230,13 @@ int Name_Ast::get_position(Symbol_Table local_table){
 }
 string Name_Ast::generate_code(ostream &file_buffer,Symbol_Table local_symbol_table){
 	
-		int position= get_position(local_symbol_table);
+		/*int position= get_position(local_symbol_table);
+		std::cout<<"position is "<<position<<"\n";
 		char buf[50];
 		sprintf(buf,"%d",position);
-		string val = string(buf) + "($fp)";
+		*/
+		//string val = string(buf) + "($fp)";
+		string val = "0($fp)";
 		return val;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -278,7 +281,7 @@ template <class DATA_TYPE>
 string Number_Ast<DATA_TYPE>::generate_code(ostream &file_buffer,Symbol_Table local_symbol_table){
 	
 	file_buffer<<GLOB_SPACE<<"li, $v0 ,"<<constant;
-
+	return "$v0";
 }
 
 

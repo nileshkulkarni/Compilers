@@ -185,14 +185,14 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 }
 
 void Procedure::generate_code(ostream &file_buffer){
-	file_buffer<<"main:					# .globl makes main know to the\n";
-	file_buffer<<"						# outside of the program.\n";
+	file_buffer<<"main:	        \t\t# .globl makes main know to the\n";
+	file_buffer<<"		   \t\t# outside of the program.\n";
 	file_buffer<<"# Prologue begins\n";
 	
 	int localSize = local_symbol_table.get_symbol_table_size();
 	file_buffer<<GLOB_SPACE<<"sw, $fp, 0($sp)		#Save the frame Pointer\n";
 	file_buffer<<GLOB_SPACE<<"sub, $fp, $sp, 4\n	#Update the frame Pointer\n"; 
-	file_buffer<<GLOB_SPACE<<"sub $sp, $sp, "<<localSize<<"\t\t#Make Space for the locals\n";
+	file_buffer<<GLOB_SPACE<<"sub $sp, $sp, "<<4*localSize<<"\t\t#Make Space for the locals\n";
 	file_buffer<<"# Prologue ends\n";
 	
 	// print all the basic blocks here 
@@ -205,7 +205,7 @@ void Procedure::generate_code(ostream &file_buffer){
 
 	file_buffer<<"# Epilouge  begins\n";
 	
-	file_buffer<<GLOB_SPACE<<"add $sp, $sp, "<<localSize<<"\n";
+	file_buffer<<GLOB_SPACE<<"add $sp, $sp, "<<4*	localSize<<"\n";
 	file_buffer<<GLOB_SPACE<<"lw, $fp, 0($sp)\n";
 	file_buffer<<GLOB_SPACE<<"jr        $31   \t# Jump back to the operating system.\n";	
 	file_buffer<<"# Epilouge ends\n";

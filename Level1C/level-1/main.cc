@@ -61,7 +61,8 @@ int main(int argc, char * argv[])
 	if (command_options.is_show_ast_selected())
 		program_object.print_ast();
 
+	program_object.generate_code();
 	program_object.delete_all();
-
+	
 	return 0;
 }
