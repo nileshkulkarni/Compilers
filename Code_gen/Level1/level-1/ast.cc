@@ -154,32 +154,13 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
 	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
-
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
 
 	lhs->set_value_of_evaluation(eval_env, result);
 
 	// Print the result
-
 	print(file_buffer);
-
 	lhs->print_value(eval_env, file_buffer);
-
-	return result;
-}
-
-	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
-
-	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
-
-	lhs->set_value_of_evaluation(eval_env, result);
-
-	// Print the result
-
-	print(file_buffer);
-
-	lhs->print_value(eval_env, file_buffer);
-
 	return result;
 }
 

@@ -222,7 +222,7 @@ Ics_Opd * Compute_IC_Stmt::get_result()        { return result; }
 
 
 void Compute_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
-void Compute_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
+void Compute_IC_Stmt::set_opd2(Ics_Opd * io)   { opd2 = io; }
 void Compute_IC_Stmt::set_result(Ics_Opd * io) { result = io; }
 
 Compute_IC_Stmt& Compute_IC_Stmt::operator=(const Compute_IC_Stmt& rhs)
@@ -263,27 +263,30 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 	}
 }
 
-void Move_IC_Stmt::print_assembly(ostream & file_buffer)
+void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 {
 	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a move IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	Assembly_Format assem_format = op_desc.get_assembly_format();
 	switch (assem_format)
 	{
-	case a_op_r_o1: 
+	case a_op_r_o1_o2: 
 			file_buffer << "\t" << op_name << ", ";
 			result->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
+			opd2->print_asm_opd(file_buffer);
 			file_buffer << "\n";
 
 			break; 
 
-	case a_op_o1_r: 
+	case a_op_o1_o2_r: 
 			file_buffer << "\t" << op_name << ", ";
 			opd1->print_asm_opd(file_buffer);
+			opd2->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			result->print_asm_opd(file_buffer);
 			file_buffer << "\n";
