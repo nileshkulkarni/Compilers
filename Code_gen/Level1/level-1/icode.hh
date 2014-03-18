@@ -63,6 +63,7 @@ typedef enum
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
 	i_r_o1_op_o2,	/* r <- o1 op o2 */ 
+	i_r_op_o1_o2,	/* r <- o1 op o2 */ 
 	i_nsy		/* not specified yet */
 } Icode_Format;
 
