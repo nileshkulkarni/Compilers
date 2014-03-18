@@ -267,6 +267,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 
 Code_For_Ast & Goto_Ast::compile()
 {
+	Code_For_Ast & goto_stmt = rhs->compile();
 }
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
