@@ -98,7 +98,7 @@ void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_ent
 		lra_symbol_list.push_back(&sym_entry);
 }
 
-
+	
 void Register_Descriptor::set_used_for_expr_result(bool used){
 	used_for_expr_result = used;
 }
@@ -283,12 +283,12 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[slt] = new Instruction_Descriptor(imm_load, "SetLessThan", "slt", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[sle] = new Instruction_Descriptor(store, "SetLessThanEqualTo", "sle", "", i_r_op_o1, a_op_o1_r);
-	spim_instruction_table[sgt] = new Instruction_Descriptor(load, "SetGreaterThan", "sgt", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[sge] = new Instruction_Descriptor(imm_load, "SetGreaterThanEqualTo", "sge", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[sne] = new Instruction_Descriptor(imm_load, "SetNotEqualTo", "sne", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[seq] = new Instruction_Descriptor(imm_load, "SetEqualTo", "seq", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[slt] = new Instruction_Descriptor(imm_load, "SetLessThan", "slt", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sle] = new Instruction_Descriptor(store, "SetLessThanEqualTo", "sle", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sgt] = new Instruction_Descriptor(load, "SetGreaterThan", "sgt", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sge] = new Instruction_Descriptor(imm_load, "SetGreaterThanEqualTo", "sge", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sne] = new Instruction_Descriptor(imm_load, "SetNotEqualTo", "sne", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(imm_load, "SetEqualTo", "seq", "", i_r_op_o1_o2, a_op_r_o1_o2);
 
 }
 

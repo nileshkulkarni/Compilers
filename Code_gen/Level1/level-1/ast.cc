@@ -154,17 +154,13 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
 	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
-
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
 
 	lhs->set_value_of_evaluation(eval_env, result);
 
 	// Print the result
-
 	print(file_buffer);
-
 	lhs->print_value(eval_env, file_buffer);
-
 	return result;
 }
 
@@ -463,13 +459,13 @@ Code_For_Ast & Expression_Ast::compile()
 
 	Register_Descriptor * lhs_result_reg = lhs_code.get_reg();
 
-	lhs_result_reg.set_used_for_expr_result(true);
+	lhs_result_reg->set_used_for_expr_result(true);
 	
 	Code_For_Ast rhs_code = rhs->compile();
 	
 	Register_Descriptor * rhs_result_reg = rhs_code.get_reg();
 	
-	rhs_result_reg.set_used_for_expr_result(true);
+	rhs_result_reg->set_used_for_expr_result(true);
 
 	// Store the statement in ic_list
 
@@ -481,28 +477,34 @@ Code_For_Ast & Expression_Ast::compile()
 	if (rhs_code.get_icode_list().empty() == false)
 		ic_list.splice(ic_list.end(), rhs_code.get_icode_list());
 
-	Register_Descriptor *resultReg = machine_dscr_object.get_new_register();
+	Register_Descriptor *result_reg = machine_dscr_object.get_new_register();
 		
+	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
+	Ics_Opd* rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
+	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
+
 	//generate new code to perform the operation
 	Icode_Stmt * expression_icode_stmt;
 	switch(op){
 		case LE:
-			expression_icode_stmt= new Compute_Stmt(sle,lhs_result_reg,rhs_result_reg,resultReg);
+			
+			expression_icode_stmt= new Compute_IC_Stmt(sle,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			
 			break;
 		case LT:
-			expression_icode_stmt= new Compute_Stmt(slt,lhs_result_reg,rhs_result_reg,resultReg);
+			expression_icode_stmt= new Compute_IC_Stmt(slt,lhs_result_opd,rhs_result_opd,result_reg_opd);
 			break;
 		case GT:
-			expression_icode_stmt= new Compute_Stmt(sgt,lhs_result_reg,rhs_result_reg,resultReg);
+			expression_icode_stmt= new Compute_IC_Stmt(sgt,lhs_result_opd,rhs_result_opd,result_reg_opd);
 			break;
 		case GE:
-			expression_icode_stmt= new Compute_Stmt(sge,lhs_result_reg,rhs_result_reg,resultReg);	
+			expression_icode_stmt= new Compute_IC_Stmt(sge,lhs_result_opd,rhs_result_opd,result_reg_opd);	
 			break;
 		case EQ:
-			expression_icode_stmt= new Compute_Stmt(seq,lhs_result_reg,rhs_result_reg,resultReg);
+			expression_icode_stmt= new Compute_IC_Stmt(seq,lhs_result_opd,rhs_result_opd,result_reg_opd);
 			break;
 		case NE:
-			expression_icode_stmt= new Compute_Stmt(sne,lhs_result_reg,rhs_result_reg,resultReg);	
+			expression_icode_stmt= new Compute_IC_Stmt(sne,lhs_result_opd,rhs_result_opd,result_reg_opd);	
 			break;
 	}
 	
@@ -511,11 +513,11 @@ Code_For_Ast & Expression_Ast::compile()
 	
 	Code_For_Ast * expression_stmt;
 	if (ic_list.empty() == false)
-		expression_stmt = new Code_For_Ast(ic_list, resultReg);
+		expression_stmt = new Code_For_Ast(ic_list, result_reg);
 
 	
-	lhs_result_reg.set_used_for_expr_result(false);
-	rhs_result_reg.set_used_for_expr_result(true);
+	lhs_result_reg->set_used_for_expr_result(false);
+	rhs_result_reg->set_used_for_expr_result(true);
 	return *expression_stmt;
 	
 }
