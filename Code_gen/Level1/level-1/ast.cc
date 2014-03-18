@@ -130,15 +130,13 @@ bool Assignment_Ast::check_ast()
 
 void Assignment_Ast::print(ostream & file_buffer)
 {
-	file_buffer << "\n" << AST_SPACE << "Asgn:";
-
-	file_buffer << "\n" << AST_NODE_SPACE << "LHS (";
-	lhs->print(file_buffer);
-	file_buffer << ")";
-
-	file_buffer << "\n" << AST_NODE_SPACE << "RHS (";
-	rhs->print(file_buffer);
-	file_buffer << ")";
+	file_buffer << AST_SPACE << "If_Else statement:	" ;
+	condition->print(file_buffer);
+	file_buffer<<"\n";
+    file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
+    file_buffer<<"\n";
+    file_buffer<<AST_NODE_SPACE<<"False Successor: "<<elseGoto->get_bb(); 
+}
 }
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -240,20 +238,26 @@ Goto_Ast::~Goto_Ast()
 	
 }
 
-bool Goto_Ast::check_ast()
-{
-	
+int Goto_Ast :: get_bb(){
+	return bb;
 }
 
 void Goto_Ast::print(ostream & file_buffer)
 {
+		file_buffer << AST_SPACE <<"Goto statement:\n";
+		file_buffer << AST_NODE_SPACE << "Successor: "<<bb;
 	
 }
 
 Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	Eval_Result result;
-	return result;
+		Eval_Result & result = *new Eval_Result_Value_Goto();
+        result.set_value(bb);
+        print_ast(file_buffer);
+//        file_buffer << "\n" << AST_SPACE << "GOTO (BB "<<bb<<")";
+//		return result;
+	    file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
+        return result;
 }
 
 Code_For_Ast & Goto_Ast::compile()

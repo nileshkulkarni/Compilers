@@ -97,9 +97,8 @@ class Goto_Ast:public Ast
 public:
 	Goto_Ast(int bbnum, int line);
 	~Goto_Ast();
-
-	bool check_ast();
-
+	
+	int  get_bb();
 	void print(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
