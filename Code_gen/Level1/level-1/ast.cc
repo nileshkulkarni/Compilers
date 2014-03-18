@@ -113,6 +113,13 @@ Assignment_Ast::~Assignment_Ast()
 	delete rhs;
 }
 
+
+Data_Type Expression_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+
 bool Assignment_Ast::check_ast()
 {
 	CHECK_INVARIANT((rhs != NULL), "Rhs of Assignment_Ast cannot be null");
@@ -130,13 +137,15 @@ bool Assignment_Ast::check_ast()
 
 void Assignment_Ast::print(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "If_Else statement:	" ;
-	condition->print(file_buffer);
-	file_buffer<<"\n";
-    file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
-    file_buffer<<"\n";
-    file_buffer<<AST_NODE_SPACE<<"False Successor: "<<elseGoto->get_bb(); 
-}
+	file_buffer << AST_SPACE << "Asgn:\n";
+
+	file_buffer << AST_NODE_SPACE"LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print(file_buffer);
+	file_buffer << ")";
 }
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -253,7 +262,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 {
 		Eval_Result & result = *new Eval_Result_Value_Goto();
         result.set_value(bb);
-        print_ast(file_buffer);
+        print(file_buffer);
 //        file_buffer << "\n" << AST_SPACE << "GOTO (BB "<<bb<<")";
 //		return result;
 	    file_buffer << AST_SPACE << "GOTO (BB "<<bb<<")";
@@ -290,7 +299,7 @@ IfElse_Ast::~IfElse_Ast()
 
 bool IfElse_Ast::check_ast()
 {
-	CHECK_INVARIANT((condtion != NULL), "Condition of IF statmemtn cannot be null");
+	CHECK_INVARIANT((condition != NULL), "Condition of IF statmemtn cannot be null");
 	CHECK_INVARIANT((ifGoto != NULL), "Goto of IF statmemtn cannot be null");
 	CHECK_INVARIANT((elseGoto != NULL), "Goto of else cannot be null");
 
@@ -301,12 +310,32 @@ bool IfElse_Ast::check_ast()
 
 void IfElse_Ast::print(ostream & file_buffer)
 {
+	file_buffer << AST_SPACE << "If_Else statement:	" ;
+	condition->print(file_buffer);
+	file_buffer<<"\n";
+    file_buffer<<AST_NODE_SPACE<<"True Successor: " <<ifGoto->get_bb();  
+    file_buffer<<"\n";
+    file_buffer<<AST_NODE_SPACE<<"False Successor: "<<elseGoto->get_bb(); 
 }
 
 Eval_Result & IfElse_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	Eval_Result result;
-	return result;
+		Eval_Result & result = condition->evaluate(eval_env, file_buffer);
+        Eval_Result & ret = *new Eval_Result_Value_Goto();
+       // file_buffer<<"here and there : "<<result.get_value()<<endl;
+        print(file_buffer);
+        
+        file_buffer<<"\n";
+        if(result.get_int_value() != 0){
+			file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<ifGoto->get_bb()<<")";
+			ret.set_value(ifGoto->get_bb());
+		}
+		else{
+			file_buffer<<AST_SPACE<<"Condition False : Goto (BB "<<elseGoto->get_bb()<<")";
+			ret.set_value(elseGoto->get_bb());
+		}
+		
+		return ret;
 }
 
 Code_For_Ast & IfElse_Ast::compile()
@@ -321,15 +350,25 @@ Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Code_For_Ast load_stmt;
 	return load_stmt;
 }
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////
 
  Expression_Ast::Expression_Ast(Ast * _lhs, Ast * _rhs,Expression_Ast::OperatorType _op, int line)
 {
 	lhs = _lhs;
 	rhs= _rhs;
-	op = _op
+	op = _op;
 	ast_num_child = binary_arity;
 	lineno = line;
+	check_ast();
 }
 
 Expression_Ast::~Expression_Ast()
@@ -347,15 +386,57 @@ bool Expression_Ast::check_ast()
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
+		cout<<"node_data_type is :"<<node_data_type<<endl;
 		return true;
 	}
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
-		"Assignment statement data type not compatible");
+		"Expression statement data type not compatible");
 }
 
 void Expression_Ast::print(ostream & file_buffer)
 {
+	if(rhs == NULL){
+		lhs->print(file_buffer);
+		return;
+	}
+    
+    file_buffer <<"\n";	
+    file_buffer << AST_NODE_SPACE;
+	
+    
+    if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT) || (op == LE))
+		file_buffer << "Condition: "; 
+	else
+		file_buffer << "Arith: "; 
+	
+	
+	printOperator(file_buffer , op);
+	file_buffer <<"\n";
+    
+    file_buffer <<  AST_SPACE << "LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")";
+	file_buffer << "\n" << AST_SPACE<< "RHS (";
+	rhs->print(file_buffer);
+	file_buffer<<")";
+}
+
+
+void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
+    
+    if(rhs == NULL){
+		file_buffer<<"CASTED EXP: NO OP";
+		return;
+	}
+    switch(op){
+        case GT: file_buffer<<"GT";break;
+        case LT: file_buffer<<"LT";break;
+        case LE: file_buffer<<"LE";break;
+        case GE: file_buffer<<"GE";break;
+        case EQ: file_buffer<<"EQ";break;
+        case NE: file_buffer<<"NE";break;
+        }
 }
 
 Eval_Result & Expression_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)

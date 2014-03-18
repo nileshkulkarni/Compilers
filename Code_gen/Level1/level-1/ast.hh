@@ -125,6 +125,9 @@ public:
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
 
+
+
+
 class Expression_Ast:public Ast
 	{
 
@@ -159,6 +162,8 @@ public:
 	Code_For_Ast & compile();
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
+
+
 
 class Name_Ast:public Ast
 {

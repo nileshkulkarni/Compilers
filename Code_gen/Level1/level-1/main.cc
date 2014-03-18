@@ -65,6 +65,7 @@ int main(int argc, char * argv[])
 		if ((error_status() == false) && (command_options.is_do_eval_selected()))
 			program_object.evaluate();
 
+		/*
 		if ((error_status() == false) && (command_options.is_do_eval_selected() == false))
 		{
 			program_object.compile();
@@ -75,7 +76,7 @@ int main(int argc, char * argv[])
 			if (command_options.is_show_symtab_selected())
 				program_object.print();
 		}
-
+	*/
 		program_object.delete_all();
 	}
 
