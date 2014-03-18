@@ -168,21 +168,6 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	return result;
 }
 
-	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
-
-	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
-
-	lhs->set_value_of_evaluation(eval_env, result);
-
-	// Print the result
-
-	print(file_buffer);
-
-	lhs->print_value(eval_env, file_buffer);
-
-	return result;
-}
-
 Code_For_Ast & Assignment_Ast::compile()
 {
 	/* 
@@ -491,7 +476,7 @@ Code_For_Ast & Expression_Ast::compile()
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
 	if (lhs_code.get_icode_list().empty() == false)
-		ic_list = load_stmt.get_icode_list();
+		ic_list = lhs_code.get_icode_list();
 
 	if (rhs_code.get_icode_list().empty() == false)
 		ic_list.splice(ic_list.end(), rhs_code.get_icode_list());
