@@ -463,12 +463,13 @@ Code_For_Ast & Expression_Ast::compile()
 
 	Register_Descriptor * lhs_result_reg = lhs_code.get_reg();
 
-	
+	lhs_result_reg.set_used_for_expr_result(true);
 	
 	Code_For_Ast rhs_code = rhs->compile();
 	
 	Register_Descriptor * rhs_result_reg = rhs_code.get_reg();
 	
+	rhs_result_reg.set_used_for_expr_result(true);
 
 	// Store the statement in ic_list
 
@@ -512,6 +513,9 @@ Code_For_Ast & Expression_Ast::compile()
 	if (ic_list.empty() == false)
 		expression_stmt = new Code_For_Ast(ic_list, resultReg);
 
+	
+	lhs_result_reg.set_used_for_expr_result(false);
+	rhs_result_reg.set_used_for_expr_result(true);
 	return *expression_stmt;
 	
 }
