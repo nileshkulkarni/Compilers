@@ -343,20 +343,34 @@ Code_For_Ast & IfElse_Ast::compile()
 	conditon_reg->set_used_for_expr_result(true);
 	
 	int if_goto_block= ifGoto->get_bb();
-	
+	int else_goto_block = elseGoto->get_bb();
 	
 	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
 	Register_Descriptor* zero_reg = machine_dscr_object.get_register(zero);
 	Ics_Opd* condition_reg_opd = new Register_Addr_Opd(condtion_reg);
 	Ics_Opd* ifGoto_reg_opd = new Const_Opd<int>( if_goto_block);
 	Ics_Opd* zero_reg_opd = new Register_Addr_Opd(zero_reg);
-	check_with_zero= new Compute_IC_Stmt(bne,condtion_reg_opd,zero_reg_opd, ifGoto_reg_opd);
-	else_jump_statement = new 
+	Ics_Opd* elseGoto_reg_opd = new Const_Opd<int>( else_goto_block);
+	Icode_Stmt* check_with_zero= new Compute_IC_Stmt(bne,condtion_reg_opd,zero_reg_opd, ifGoto_reg_opd);
+	Icode_Stmt* else_jump_statement = new UCJump_IC_Stmt(elseGoto_reg_opd);
 	
 	
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (lhs_code.get_icode_list().empty() == false)
+		ic_list = condition_code.get_icode_list();
+	
+	ic_list.push_back(check_with_zero);
+	ic_list.push_back(else_jump_statment);
 	
 	condition_reg->set_used_for_expr_result(false);
-	return load_stmt;
+
+	Code_For_Ast * if_else_stmt;
+	if (ic_list.empty() == false)
+		if_else_stmt = new Code_For_Ast(ic_list, NULL);
+
+	
+	return if_else_stmt;
 }
 
 Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
