@@ -335,14 +335,33 @@ Eval_Result & IfElse_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 
 Code_For_Ast & IfElse_Ast::compile()
 {
-	Code_For_Ast load_stmt;
+	
+	Code_For_Ast condition_code = condition->compile();
+	Register_Descriptor * condition_reg = lhs_code.get_reg();
+
+	conditon_reg->set_used_for_expr_result(true);
+	
+	int if_goto_block= ifGoto->get_bb();
+	
+	
+	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
+	Register_Descriptor* zero_reg = machine_dscr_object.get_register(zero);
+	Ics_Opd* condition_reg_opd = new Register_Addr_Opd(condtion_reg);
+	Ics_Opd* ifGoto_reg_opd = new Const_Opd<int>( if_goto_block);
+	Ics_Opd* zero_reg_opd = new Register_Addr_Opd(zero_reg);
+	check_with_zero= new Compute_IC_Stmt(bne,condtion_reg_opd,zero_reg_opd, ifGoto_reg_opd);
+	else_jump_statement = new 
+	
+	
+	
+	condition_reg->set_used_for_expr_result(false);
 	return load_stmt;
 }
 
 Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
 	
-	Code_For_Ast load_stmt;
+	
 	return load_stmt;
 }
 

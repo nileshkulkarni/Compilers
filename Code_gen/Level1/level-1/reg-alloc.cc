@@ -339,3 +339,21 @@ Register_Descriptor * Machine_Description::get_new_register()
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 			"Error in get_new_reg or register requirements of input program cannot be met");
 }
+
+
+Register_Descriptor* get_register(Spim_Register reg){
+	Register_Descriptor * reg_desc;
+
+	map<Spim_Register, Register_Descriptor *>::iterator i;
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+
+		if (i->first == reg)
+			return reg_desc;
+	}
+
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+			"Error could not find required reg");
+}
+	

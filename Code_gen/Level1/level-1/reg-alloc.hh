@@ -243,7 +243,7 @@ public:
 
 	void validate_init_local_register_mapping();
 	void clear_local_register_mappings();
-
+	Register_Descriptor* get_register(Spim_Register);
 	Register_Descriptor * get_new_register();
 };
 
