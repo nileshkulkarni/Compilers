@@ -478,7 +478,10 @@ Code_For_Ast & Expression_Ast::compile()
 		ic_list.splice(ic_list.end(), rhs_code.get_icode_list());
 
 	Register_Descriptor *result_reg = machine_dscr_object.get_new_register();
-		
+	result_reg->set_used_for_expr_result(true);
+	
+	cout<<"free register allocated "<<result_reg->get_name()<<"\n";
+	
 	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
 	Ics_Opd* rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
 	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
