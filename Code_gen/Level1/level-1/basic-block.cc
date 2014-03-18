@@ -120,8 +120,10 @@ void Basic_Block::compile()
 	machine_dscr_object.clear_local_register_mappings();
 }
 
+
 void Basic_Block::print_assembly(ostream & file_buffer)
 {
+	file_buffer<<"label"<<id_number<<":\n";
 	list<Icode_Stmt *>::iterator i;
 	for (i = bb_icode_list.begin(); i != bb_icode_list.end(); i++)
 		(*i)->print_assembly(file_buffer);

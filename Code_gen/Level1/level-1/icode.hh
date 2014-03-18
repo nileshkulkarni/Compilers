@@ -87,6 +87,7 @@ typedef enum
 	sge,
 	sne,
 	seq,
+	bne,
 	nop 
 } Tgt_Op;
 
@@ -173,6 +174,7 @@ public:
 	Register_Addr_Opd & operator=(const Register_Addr_Opd & rhs);
 };
 
+
 template <class T>
 class Const_Opd: public Ics_Opd
 {
@@ -254,7 +256,7 @@ class UCJump_IC_Stmt: public Icode_Stmt
 	Ics_Opd * opd1;   
 
 public:
-	UCJump_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1); 
+	UCJump_IC_Stmt(Ics_Opd * opd1); 
 	~UCJump_IC_Stmt() {} 
 	UCJump_IC_Stmt & operator=(const UCJump_IC_Stmt & rhs);
 

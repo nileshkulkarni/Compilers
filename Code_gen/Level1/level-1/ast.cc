@@ -267,7 +267,24 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 
 Code_For_Ast & Goto_Ast::compile()
 {
-	Code_For_Ast & goto_stmt = rhs->compile();
+	
+	
+	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
+	
+	string val = static_cast<ostringstream*>( &(ostringstream() << bb) )->str();
+	Ics_Opd* goto_reg_opd = new Const_Opd<string>("label" + val);
+	Icode_Stmt* jump_statement = new UCJump_IC_Stmt(goto_reg_opd);
+	
+	
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	ic_list.push_back(jump_statement);
+
+	Code_For_Ast * goto_stmt;
+	if (ic_list.empty() == false)
+		goto_stmt = new Code_For_Ast(ic_list, NULL);
+
+	return *goto_stmt;
 }
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
@@ -338,30 +355,36 @@ Code_For_Ast & IfElse_Ast::compile()
 {
 	
 	Code_For_Ast condition_code = condition->compile();
-	Register_Descriptor * condition_reg = lhs_code.get_reg();
+	Register_Descriptor * condition_reg = condition_code.get_reg();
 
-	conditon_reg->set_used_for_expr_result(true);
+	condition_reg->set_used_for_expr_result(true);
 	
 	int if_goto_block= ifGoto->get_bb();
 	int else_goto_block = elseGoto->get_bb();
 	
 	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
 	Register_Descriptor* zero_reg = machine_dscr_object.get_register(zero);
-	Ics_Opd* condition_reg_opd = new Register_Addr_Opd(condtion_reg);
-	Ics_Opd* ifGoto_reg_opd = new Const_Opd<int>( if_goto_block);
+	Ics_Opd* condition_reg_opd = new Register_Addr_Opd(condition_reg);
+	
+	string val = static_cast<ostringstream*>( &(ostringstream() << if_goto_block) )->str();
+	Ics_Opd* ifGoto_reg_opd = new Const_Opd<string>("label" + val);
+	
 	Ics_Opd* zero_reg_opd = new Register_Addr_Opd(zero_reg);
-	Ics_Opd* elseGoto_reg_opd = new Const_Opd<int>( else_goto_block);
-	Icode_Stmt* check_with_zero= new Compute_IC_Stmt(bne,condtion_reg_opd,zero_reg_opd, ifGoto_reg_opd);
+	
+	val = static_cast<ostringstream*>( &(ostringstream() << else_goto_block) )->str();
+	Ics_Opd* elseGoto_reg_opd = new Const_Opd<string>("label"+ val);
+
+	Icode_Stmt* check_with_zero= new Compute_IC_Stmt(bne,  ifGoto_reg_opd , condition_reg_opd,zero_reg_opd);
 	Icode_Stmt* else_jump_statement = new UCJump_IC_Stmt(elseGoto_reg_opd);
 	
 	
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
-	if (lhs_code.get_icode_list().empty() == false)
+	if (condition_code.get_icode_list().empty() == false)
 		ic_list = condition_code.get_icode_list();
 	
 	ic_list.push_back(check_with_zero);
-	ic_list.push_back(else_jump_statment);
+	ic_list.push_back(else_jump_statement);
 	
 	condition_reg->set_used_for_expr_result(false);
 
@@ -370,14 +393,14 @@ Code_For_Ast & IfElse_Ast::compile()
 		if_else_stmt = new Code_For_Ast(ic_list, NULL);
 
 	
-	return if_else_stmt;
+	return *if_else_stmt;
 }
 
 Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
 	
-	
-	return load_stmt;
+	Code_For_Ast *load_stmt;
+	return *load_stmt;
 }
 
 
@@ -415,7 +438,6 @@ bool Expression_Ast::check_ast()
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
-		cout<<"node_data_type is :"<<node_data_type<<endl;
 		return true;
 	}
 
