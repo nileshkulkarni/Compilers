@@ -80,6 +80,7 @@ typedef enum
 	load, 
 	imm_load, 
 	store,
+	j,
 	slt,
 	sle,
 	sgt,
@@ -244,6 +245,30 @@ public:
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
 };
+
+
+
+
+class UCJump_IC_Stmt: public Icode_Stmt
+{ 
+	Ics_Opd * opd1;   
+
+public:
+	UCJump_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1); 
+	~UCJump_IC_Stmt() {} 
+	UCJump_IC_Stmt & operator=(const UCJump_IC_Stmt & rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
+	
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+
+
 
 
 
