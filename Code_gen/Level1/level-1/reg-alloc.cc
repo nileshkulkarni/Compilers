@@ -289,6 +289,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[sge] = new Instruction_Descriptor(imm_load, "SetGreaterThanEqualTo", "sge", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[sne] = new Instruction_Descriptor(imm_load, "SetNotEqualTo", "sne", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[seq] = new Instruction_Descriptor(imm_load, "SetEqualTo", "seq", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[j] = new Instruction_Descriptor(imm_load, "Jump", "j", "", i_op_o1, a_op_o1);
 
 }
 
