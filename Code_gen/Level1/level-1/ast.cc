@@ -286,7 +286,6 @@ IfElse_Ast::IfElse_Ast(Ast * cond, Goto_Ast * temp_ifGoto, Goto_Ast* temp_elseGo
 	elseGoto = temp_elseGoto;
 	ast_num_child = binary_arity;
 	node_data_type = void_data_type;
-
 	lineno = line;
 }
 
