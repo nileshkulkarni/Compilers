@@ -168,6 +168,21 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	return result;
 }
 
+	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
+
+	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
+
+	lhs->set_value_of_evaluation(eval_env, result);
+
+	// Print the result
+
+	print(file_buffer);
+
+	lhs->print_value(eval_env, file_buffer);
+
+	return result;
+}
+
 Code_For_Ast & Assignment_Ast::compile()
 {
 	/* 
@@ -444,6 +459,76 @@ Eval_Result & Expression_Ast::evaluate(Local_Environment & eval_env, ostream & f
 
 Code_For_Ast & Expression_Ast::compile()
 {
+	
+	/* 
+		An assignment x = y where y is a variable is 
+		compiled as a combination of load and store statements:
+		(load) R <- y 
+		(store) x <- R
+		If y is a constant, the statement is compiled as:
+		(imm_Load) R <- y 
+		(store) x <- R
+		where imm_Load denotes the load immediate operation.
+	*/
+
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	Code_For_Ast & lhs_code= lhs->compile();
+
+	Register_Descriptor * lhs_result_reg = lhs_code.get_reg();
+
+	
+	
+	Code_For_Ast rhs_code = rhs->compile();
+	
+	Register_Descriptor * rhs_result_reg = rhs_code.get_reg();
+	
+
+	// Store the statement in ic_list
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (lhs_code.get_icode_list().empty() == false)
+		ic_list = load_stmt.get_icode_list();
+
+	if (rhs_code.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), rhs_code.get_icode_list());
+
+	Register_Descriptor *resultReg = machine_dscr_object.get_new_register();
+		
+	//generate new code to perform the operation
+	Icode_Stmt * expression_icode_stmt;
+	switch(op){
+		case LE:
+			expression_icode_stmt= new Compute_Stmt(sle,lhs_result_reg,rhs_result_reg,resultReg);
+			break;
+		case LT:
+			expression_icode_stmt= new Compute_Stmt(slt,lhs_result_reg,rhs_result_reg,resultReg);
+			break;
+		case GT:
+			expression_icode_stmt= new Compute_Stmt(sgt,lhs_result_reg,rhs_result_reg,resultReg);
+			break;
+		case GE:
+			expression_icode_stmt= new Compute_Stmt(sge,lhs_result_reg,rhs_result_reg,resultReg);	
+			break;
+		case EQ:
+			expression_icode_stmt= new Compute_Stmt(seq,lhs_result_reg,rhs_result_reg,resultReg);
+			break;
+		case NE:
+			expression_icode_stmt= new Compute_Stmt(sne,lhs_result_reg,rhs_result_reg,resultReg);	
+			break;
+	}
+	
+	
+	ic_list.push_back(expression_icode_stmt);
+	
+	Code_For_Ast * expression_stmt;
+	if (ic_list.empty() == false)
+		expression_stmt = new Code_For_Ast(ic_list, resultReg);
+
+	return *expression_stmt;
+	
 }
 
 Code_For_Ast & Expression_Ast::compile_and_optimize_ast(Lra_Outcome & lra)

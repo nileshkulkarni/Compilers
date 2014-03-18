@@ -98,6 +98,11 @@ void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_ent
 		lra_symbol_list.push_back(&sym_entry);
 }
 
+
+void Register_Descriptor::set_used_for_expr_result(bool used){
+	used_for_expr_result = used;
+}
+
 //////////////////////////////// Lra_Outcome //////////////////////////////////////////
 
 Lra_Outcome::Lra_Outcome(Register_Descriptor * rdp, bool nr, bool sr, bool dr, bool mv, bool ld)
