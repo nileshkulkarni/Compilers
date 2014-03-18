@@ -247,11 +247,12 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 
 	switch (ic_format)
 	{
-	case i_r_op_o1: 
+	case i_r_op_o1_o2: 
 			file_buffer << " " << operation_name << ":\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
+			file_buffer << ", ";
 			opd2->print_ics_opd(file_buffer);
 			file_buffer << "\n";
 
@@ -278,6 +279,7 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 			result->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
+			file_buffer << ", ";
 			opd2->print_asm_opd(file_buffer);
 			file_buffer << "\n";
 
@@ -286,6 +288,7 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 	case a_op_o1_o2_r: 
 			file_buffer << "\t" << op_name << ", ";
 			opd1->print_asm_opd(file_buffer);
+			file_buffer << ", ";
 			opd2->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			result->print_asm_opd(file_buffer);
