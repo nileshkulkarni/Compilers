@@ -61,8 +61,10 @@ bool Register_Descriptor::is_free()
 { 
 	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)) 
 		return true;
-	else 
+	else{
+		
 		return false;
+	}
 }
 
 void Register_Descriptor::remove_symbol_entry_from_list(Symbol_Table_Entry & sym_entry)
@@ -90,6 +92,7 @@ void Register_Descriptor::clear_lra_symbol_list()
 	}
 
 	lra_symbol_list.clear();
+	used_for_expr_result = false;
 }
 
 void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_entry)
@@ -283,14 +286,14 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[slt] = new Instruction_Descriptor(imm_load, "SetLessThan", "slt", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[sle] = new Instruction_Descriptor(store, "SetLessThanEqualTo", "sle", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[sgt] = new Instruction_Descriptor(load, "SetGreaterThan", "sgt", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[sge] = new Instruction_Descriptor(imm_load, "SetGreaterThanEqualTo", "sge", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[sne] = new Instruction_Descriptor(imm_load, "SetNotEqualTo", "sne", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[seq] = new Instruction_Descriptor(imm_load, "SetEqualTo", "seq", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[bne] = new Instruction_Descriptor(imm_load, "BranchNotEqualTo", "bne", "", i_r_op_o1_o2, a_op_r_o1_o2);
-	spim_instruction_table[j] = new Instruction_Descriptor(imm_load, "Jump", "j", "", i_op_o1, a_op_o1);
+	spim_instruction_table[slt] = new Instruction_Descriptor(slt, "slt", "slt", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sle] = new Instruction_Descriptor(sle, "sle", "sle", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sgt] = new Instruction_Descriptor(sgt, "sgt", "sgt", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sge] = new Instruction_Descriptor(sge, "sge", "sge", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[sne] = new Instruction_Descriptor(sne, "sne", "sne", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(seq, "seq", "seq", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[j] = new Instruction_Descriptor(j, "goto", "j", "", i_op_o1, a_op_o1);
 
 }
 
@@ -300,10 +303,14 @@ void Machine_Description::validate_init_local_register_mapping()
 	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
 	{
 		Register_Descriptor * reg_desc = i->second;
-		if (reg_desc->get_use_category() == gp_data)
+		if (reg_desc->get_use_category() == gp_data){
 			CHECK_INVARIANT(reg_desc->is_free(), 
 					"GP data registers should be free at the start of a basic block");
+			
+		}
+		
 	}
+	
 }
 
 void Machine_Description::clear_local_register_mappings()

@@ -432,6 +432,10 @@ atomic_expression: variable{
 | constant{
     $$ = $1;
     }
+|
+	'(' expression ')' {
+		$$ = $2;
+	}
 ;
 
 

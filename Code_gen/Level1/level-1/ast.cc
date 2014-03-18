@@ -183,7 +183,7 @@ Code_For_Ast & Assignment_Ast::compile()
 	Code_For_Ast & load_stmt = rhs->compile();
 
 	Register_Descriptor * load_register = load_stmt.get_reg();
-
+	load_register->set_used_for_expr_result(true);
 	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
 
 	// Store the statement in ic_list
@@ -200,6 +200,7 @@ Code_For_Ast & Assignment_Ast::compile()
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, load_register);
 
+	load_register->set_used_for_expr_result(false);
 	return *assign_stmt;
 }
 
@@ -374,7 +375,7 @@ Code_For_Ast & IfElse_Ast::compile()
 	val = static_cast<ostringstream*>( &(ostringstream() << else_goto_block) )->str();
 	Ics_Opd* elseGoto_reg_opd = new Const_Opd<string>("label"+ val);
 
-	Icode_Stmt* check_with_zero= new Compute_IC_Stmt(bne,  ifGoto_reg_opd , condition_reg_opd,zero_reg_opd);
+	Icode_Stmt* check_with_zero= new CJump_IC_Stmt(bne,  zero_reg_opd , ifGoto_reg_opd , condition_reg_opd);
 	Icode_Stmt* else_jump_statement = new UCJump_IC_Stmt(elseGoto_reg_opd);
 	
 	
@@ -475,7 +476,7 @@ void Expression_Ast::print(ostream & file_buffer)
 
 
 void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::OperatorType op){
-    
+   
     if(rhs == NULL){
 		file_buffer<<"CASTED EXP: NO OP";
 		return;
@@ -536,7 +537,7 @@ Code_For_Ast & Expression_Ast::compile()
 	Register_Descriptor *result_reg = machine_dscr_object.get_new_register();
 	result_reg->set_used_for_expr_result(true);
 	
-	cout<<"free register allocated "<<result_reg->get_name()<<"\n";
+	//cout<<"free register allocated "<<result_reg->get_name()<<"\n";
 	
 	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
 	Ics_Opd* rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
