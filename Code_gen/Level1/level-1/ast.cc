@@ -490,9 +490,7 @@ Code_For_Ast & Expression_Ast::compile()
 	Icode_Stmt * expression_icode_stmt;
 	switch(op){
 		case LE:
-			
 			expression_icode_stmt= new Compute_IC_Stmt(sle,lhs_result_opd,rhs_result_opd,result_reg_opd);
-			
 			break;
 		case LT:
 			expression_icode_stmt= new Compute_IC_Stmt(slt,lhs_result_opd,rhs_result_opd,result_reg_opd);
@@ -520,9 +518,9 @@ Code_For_Ast & Expression_Ast::compile()
 
 	
 	lhs_result_reg->set_used_for_expr_result(false);
-	rhs_result_reg->set_used_for_expr_result(true);
+	rhs_result_reg->set_used_for_expr_result(false);
 	return *expression_stmt;
-	
+
 }
 
 Code_For_Ast & Expression_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
