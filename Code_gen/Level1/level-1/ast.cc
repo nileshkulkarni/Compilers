@@ -200,6 +200,8 @@ Code_For_Ast & Assignment_Ast::compile()
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, load_register);
 
+//!!
+
 	load_register->set_used_for_expr_result(false);
 	return *assign_stmt;
 }
@@ -209,8 +211,15 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	lra.optimize_lra(mc_2m, lhs, rhs);
-	Code_For_Ast load_stmt = rhs->compile_and_optimize_ast(lra);
+	Code_For_Ast load_stmt;
+	
+	
+//!!?????	
+	if((typeid(*rhs) == typeid(Number_Ast<int>)) || (typeid(*rhs) == typeid(Name_Ast))){
+		lra.optimize_lra(mc_2m, lhs, rhs);
+	}
+	
+	load_stmt = rhs->compile_and_optimize_ast(lra);
 
 	Register_Descriptor * result_register = load_stmt.get_reg();
 
@@ -228,6 +237,7 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, result_register);
 
+	
 	return *assign_stmt;
 }
 ////////////////////////////////////////////////////////////////
@@ -269,9 +279,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 Code_For_Ast & Goto_Ast::compile()
 {
 	
-	
 	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
-	
 	string val = static_cast<ostringstream*>( &(ostringstream() << bb) )->str();
 	Ics_Opd* goto_reg_opd = new Const_Opd<string>("label" + val);
 	Icode_Stmt* jump_statement = new UCJump_IC_Stmt(goto_reg_opd);
@@ -290,7 +298,7 @@ Code_For_Ast & Goto_Ast::compile()
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-
+	return compile();
 }
 ////////////////////////////////////////////////////////////////
 
@@ -399,9 +407,54 @@ Code_For_Ast & IfElse_Ast::compile()
 
 Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
+	//TODO : call lra optimize somehow
+	//Apparently unnecessary
+/*
+	if((typeid(*rhs) == typeid(Number_Ast<int>)) || (typeid(*rhs) == typeid(Name_Ast)))
+		lra.optimize_lra(mc_2r, NULL, condition);
+	//Don't know what to do here, According to base_code , this should seg_fault if condition is Name_ast or Number_ast.
+*/
+
+	Code_For_Ast condition_code = condition->compile_and_optimize_ast(lra);
+	Register_Descriptor * condition_reg = condition_code.get_reg();
+
+	condition_reg->set_used_for_expr_result(true);
 	
-	Code_For_Ast *load_stmt;
-	return *load_stmt;
+	int if_goto_block= ifGoto->get_bb();
+	int else_goto_block = elseGoto->get_bb();
+	
+	//Register_Descriptor* result_reg  = machine_dscr_object.get_new_register();
+	Register_Descriptor* zero_reg = machine_dscr_object.get_register(zero);
+	Ics_Opd* condition_reg_opd = new Register_Addr_Opd(condition_reg);
+	
+	string val = static_cast<ostringstream*>( &(ostringstream() << if_goto_block) )->str();
+	Ics_Opd* ifGoto_reg_opd = new Const_Opd<string>("label" + val);
+	
+	Ics_Opd* zero_reg_opd = new Register_Addr_Opd(zero_reg);
+	
+	val = static_cast<ostringstream*>( &(ostringstream() << else_goto_block) )->str();
+	Ics_Opd* elseGoto_reg_opd = new Const_Opd<string>("label"+ val);
+
+	Icode_Stmt* check_with_zero= new CJump_IC_Stmt(bne,  zero_reg_opd , ifGoto_reg_opd , condition_reg_opd);
+	Icode_Stmt* else_jump_statement = new UCJump_IC_Stmt(elseGoto_reg_opd);
+	
+	
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (condition_code.get_icode_list().empty() == false)
+		ic_list = condition_code.get_icode_list();
+	
+	ic_list.push_back(check_with_zero);
+	ic_list.push_back(else_jump_statement);
+	
+	condition_reg->set_used_for_expr_result(false);
+
+	Code_For_Ast * if_else_stmt;
+	if (ic_list.empty() == false)
+		if_else_stmt = new Code_For_Ast(ic_list, NULL);
+
+	
+	return *if_else_stmt;
 }
 
 
@@ -582,6 +635,84 @@ Code_For_Ast & Expression_Ast::compile()
 
 Code_For_Ast & Expression_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+	
+	
+//TODO	???????
+
+	if(typeid(*lhs) == typeid(Name_Ast)){
+		lra.optimize_lra(mc_2r, NULL, lhs);
+	}
+	
+	
+	Code_For_Ast & lhs_code= lhs->compile_and_optimize_ast(lra);
+	Register_Descriptor * lhs_result_reg = lhs_code.get_reg();
+	lhs_result_reg->set_used_for_expr_result(true);
+	
+	
+	if((typeid(*rhs) == typeid(Number_Ast<int>)) || (typeid(*rhs) == typeid(Name_Ast)))
+		lra.optimize_lra(mc_2r, NULL, rhs);
+	Code_For_Ast rhs_code = rhs->compile_and_optimize_ast(lra);
+	Register_Descriptor * rhs_result_reg = rhs_code.get_reg();
+	rhs_result_reg->set_used_for_expr_result(true);
+
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (lhs_code.get_icode_list().empty() == false)
+		ic_list = lhs_code.get_icode_list();
+
+	if (rhs_code.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), rhs_code.get_icode_list());
+
+	Register_Descriptor *result_reg = machine_dscr_object.get_new_register();
+	result_reg->set_used_for_expr_result(true);
+	
+	//cout<<"free register allocated "<<result_reg->get_name()<<"\n";
+	
+	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
+	Ics_Opd* rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
+	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
+
+	//generate new code to perform the operation
+	Icode_Stmt * expression_icode_stmt;
+	switch(op){
+		case LE:
+			expression_icode_stmt= new Compute_IC_Stmt(sle,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			break;
+		case LT:
+			expression_icode_stmt= new Compute_IC_Stmt(slt,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			break;
+		case GT:
+			expression_icode_stmt= new Compute_IC_Stmt(sgt,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			break;
+		case GE:
+			expression_icode_stmt= new Compute_IC_Stmt(sge,lhs_result_opd,rhs_result_opd,result_reg_opd);	
+			break;
+		case EQ:
+			expression_icode_stmt= new Compute_IC_Stmt(seq,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			break;
+		case NE:
+			expression_icode_stmt= new Compute_IC_Stmt(sne,lhs_result_opd,rhs_result_opd,result_reg_opd);	
+			break;
+	}
+	
+	
+	ic_list.push_back(expression_icode_stmt);
+	
+	Code_For_Ast * expression_stmt;
+	if (ic_list.empty() == false)
+		expression_stmt = new Code_For_Ast(ic_list, result_reg);
+
+	
+	lhs_result_reg->set_used_for_expr_result(false);
+	rhs_result_reg->set_used_for_expr_result(false);
+	return *expression_stmt;
+
+
+
+	
 }
 /////////////////////////////////////////////////////////////////
 
@@ -730,7 +861,7 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 
 Code_For_Ast & Name_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;;
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
 	bool load_needed = lra.is_load_needed();
 

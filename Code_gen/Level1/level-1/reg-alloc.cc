@@ -59,10 +59,10 @@ bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_li
 
 bool Register_Descriptor::is_free()     
 { 
-	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)) 
+	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)){ 
 		return true;
+	}	
 	else{
-		
 		return false;
 	}
 }
@@ -97,8 +97,9 @@ void Register_Descriptor::clear_lra_symbol_list()
 
 void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_entry)
 {
-	if (find_symbol_entry_in_list(sym_entry) == false)
+	if (find_symbol_entry_in_list(sym_entry) == false){
 		lra_symbol_list.push_back(&sym_entry);
+	}
 }
 
 	
@@ -165,7 +166,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
-			destination_register = destination_symbol_entry->get_register(); 
+			destination_register = destination_symbol_entry->get_register();
 		}
 
 		if (typeid(*source_memory) == typeid(Number_Ast<int>))
@@ -182,6 +183,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_same_as_source = true;
 			load_needed = false;
 		}
+		
 		else if (destination_register != NULL)
 		{
 			result_register = destination_register;
@@ -199,10 +201,10 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 	case mc_2r:
 		CHECK_INVARIANT(source_memory, "Sourse ast pointer cannot be NULL for m2r scenario in lra");
-
-		source_symbol_entry = &(source_memory->get_symbol_entry());
-		source_register = source_symbol_entry->get_register(); 
-
+		if(typeid(*source_memory) != typeid(Number_Ast<int>)){
+			source_symbol_entry = &(source_memory->get_symbol_entry());
+			source_register = source_symbol_entry->get_register();
+		}
 		if (source_register != NULL)
 		{
 			result_register = source_register;
@@ -215,7 +217,6 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_a_new_register = true;
 			load_needed = true;
 		}
-
 		break;
 
 	case r2r:
@@ -240,10 +241,14 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	CHECK_INVARIANT ((result_register != NULL), "Inconsistent information in lra");
 	register_description = result_register;
 
-	if (destination_register)
-		destination_symbol_entry->free_register(destination_register); 
 
-	destination_symbol_entry->update_register(result_register);
+	if (destination_register){
+		destination_symbol_entry->free_register(destination_register); 
+	}
+	
+	if(destination_memory){
+		destination_symbol_entry->update_register(result_register);
+	}
 }
 
 /******************************* Machine Description *****************************************/
