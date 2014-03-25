@@ -244,11 +244,12 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Symbol_Table_Entry *lhs_symbol_entry = &(lhs->get_symbol_entry());
 	Register_Descriptor *old_register = lhs_symbol_entry->get_register();
 	
-	if(!((typeid(*rhs) == typeid(Number_Ast<int>)) || (typeid(*rhs) == typeid(Name_Ast)))){
-		cout<<"Should not come here:"<<endl;
+	if(old_register){
 		lhs_symbol_entry->free_register(old_register);
-		lhs_symbol_entry->update_register(result_register);
 	}
+
+	lhs_symbol_entry->update_register(result_register);
+
 	
 	return *assign_stmt;
 }
