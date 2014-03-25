@@ -56,7 +56,7 @@ Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use;
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
-
+int Register_Descriptor::get_symbol_list_size() 		{return lra_symbol_list.size(); }
 bool Register_Descriptor::is_free()     
 { 
 	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)){ 
@@ -174,7 +174,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else
 		{
 			source_symbol_entry = &(source_memory->get_symbol_entry());
-			source_register = source_symbol_entry->get_register(); 
+			source_register = source_symbol_entry->get_register();
 		}
 
 		if (source_register != NULL)
@@ -184,12 +184,13 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			load_needed = false;
 		}
 		
-		else if (destination_register != NULL)
+		else if (destination_register != NULL && (destination_register->get_symbol_list_size() == 1))
 		{
 			result_register = destination_register;
 			is_same_as_destination = true;
 			load_needed = true;
 		}
+ 
 		else 
 		{
 			result_register = machine_dscr_object.get_new_register();
@@ -243,6 +244,9 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 
 	if (destination_register){
+		//cout<<destination_register->get_name()<<endl;
+		//source_memory->print(cout);
+		//destination_memory->print(cout);
 		destination_symbol_entry->free_register(destination_register); 
 	}
 	

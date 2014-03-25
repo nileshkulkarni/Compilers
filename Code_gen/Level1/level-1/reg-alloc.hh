@@ -82,9 +82,13 @@ class Register_Descriptor
     ~Register_Descriptor() {}
 
     bool is_symbol_list_empty();
+    int get_symbol_list_size();
+    
     void update_symbol_information(Symbol_Table_Entry & symbol_entry);
 
     bool find_symbol_entry_in_list(Symbol_Table_Entry & symbol_entry);
+    
+    
     void remove_symbol_entry_from_list(Symbol_Table_Entry & symbol_entry);
 
     Register_Use_Category get_use_category(); 
