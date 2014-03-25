@@ -222,8 +222,10 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	load_stmt = rhs->compile_and_optimize_ast(lra);
 
 	Register_Descriptor * result_register = load_stmt.get_reg();
-
 	Code_For_Ast store_stmt = lhs->create_store_stmt(result_register);
+	
+	
+	
 
 	list<Icode_Stmt *> ic_list;
 
@@ -236,7 +238,16 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Code_For_Ast * assign_stmt;
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, result_register);
-
+		
+	
+	Symbol_Table_Entry *lhs_symbol_entry = &(lhs->get_symbol_entry());
+	Register_Descriptor *old_register = lhs_symbol_entry->get_register();
+	
+	if(old_register)
+		lhs_symbol_entry->free_register(old_register);
+	
+	lhs_symbol_entry->update_register(result_register);
+	
 	
 	return *assign_stmt;
 }
