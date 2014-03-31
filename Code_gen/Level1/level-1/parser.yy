@@ -48,6 +48,9 @@
 %token IF ELSE GOTO
 %left <op> NE EQ
 %left <op> LT LE GT GE
+%left '+' '-'
+%left '*' '/'
+
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
@@ -62,6 +65,7 @@
 %type <ast> constant
 %type <ast> expression
 %type <ast> relational_expression
+%type <ast> unary_expression
 %type <ast> if_else_statement
 %type <ast> goto_statement
 %type <ast> atomic_expression
@@ -444,7 +448,7 @@ relational_expression:atomic_expression{
     }
     |
     relational_expression GE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE, get_line_number() ); 
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE, get_line_number()); 
             $$ = exp;
     }
     |
@@ -474,10 +478,81 @@ relational_expression:atomic_expression{
             $$ = exp;
     }
 ;
-expression : relational_expression {
-        $$ =$1;
-}
+
+
+
+unary_expression: atomic_expression{
+                    $$ =$1;
+				}
+                |
+                '-' unary_expression{
+                    Ast*  unaryExp = new UnaryExpression_Ast($2,Expression_Ast::OperatorType::UMINUS , get_line_number());
+                    $$ = unaryExp;
+                }
 ;
+
+expression : 
+		unary_expression{
+            $$ = $1;
+          }
+
+	|
+		relational_expression {
+			$$ =$1;
+		}
+		
+	| expression '+' expression{         
+           assert($3 != NULL);
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
+       }
+    | expression '-' expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MINUS, , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
+        }
+    | expression '*' expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MULT , , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
+        }
+    | expression '/' expression{   
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV , , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast(line);
+        }
+    | '(' DATA_TYPE ')' atomic_expression{
+           Ast* exp = new Expression_Ast($4,$2 , get_line_number()); 
+           $$ = exp;
+           
+    }	
+;
+
+
+
+DATA_TYPE : FLOAT{
+            Data_Type data_type = float_data_type;             
+            $$ = data_type;
+        }
+        |DOUBLE{
+            Data_Type data_type = double_data_type;             
+            $$ = data_type;
+
+        }
+        |INTEGER{
+            Data_Type data_type = int_data_type;             
+            $$ = data_type;
+
+        }
+;
+
+
+
 
 
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement 
@@ -489,6 +564,7 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement
 	}
 	}	
 ;
+
 goto_statement: GOTO BBNUM ';' 
 	{
 	if(NOT_ONLY_PARSE)
@@ -499,6 +575,8 @@ goto_statement: GOTO BBNUM ';'
     }
 ; 
               
+
+
 assignment_statement:
 	variable ASSIGN expression ';'
 	{
@@ -559,4 +637,14 @@ constant:
 		$$ = num_ast;
 	}
 	}
+|
+	FLOAT_NUMBER
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//cout<<"$1 : "<<$1<<endl;
+		$$ = new Number_Ast<float>($1, float_data_type, get_line_number());
+	}
+	}
+	;
 ;

@@ -139,7 +139,13 @@ public:
 		EQ,
 		NE,
 		LT,
-		GT
+		GT,
+		PLUS,
+		MINUS,
+		MULT,
+		DIV,
+		UMINUS,
+		UPLUS	
 	};
 
 
