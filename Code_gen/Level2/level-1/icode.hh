@@ -88,7 +88,11 @@ typedef enum
 	sne,
 	seq,
 	bne,
-	nop 
+	nop,
+	add,
+	sub,
+	mult,
+	div 
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
@@ -230,6 +234,7 @@ class Compute_IC_Stmt: public Icode_Stmt
 
 public:
 	Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2,  Ics_Opd * result); 
+	Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2,  Ics_Opd * result,int float_type); 
 	~Compute_IC_Stmt() {} 
 	Compute_IC_Stmt & operator=(const Compute_IC_Stmt & rhs);
 

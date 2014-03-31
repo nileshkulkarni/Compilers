@@ -39,6 +39,11 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
+#define replace(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
+#define assign_replace(r,v) ((r.data_type == double_data_type)? r.double_ret =v: (r.data_type == float_data_type)? r.float_ret =v: r.int_ret =v)
+
+
+
 Ast::Ast()
 {}
 
@@ -417,10 +422,24 @@ Code_For_Ast & IfElse_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
  Expression_Ast::Expression_Ast(Ast * _lhs, Ast * _rhs,Expression_Ast::OperatorType _op, int line)
 {
 	lhs = _lhs;
-	rhs= _rhs;
-	op = _op;
+	assert(_rhs != NULL) ; 
+	rhs = _rhs;
+	if((_op == GE) || (_op == EQ) || (_op == NE) || (_op == LT) || (_op == GT) || (_op == LE))
+			node_data_type = int_data_type;
+	else
+		node_data_type = lhs->get_data_type(); //## TO-DO , DONE
+	op  = _op;
 	ast_num_child = binary_arity;
 	lineno = line;
+	check_ast();
+}
+
+Expression_Ast :: Expression_Ast(Ast * _atomic_exp , Data_Type _T, int line){
+	lhs = _atomic_exp; 
+	rhs = NULL;
+	node_data_type = _T;
+	ast_num_child = unary_arity;
+	lineno=line;
 	check_ast();
 }
 
@@ -488,6 +507,10 @@ void Expression_Ast :: printOperator(ostream& file_buffer,Expression_Ast::Operat
         case GE: file_buffer<<"GE";break;
         case EQ: file_buffer<<"EQ";break;
         case NE: file_buffer<<"NE";break;
+        case PLUS: file_buffer<<"PLUS";break;
+        case MINUS: file_buffer<<"MINUS";break;
+        case MULT: file_buffer<<"MULT";break;
+        case DIV: file_buffer<<"DIV";break;
         }
 }
 
@@ -546,6 +569,38 @@ Code_For_Ast & Expression_Ast::compile()
 	//generate new code to perform the operation
 	Icode_Stmt * expression_icode_stmt;
 	switch(op){
+		case PLUS:
+			if(node_data_type == float_data_type || node_data_type == double_data_type){
+				expresssion_icode_stmt = new Compute_IC_Stmt(add,lhs_result_opd,rhs_result_opd,result_reg_opd,1)
+			}
+			else{
+				expression_icode_stmt= new Compute_IC_Stmt(add,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			}
+			break;
+		case MINUS:
+			if(node_data_type == float_data_type || node_data_type == double_data_type){
+				expresssion_icode_stmt = new Compute_IC_Stmt(sub,lhs_result_opd,rhs_result_opd,result_reg_opd,1)
+			}
+			else{
+				expression_icode_stmt= new Compute_IC_Stmt(sub,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			}
+			break;
+		case DIV:
+			if(node_data_type == float_data_type || node_data_type == double_data_type){
+				expresssion_icode_stmt = new Compute_IC_Stmt(div,lhs_result_opd,rhs_result_opd,result_reg_opd,1)
+			}
+			else{
+				expression_icode_stmt= new Compute_IC_Stmt(div,lhs_result_opd,rhs_result_opd,result_reg_opd);
+			}
+			break;
+		case MULT:
+			if(node_data_type == float_data_type || node_data_type == double_data_type){
+				expresssion_icode_stmt = new Compute_IC_Stmt(mult,lhs_result_opd,rhs_result_opd,result_reg_opd,1)
+			}
+			else{
+				expression_icode_stmt= new Compute_IC_Stmt(multlhs_result_opd,rhs_result_opd,result_reg_opd);
+			}
+			break;
 		case LE:
 			expression_icode_stmt= new Compute_IC_Stmt(sle,lhs_result_opd,rhs_result_opd,result_reg_opd);
 			break;

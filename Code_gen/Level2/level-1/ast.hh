@@ -30,6 +30,9 @@
 #include<typeinfo>
 #include<list>
 
+#define replaceRet(r) ((r.data_type == double_data_type)? r.double_ret : (r.data_type == float_data_type)? r.float_ret : r.int_ret)
+
+
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
 #define AST_SUB_NODE_SPACE "               "
@@ -139,7 +142,13 @@ public:
 		EQ,
 		NE,
 		LT,
-		GT
+		GT,
+		PLUS,
+		MINUS,
+		MULT,
+		DIV,
+		UMINUS,
+		UPLUS
 	};
 
 
@@ -164,6 +173,29 @@ public:
 };
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+	
+class UnaryExpression_Ast:public Ast
+{
+	Ast *exp;
+	Expression_Ast::OperatorType op;
+
+public:
+	UnaryExpression_Ast(Ast *_exp , Expression_Ast::OperatorType op);
+	~UnaryExpression_Ast();
+
+	void printOperator(ostream& file_buffer,Expression_Ast::OperatorType op);
+    
+	Data_Type get_data_type();
+	void print_ast(ostream & file_buffer);
+
+	void print_value(Local_Environment & eval_env, ostream & file_buffer);
+	
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////
 
 class Name_Ast:public Ast
 {
