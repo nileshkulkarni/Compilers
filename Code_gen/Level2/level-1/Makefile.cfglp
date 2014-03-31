@@ -62,7 +62,7 @@ clean :
 ###########################################################################
 
 check_clean :
-	rm -f *.o cfglp64 cfgpp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output plugin*.so
+	rm -f *.o cfglp cfgpp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
 	rm -f cscope.out tags a.out
 	rm Makefile*
 	rm -rf test_files test_files_output

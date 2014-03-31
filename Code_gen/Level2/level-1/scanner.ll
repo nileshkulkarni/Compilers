@@ -25,6 +25,16 @@
 %lex-source="scanner.cc"
 
 %%
+double {
+            store_token_name("DOUBLE");
+            return Parser::DOUBLE;
+
+      }
+float {
+            store_token_name("FLOAT");
+            return Parser::FLOAT;
+
+      }
 
 int		{
 			store_token_name("INTEGER");
@@ -101,6 +111,16 @@ goto    {
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
+
+([-]?[[:digit:]]+[.][[:digit:]]+)	{ 
+				store_token_name("FNUM");
+
+				ParserBase::STYPE__ * val = getSval();
+                float va;
+                sscanf(matched().c_str(),"%f",&va);
+				val->float_value =va;
+				return Parser::FLOAT_NUMBER;
+    }
 
 [-]?[[:digit:]_]+ 	{ 
 				store_token_name("NUM");

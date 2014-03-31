@@ -56,13 +56,13 @@ Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use;
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
-
+int Register_Descriptor::get_symbol_list_size() 		{return lra_symbol_list.size(); }
 bool Register_Descriptor::is_free()     
 { 
-	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)) 
+	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && !(used_for_expr_result)){ 
 		return true;
+	}	
 	else{
-		
 		return false;
 	}
 }
@@ -97,8 +97,9 @@ void Register_Descriptor::clear_lra_symbol_list()
 
 void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_entry)
 {
-	if (find_symbol_entry_in_list(sym_entry) == false)
+	if (find_symbol_entry_in_list(sym_entry) == false){
 		lra_symbol_list.push_back(&sym_entry);
+	}
 }
 
 	
@@ -165,7 +166,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
-			destination_register = destination_symbol_entry->get_register(); 
+			destination_register = destination_symbol_entry->get_register();
 		}
 
 		if (typeid(*source_memory) == typeid(Number_Ast<int>))
@@ -173,7 +174,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else
 		{
 			source_symbol_entry = &(source_memory->get_symbol_entry());
-			source_register = source_symbol_entry->get_register(); 
+			source_register = source_symbol_entry->get_register();
 		}
 
 		if (source_register != NULL)
@@ -182,12 +183,14 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_same_as_source = true;
 			load_needed = false;
 		}
-		else if (destination_register != NULL)
+		
+		else if (destination_register != NULL && (destination_register->get_symbol_list_size() == 1))
 		{
 			result_register = destination_register;
 			is_same_as_destination = true;
 			load_needed = true;
 		}
+ 
 		else 
 		{
 			result_register = machine_dscr_object.get_new_register();
@@ -199,10 +202,10 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 	case mc_2r:
 		CHECK_INVARIANT(source_memory, "Sourse ast pointer cannot be NULL for m2r scenario in lra");
-
-		source_symbol_entry = &(source_memory->get_symbol_entry());
-		source_register = source_symbol_entry->get_register(); 
-
+		if(typeid(*source_memory) != typeid(Number_Ast<int>)){
+			source_symbol_entry = &(source_memory->get_symbol_entry());
+			source_register = source_symbol_entry->get_register();
+		}
 		if (source_register != NULL)
 		{
 			result_register = source_register;
@@ -215,7 +218,6 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_a_new_register = true;
 			load_needed = true;
 		}
-
 		break;
 
 	case r2r:
@@ -240,10 +242,17 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	CHECK_INVARIANT ((result_register != NULL), "Inconsistent information in lra");
 	register_description = result_register;
 
-	if (destination_register)
-		destination_symbol_entry->free_register(destination_register); 
 
-	destination_symbol_entry->update_register(result_register);
+	if (destination_register){
+		//cout<<destination_register->get_name()<<endl;
+		//source_memory->print(cout);
+		//destination_memory->print(cout);
+		destination_symbol_entry->free_register(destination_register); 
+	}
+	
+	if(destination_memory){
+		destination_symbol_entry->update_register(result_register);
+	}
 }
 
 /******************************* Machine Description *****************************************/
@@ -275,17 +284,31 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[s5] = new Register_Descriptor(s5, "s5", int_num, gp_data);
 	spim_register_table[s6] = new Register_Descriptor(s6, "s6", int_num, gp_data);
 	spim_register_table[s7] = new Register_Descriptor(s7, "s7", int_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f1, "f1", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f2, "f2", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f3, "f3", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f4, "f4", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f5, "f5", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f6, "f6", float_num, gp_data);
+	spim_register_table[s7] = new Register_Descriptor(f7, "f7", float_num, gp_data);
+	
 	spim_register_table[gp] = new Register_Descriptor(gp, "gp", int_num, pointer);
 	spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
 	spim_register_table[fp] = new Register_Descriptor(fp, "fp", int_num, pointer);
 	spim_register_table[ra] = new Register_Descriptor(ra, "ra", int_num, ret_address);
+	
 }
 
 void Machine_Description::initialize_instruction_table()
 {
+	spim_instruction_table[store] = new Instruction_Descriptor(storef, "store.d", "s.d", "", i_r_op_o1, a_op_o1_r);
+	spim_instruction_table[store] = new Instruction_Descriptor(loadf, "load.d", "sw", "", i_r_op_o1, a_op_o1_r);
+	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_loadf, "iLoad.d", "li.d", "", i_r_op_o1, a_op_r_o1);
+	
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
+	
 	spim_instruction_table[slt] = new Instruction_Descriptor(slt, "slt", "slt", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[sle] = new Instruction_Descriptor(sle, "sle", "sle", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[sgt] = new Instruction_Descriptor(sgt, "sgt", "sgt", "", i_r_op_o1_o2, a_op_r_o1_o2);
@@ -294,6 +317,20 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[seq] = new Instruction_Descriptor(seq, "seq", "seq", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_r_op_o1_o2, a_op_r_o1_o2);
 	spim_instruction_table[j] = new Instruction_Descriptor(j, "goto", "j", "", i_op_o1, a_op_o1);
+
+	spim_instruction_table[seq] = new Instruction_Descriptor(add, "add", "add", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(addf, "add.d", "add.d", "", i_r_op_o1_o2, a_op_r_o1_o2);
+
+	spim_instruction_table[seq] = new Instruction_Descriptor(sub,"sub", "sub", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(subf, "sub.d", "sub.d", "", i_r_op_o1_o2, a_op_r_o1_o2);
+
+
+	spim_instruction_table[seq] = new Instruction_Descriptor(mul, "mul", "mul", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(mulf, "mul.d", "mul.d", "", i_r_op_o1_o2, a_op_r_o1_o2);
+
+	spim_instruction_table[seq] = new Instruction_Descriptor(divi, "div", "div", "", i_r_op_o1_o2, a_op_r_o1_o2);
+	spim_instruction_table[seq] = new Instruction_Descriptor(divif, "div.d", "div.d", "", i_r_op_o1_o2, a_op_r_o1_o2);
+
 
 }
 
@@ -331,7 +368,22 @@ void Machine_Description::clear_local_register_mappings()
 	a basic block.
 	*/
 }
+Register_Descriptor * Machine_Description::get_new_float_register()
+{
+	Register_Descriptor * reg_desc;
 
+	map<Spim_Register, Register_Descriptor *>::iterator i;
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+
+		if (reg_desc->is_free() && reg_desc->value_type == float_num)
+			return reg_desc;
+	}
+
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+			"Error in get_new_reg or register requirements of input program cannot be met");
+}
 Register_Descriptor * Machine_Description::get_new_register()
 {
 	Register_Descriptor * reg_desc;
@@ -341,7 +393,7 @@ Register_Descriptor * Machine_Description::get_new_register()
 	{
 		reg_desc = i->second;
 
-		if (reg_desc->is_free())
+		if (reg_desc->is_free() && reg_desc->value_type== int_num)
 			return reg_desc;
 	}
 

@@ -77,9 +77,9 @@ typedef enum
 
 typedef enum 
 { 
-	load, 
-	imm_load, 
-	store,
+	load,loadf,
+	imm_load,imm_loadf, 
+	store,storef,
 	j,
 	slt,
 	sle,
@@ -89,10 +89,11 @@ typedef enum
 	seq,
 	bne,
 	nop,
-	add,
-	sub,
-	mult,
-	div 
+	add,addf,
+	sub,subf,
+	mul,mulf,
+	divi,divif
+	
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
@@ -234,7 +235,6 @@ class Compute_IC_Stmt: public Icode_Stmt
 
 public:
 	Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2,  Ics_Opd * result); 
-	Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2,  Ics_Opd * result,int float_type); 
 	~Compute_IC_Stmt() {} 
 	Compute_IC_Stmt & operator=(const Compute_IC_Stmt & rhs);
 

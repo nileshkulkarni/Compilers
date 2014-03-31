@@ -48,12 +48,14 @@ typedef enum
 	gp,	/* global data pointer register */
 	sp,	/* stack pointer register */
 	fp,	/* frame pointer register */
-	ra	/* return address register */
+	ra,	/* return address register */
+	f1, f2 ,f3, f4, f5, f6, f7 /* floating point regisers */
 } Spim_Register;
 
 typedef enum 
 { 
-	int_num 
+	int_num,
+	float_num 
 } Register_Val_Type;
 
 typedef enum 
@@ -70,25 +72,31 @@ class Register_Descriptor
 {
     Spim_Register reg_id;
     string reg_name;
-    Register_Val_Type value_type;
     Register_Use_Category reg_use; 
 
     list<Symbol_Table_Entry *> lra_symbol_list;
     bool used_for_expr_result;
 
   public:
+    
+    Register_Val_Type value_type;
     Register_Descriptor (Spim_Register reg, string nam, Register_Val_Type vt, Register_Use_Category uc);
     Register_Descriptor() {}
     ~Register_Descriptor() {}
 
     bool is_symbol_list_empty();
+    int get_symbol_list_size();
+    
     void update_symbol_information(Symbol_Table_Entry & symbol_entry);
 
     bool find_symbol_entry_in_list(Symbol_Table_Entry & symbol_entry);
+    
+    
     void remove_symbol_entry_from_list(Symbol_Table_Entry & symbol_entry);
 
     Register_Use_Category get_use_category(); 
     Spim_Register get_register();
+  
 
     string get_name();
     void clear_lra_symbol_list();
@@ -244,6 +252,7 @@ public:
 	void validate_init_local_register_mapping();
 	void clear_local_register_mappings();
 	Register_Descriptor* get_register(Spim_Register);
+	Register_Descriptor * get_new_float_register();
 	Register_Descriptor * get_new_register();
 };
 

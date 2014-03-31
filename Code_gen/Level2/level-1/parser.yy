@@ -29,6 +29,7 @@
 %union 
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	pair<Data_Type, string> * decl;
 	list<Ast *> * ast_list;
@@ -39,15 +40,21 @@
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
 	Expression_Ast::OperatorType op;
+	Data_Type data_type;
+
 };
 
 %token <integer_value> INTEGER_NUMBER BBNUM
+%token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER 
+%token RETURN INTEGER FLOAT DOUBLE
 %token ASSIGN
 %token IF ELSE GOTO
 %left <op> NE EQ
-%left <op> LT LE GT GE
+%left <op> LT LE GT GE 
+%left '+' '-'
+%left '*' '/'
+
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
@@ -61,10 +68,12 @@
 %type <ast> variable
 %type <ast> constant
 %type <ast> expression
-%type <ast> relational_expression
+%type <ast> unary_expression
 %type <ast> if_else_statement
 %type <ast> goto_statement
 %type <ast> atomic_expression
+%type <data_type> DATA_TYPE 
+
 
 %start program
 
@@ -439,45 +448,109 @@ atomic_expression: variable{
 ;
 
 
-relational_expression:atomic_expression{
-                   $$ =$1;
-    }
-    |
-    relational_expression GE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE, get_line_number() ); 
-            $$ = exp;
-    }
-    |
-    relational_expression LE  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE, get_line_number() ); 
-            $$ = exp;
-    }
-    |
-    relational_expression LT  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT, get_line_number() ); 
-            $$ = exp;
-    }
-    |
-    relational_expression GT  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT, get_line_number() ); 
-            $$ = exp;
-    }
-    |
-    relational_expression  EQ  relational_expression{
-           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ, get_line_number() ); 
-           
+
+
+
+unary_expression: atomic_expression{
+                    $$ =$1;
+				}
+                |
+                '-' unary_expression{
+                    Ast*  unaryExp = new UnaryExpression_Ast($2,Expression_Ast::OperatorType::UMINUS , get_line_number());
+                    $$ = unaryExp;
+                }
+;
+
+expression : 
+		unary_expression{
+            $$ = $1;
+          }
+
+	| expression LE expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LE, get_line_number()); 
            $$ = exp;
-    }
-    |
-    relational_expression NE  relational_expression{
+           int line = get_line_number();
+           $$->check_ast();
+           }
+    | expression GE expression {
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GE, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+           }
+    | expression LT expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::LT, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+           }
+    | expression GT expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::GT, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+           }
+    | expression NE expression{
            Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::NE, get_line_number()); 
-            $$ = exp;
-    }
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+           }
+    | expression EQ expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::EQ, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+           }	
+	| expression '+' expression{         
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::PLUS, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+       }
+    | expression '-' expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MINUS, get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+        }
+    | expression '*' expression{
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::MULT , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+        }
+    | expression '/' expression{   
+           Ast* exp = new Expression_Ast($1,$3,Expression_Ast::OperatorType::DIV , get_line_number()); 
+           $$ = exp;
+           int line = get_line_number();
+           $$->check_ast();
+        }
+    | '(' DATA_TYPE ')' atomic_expression{
+           Ast* exp = new Expression_Ast($4,$2 , get_line_number()); 
+           $$ = exp;
+        }		
 ;
-expression : relational_expression {
-        $$ =$1;
-}
+
+
+
+DATA_TYPE : FLOAT{
+            Data_Type data_type = float_data_type;             
+            $$ = data_type;
+        }
+        |DOUBLE{
+            Data_Type data_type = double_data_type;             
+            $$ = data_type;
+
+        }
+        |INTEGER{
+            Data_Type data_type = int_data_type;             
+            $$ = data_type;
+		 }
 ;
+
+
+
 
 
 if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement 
@@ -489,6 +562,7 @@ if_else_statement: IF '(' expression ')' goto_statement ELSE goto_statement
 	}
 	}	
 ;
+
 goto_statement: GOTO BBNUM ';' 
 	{
 	if(NOT_ONLY_PARSE)
@@ -499,6 +573,8 @@ goto_statement: GOTO BBNUM ';'
     }
 ; 
               
+
+
 assignment_statement:
 	variable ASSIGN expression ';'
 	{
@@ -559,4 +635,14 @@ constant:
 		$$ = num_ast;
 	}
 	}
+|
+	FLOAT_NUMBER
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//cout<<"$1 : "<<$1<<endl;
+		$$ = new Number_Ast<float>($1, float_data_type, get_line_number());
+	}
+	}
 ;
+
