@@ -49,8 +49,7 @@ typedef enum
 	sp,	/* stack pointer register */
 	fp,	/* frame pointer register */
 	ra,	/* return address register */
-//	f1, f2 ,f3, f4, f5, f6, f7 /* floating point regisers */
-	f2 ,f3, f4, f5, f6, f7 /* floating point regisers */
+	f2 ,f4, f6, f8, f10, f12, f14 ,f16, f18, f20, f22, f24, f26, f28, f30 /* floating point regisers */
 
 } Spim_Register;
 

@@ -154,12 +154,14 @@ Const_Opd<DATA_TYPE> & Const_Opd<DATA_TYPE>::operator=(const Const_Opd<DATA_TYPE
 template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_ics_opd(ostream & file_buffer) 
 {
+	file_buffer<<std::fixed<<std::setprecision(2);
 	file_buffer << num;
 }
 
 template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer) 
 {
+	file_buffer<<std::fixed<<std::setprecision(2);
 	file_buffer << num;
 }
 

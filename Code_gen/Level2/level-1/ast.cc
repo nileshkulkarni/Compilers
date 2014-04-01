@@ -560,10 +560,9 @@ Expression_Ast::~Expression_Ast()
 
 bool Expression_Ast::check_ast()
 {
-	CHECK_INVARIANT((rhs != NULL), "Rhs of Assignment_Ast cannot be null");
+	CHECK_INVARIANT((ast_num_child == unary_arity || (rhs != NULL)), "Rhs of Assignment_Ast cannot be null");
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
 
-	
 	if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT) || (op == LE)){
 		node_data_type = int_data_type;
 		return true;

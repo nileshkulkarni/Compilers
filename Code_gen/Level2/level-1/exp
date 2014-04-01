@@ -1,9 +1,3 @@
-  Procedure: main
-  Intermediate Code Statements
-
-label2:    	
-	iLoad.d:    	f2 <- 2.40
-	store.d:    	b <- f2
 
 	.text 			# The .text assembler directive indicates
 	.globl main		# The following is the code (as oppose to data)
@@ -13,16 +7,24 @@ main:				# .globl makes main know to the
 	sw $fp, 0($sp)		# Save the frame pointer
 	sub $fp, $sp, 4		# Update the frame pointer
 
-	sub $sp, $sp, 12		# Make space for the locals
+	sub $sp, $sp, 36		# Make space for the locals
 # Prologue ends
 
 
 label2:    	
-	li.d $f2, 2.40
+	li $v0, 3
+	sw $v0, -24($fp)
+	li.d $f2, 2.30
 	s.d $f2, 0($fp)
+	lw $v0, -24($fp)
+	mtc1 $f2, $v0
+	l.d $f4, 0($fp)
+	div.d $f6, $f2, $f4
+	mfc1 $v0, $f6
+	sw $v0, -28($fp)
 
 # Epilogue Begins
-	add $sp, $sp, 12
+	add $sp, $sp, 36
 	lw $fp, 0($sp)  
 	jr        $31		# Jump back to the operating system.
 # Epilogue Ends
