@@ -38,6 +38,7 @@ using namespace std;
 #include"basic-block.hh"
 #include"procedure.hh"
 #include"program.hh"
+#include <cassert>
 
 Ast::Ast()
 {}
@@ -555,7 +556,6 @@ Expression_Ast::~Expression_Ast()
 {
 	delete lhs;
 	delete rhs;
-	
 }
 
 bool Expression_Ast::check_ast()
@@ -567,6 +567,13 @@ bool Expression_Ast::check_ast()
 		node_data_type = int_data_type;
 		return true;
 	}
+	
+	if(rhs == NULL){
+		assert(ast_num_child == unary_arity);
+		return true;
+	}
+	
+	
 	
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
@@ -644,22 +651,21 @@ Code_For_Ast & Expression_Ast::compile()
 	*/
 
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
-	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+	CHECK_INVARIANT((ast_num_child == unary_arity || (rhs != NULL)), "Rhs cannot be null");
 
 	Code_For_Ast & lhs_code= lhs->compile();
-
 	Register_Descriptor * lhs_result_reg = lhs_code.get_reg();
-
 	lhs_result_reg->set_used_for_expr_result(true);
-	
-	Code_For_Ast rhs_code = rhs->compile();
-	
-	Register_Descriptor * rhs_result_reg = rhs_code.get_reg();
-	
-	rhs_result_reg->set_used_for_expr_result(true);
 
+	Code_For_Ast rhs_code;
+	Register_Descriptor * rhs_result_reg;
+	if(rhs!=NULL){
+		rhs_code = rhs->compile();
+		rhs_result_reg = rhs_code.get_reg();
+		rhs_result_reg->set_used_for_expr_result(true);
+	}
+	
 	// Store the statement in ic_list
-
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
 	if (lhs_code.get_icode_list().empty() == false)
@@ -682,9 +688,11 @@ Code_For_Ast & Expression_Ast::compile()
 	//cout<<"free register allocated "<<result_reg->get_name()<<"\n";
 	
 	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
-	Ics_Opd* rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
 	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
-
+	Ics_Opd* rhs_result_opd;
+	if(rhs!=NULL)
+		rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
+	
 	//generate new code to perform the operation
 	Icode_Stmt * expression_icode_stmt;
 	switch(op){
