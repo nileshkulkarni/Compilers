@@ -1,8 +1,8 @@
 main()
 {
-	float b;
+	int b;
 	int a;
 
 	a = 2;
-    b = (float)a;
+    b = -a;
 }

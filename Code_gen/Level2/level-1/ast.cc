@@ -518,6 +518,55 @@ Eval_Result & UnaryExpression_Ast ::  evaluate(Local_Environment & eval_env, ost
 }
 
 Code_For_Ast & UnaryExpression_Ast::compile(){
+	CHECK_INVARIANT((exp != NULL), "Lhs cannot be null");
+	
+	Code_For_Ast & exp_code= exp->compile();
+
+	Register_Descriptor * exp_result_reg = exp_code.get_reg();
+
+	exp_result_reg->set_used_for_expr_result(true);
+	
+	// Store the statement in ic_list
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (exp_code.get_icode_list().empty() == false)
+		ic_list = exp_code.get_icode_list();
+
+	Register_Descriptor *result_reg;
+	if(node_data_type == float_data_type || node_data_type== double_data_type){
+		
+		result_reg = machine_dscr_object.get_new_float_register();
+	}
+	else{
+		
+		result_reg= machine_dscr_object.get_new_register();
+	}
+	result_reg->set_used_for_expr_result(true);
+	
+	//cout<<"free register allocated "<<result_reg->get_name()<<"\n";
+	
+	Ics_Opd* exp_result_opd = new Register_Addr_Opd(exp_result_reg); 	
+	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
+
+	//generate new code to perform the operation
+	Icode_Stmt * expression_icode_stmt;
+	if(node_data_type == float_data_type || node_data_type == double_data_type ){
+		expression_icode_stmt = new Move_IC_Stmt(negf,exp_result_opd,result_reg_opd); 
+	}
+	else{
+		expression_icode_stmt =  new Move_IC_Stmt(neg,exp_result_opd,result_reg_opd);
+	}
+	ic_list.push_back(expression_icode_stmt);
+	
+	Code_For_Ast * expression_stmt;
+	if (ic_list.empty() == false)
+		expression_stmt = new Code_For_Ast(ic_list, result_reg);
+
+	
+	exp_result_reg->set_used_for_expr_result(false);
+	return *expression_stmt;
+	
 }
 
 
