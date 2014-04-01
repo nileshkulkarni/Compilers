@@ -745,11 +745,11 @@ Code_For_Ast & Expression_Ast::compile()
 		rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
 	else{
 		
-	cout<<"here \n";
+	
 			if(node_data_type == float_data_type)
-				expression_icode_stmt = new Move_IC_Stmt(mfc1,lhs_result_opd,result_reg_opd);
-			else
 				expression_icode_stmt = new Move_IC_Stmt(mtc1,lhs_result_opd,result_reg_opd);
+			else
+				expression_icode_stmt = new Move_IC_Stmt(mfc1,lhs_result_opd,result_reg_opd);
 		
 		goto label;
 	}
