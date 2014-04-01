@@ -1,4 +1,4 @@
-[[parser.yy (info)] Line 646: 
+
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: program ->  optional_declaration_list procedure_definition
@@ -50,7 +50,7 @@ Production Rules
 47: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
 48: program_$ ->  program
 
-[[parser.yy (info)] 
+
 Symbolic Terminal tokens:
        error
        EOF
@@ -83,9 +83,9 @@ Symbolic Terminal tokens:
     59: ';'
     58: ':'
 
-[[parser.yy (info)] 
+
 Grammar States: 
-[[parser.yy (info)] State 0:
+State 0:
 48: program_$ ->  . program 
   0:   On program to state 1
   1:   On optional_declaration_list to state 2

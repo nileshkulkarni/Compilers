@@ -92,7 +92,9 @@ typedef enum
 	add,addf,
 	sub,subf,
 	mul,mulf,
-	divi,divif
+	divi,divif,
+	neg, negf,
+	mfc1, mtc1
 	
 } Tgt_Op;
 
