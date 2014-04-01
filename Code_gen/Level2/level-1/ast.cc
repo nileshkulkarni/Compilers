@@ -739,11 +739,19 @@ Code_For_Ast & Expression_Ast::compile()
 	Ics_Opd* lhs_result_opd = new Register_Addr_Opd(lhs_result_reg); 	
 	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
 	Ics_Opd* rhs_result_opd;
+	Icode_Stmt * expression_icode_stmt;
+	
 	if(rhs!=NULL)
 		rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
-	
+	else{
+			if(node_data_type == float_data_type)
+				expression_icode_stmt = new Move_IC_Stmt(mfc1,lhs_result_opd,result_reg_opd);
+			else
+				expression_icode_stmt = new Move_IC_Stmt(mtc1,lhs_result_opd,result_reg_opd);
+		
+		goto label;
+	}
 	//generate new code to perform the operation
-	Icode_Stmt * expression_icode_stmt;
 	switch(op){
 		case PLUS:
 			if(node_data_type == float_data_type || node_data_type == double_data_type){
@@ -798,7 +806,7 @@ Code_For_Ast & Expression_Ast::compile()
 			break;
 	}
 	
-	
+label:	
 	ic_list.push_back(expression_icode_stmt);
 	
 	Code_For_Ast * expression_stmt;
