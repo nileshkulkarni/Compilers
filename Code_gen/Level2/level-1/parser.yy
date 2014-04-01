@@ -254,7 +254,7 @@ variable_declaration:
 ;
 
 declaration:
-	INTEGER NAME
+	DATA_TYPE NAME
 	{
 	if (NOT_ONLY_PARSE)
 	{
