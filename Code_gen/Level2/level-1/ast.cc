@@ -755,7 +755,6 @@ Code_For_Ast & Expression_Ast::compile()
 						flag=1;
 				}
 				else{
-						
 					expression_icode_stmt = new Move_IC_Stmt(mtc1,lhs_result_opd,result_reg_opd);
 				}
 			}
@@ -830,22 +829,22 @@ label:
 	if(expression_icode_stmt !=NULL)
 		ic_list.push_back(expression_icode_stmt);
 	
-	Code_For_Ast * expression_stmt;
-	if (ic_list.empty() == false)
-		expression_stmt = new Code_For_Ast(ic_list, result_reg);
-
-	
 	lhs_result_reg->set_used_for_expr_result(false);
 	if(rhs!=NULL){
 		rhs_result_reg->set_used_for_expr_result(false);
 	}
 	
 	if(flag == 1){
-		cout<<"here"<<endl;
 		result_reg->set_used_for_expr_result(false);
 		result_reg = lhs_result_reg;
 		result_reg->set_used_for_expr_result(true);
 	}
+	
+	Code_For_Ast * expression_stmt;
+	if (ic_list.empty() == false)
+		expression_stmt = new Code_For_Ast(ic_list, result_reg);
+
+	
 	return *expression_stmt;
 
 }
