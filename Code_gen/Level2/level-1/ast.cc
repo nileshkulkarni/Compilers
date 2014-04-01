@@ -742,7 +742,7 @@ Code_For_Ast & Expression_Ast::compile()
 	Ics_Opd* result_reg_opd = new Register_Addr_Opd(result_reg); 	
 	Ics_Opd* rhs_result_opd;
 	Icode_Stmt * expression_icode_stmt=NULL;
-	
+	int flag=0;
 	if(rhs!=NULL)
 		rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
 	else{
@@ -752,6 +752,7 @@ Code_For_Ast & Expression_Ast::compile()
 				if ((lhs->get_data_type() == node_data_type)||
 					((lhs->get_data_type() == float_data_type || lhs->get_data_type() == double_data_type) &&
 					(node_data_type == float_data_type || node_data_type == double_data_type))){
+						flag=1;
 				}
 				else{
 						
@@ -762,7 +763,7 @@ Code_For_Ast & Expression_Ast::compile()
 				if ((lhs->get_data_type() == node_data_type) || 
 					((lhs->get_data_type() == float_data_type || lhs->get_data_type() == double_data_type) &&
 					(node_data_type == float_data_type || node_data_type == double_data_type)))	{
-						
+						flag=1;
 				}
 				else{
 					expression_icode_stmt = new Move_IC_Stmt(mfc1,lhs_result_opd,result_reg_opd);
@@ -837,6 +838,13 @@ label:
 	lhs_result_reg->set_used_for_expr_result(false);
 	if(rhs!=NULL){
 		rhs_result_reg->set_used_for_expr_result(false);
+	}
+	
+	if(flag == 1){
+		cout<<"here"<<endl;
+		result_reg->set_used_for_expr_result(false);
+		result_reg = lhs_result_reg;
+		result_reg->set_used_for_expr_result(true);
 	}
 	return *expression_stmt;
 
