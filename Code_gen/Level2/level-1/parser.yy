@@ -259,12 +259,9 @@ declaration:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
-
 		string name = *$2;
-		Data_Type type = int_data_type;
-
+		Data_Type type = $1;
 		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
-
 		$$ = declar;
 	}
 	}

@@ -411,8 +411,14 @@ void CJump_IC_Stmt::print_assembly(ostream & file_buffer)
 
 Move_IC_Stmt::Move_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * res)
 {
+	
+//	cout<<"op is "<<op<<endl;
+	
 	CHECK_INVARIANT((machine_dscr_object.spim_instruction_table[op] != NULL),
 			"Instruction description in spim table cannot be null");
+
+//	cout<<"check passed: "<<op<<endl;
+
 
 	op_desc = *(machine_dscr_object.spim_instruction_table[op]);
 	opd1 = o1;   

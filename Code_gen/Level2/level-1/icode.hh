@@ -77,9 +77,9 @@ typedef enum
 
 typedef enum 
 { 
-	load,loadf,
-	imm_load,imm_loadf, 
-	store,storef,
+	load, loadf,
+	imm_load, imm_loadf, 
+	store, storef,
 	j,
 	slt,
 	sle,

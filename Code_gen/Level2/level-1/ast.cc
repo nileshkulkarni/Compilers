@@ -563,6 +563,13 @@ bool Expression_Ast::check_ast()
 	CHECK_INVARIANT((rhs != NULL), "Rhs of Assignment_Ast cannot be null");
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
 
+	
+	if((op == GE) || (op == EQ) || (op == NE) || (op == LT) || (op == GT) || (op == LE)){
+		node_data_type = int_data_type;
+		return true;
+	}
+	
+	
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
