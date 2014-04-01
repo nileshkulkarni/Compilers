@@ -1,11 +1,18 @@
 main()
-{	
-	int a = 4;
-	int b = 3;
-	int c = 3;
+{
+    int a;
+	float b;
+	float c;
+	float e;
+	float f;
+	float g;
+	float h;
 
-	if (c > (a > b)?0:21)
-		a = 6;
-	else
-		b = 6;
+	b = 2.4;
+	c = 3;
+	e = 3;
+	f = 3;
+	g = 3;
+	h = b*c +e +f+g;
+    a = b<c;
 }
