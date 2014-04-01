@@ -343,8 +343,8 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[neg] = new Instruction_Descriptor(neg, "neg", "neg", "", i_op_r_o1, a_op_r_o1);
 	spim_instruction_table[negf] = new Instruction_Descriptor(negf, "neg.d", "neg.d", "", i_op_r_o1, a_op_r_o1);
 
-	spim_instruction_table[mfc1] = new Instruction_Descriptor(mfc1, "mfc1", "mfc1", "", i_op_r_o1, a_op_r_o1);
-	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_op_r_o1, a_op_r_o1);
+	spim_instruction_table[mfc1] = new Instruction_Descriptor(mfc1, "mfc1", "mfc1", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_r_op_o1, a_op_r_o1);
 
 
 }

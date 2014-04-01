@@ -744,6 +744,8 @@ Code_For_Ast & Expression_Ast::compile()
 	if(rhs!=NULL)
 		rhs_result_opd = new Register_Addr_Opd(rhs_result_reg); 	
 	else{
+		
+	cout<<"here \n";
 			if(node_data_type == float_data_type)
 				expression_icode_stmt = new Move_IC_Stmt(mfc1,lhs_result_opd,result_reg_opd);
 			else
@@ -815,7 +817,9 @@ label:
 
 	
 	lhs_result_reg->set_used_for_expr_result(false);
-	rhs_result_reg->set_used_for_expr_result(false);
+	if(rhs!=NULL){
+		rhs_result_reg->set_used_for_expr_result(false);
+	}
 	return *expression_stmt;
 
 }
