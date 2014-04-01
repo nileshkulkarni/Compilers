@@ -89,6 +89,35 @@ public:
 	Result_Enum get_result_enum();
 };
 
+
+
+
+class Eval_Result_Value_Float:public Eval_Result_Value
+{
+	float value;
+	bool defined;
+public:
+	Eval_Result_Value_Float();
+	~Eval_Result_Value_Float();
+
+	void set_value(float number);
+	float get_float_value();
+
+	void set_variable_status(bool def);
+	bool is_variable_defined();
+
+	void set_result_enum(Result_Enum res);
+	Result_Enum get_result_enum();
+};
+
+
+
+
+
+
+
+
+
 class Eval_Result_Value_Goto:public Eval_Result_Value
 {
 	int value;

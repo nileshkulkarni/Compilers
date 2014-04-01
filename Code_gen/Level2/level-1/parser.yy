@@ -637,7 +637,7 @@ constant:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		//cout<<"$1 : "<<$1<<endl;
+		cout<<"$1 : "<<$1<<endl;
 		$$ = new Number_Ast<float>($1, float_data_type, get_line_number());
 	}
 	}

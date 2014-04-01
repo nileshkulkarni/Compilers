@@ -569,7 +569,6 @@ bool Expression_Ast::check_ast()
 		return true;
 	}
 	
-	
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
@@ -579,6 +578,8 @@ bool Expression_Ast::check_ast()
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 		"Expression statement data type not compatible");
 }
+
+
 
 void Expression_Ast::print(ostream & file_buffer)
 {
@@ -1036,9 +1037,7 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 {
 	constant = number;
 	node_data_type = constant_data_type;
-
 	ast_num_child = zero_arity;
-
 	lineno = line;
 }
 
@@ -1071,18 +1070,39 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 		return result;
 	}
+
 }
 
 template <class DATA_TYPE>
 Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
 {
-	Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+	Register_Descriptor * result_register; 
+	
+	if(node_data_type == int_data_type){
+		result_register = machine_dscr_object.get_new_register();
+	}
+	else{
+		result_register = machine_dscr_object.get_new_float_register();
+	}
+	
+	
 	CHECK_INVARIANT((result_register != NULL), "Result register cannot be null");
 	Ics_Opd * load_register = new Register_Addr_Opd(result_register);
-	Ics_Opd * opd = new Const_Opd<int>(constant);
-
-	Icode_Stmt * load_stmt = new Move_IC_Stmt(imm_load, opd, load_register);
-
+	
+	Ics_Opd * opd;
+	Icode_Stmt * load_stmt;
+	
+	
+	if(node_data_type == int_data_type){
+		opd = new Const_Opd<int>(constant);
+		load_stmt = new Move_IC_Stmt(imm_load, opd, load_register);
+	}
+	else{
+		opd = new Const_Opd<float>(constant);
+		load_stmt = new Move_IC_Stmt(imm_loadf, opd, load_register);
+	}
+			
+	
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	ic_list.push_back(load_stmt);
 

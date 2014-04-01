@@ -637,4 +637,5 @@ Instruction_Descriptor::Instruction_Descriptor()
 }
 
 template class Const_Opd<int>;
+template class Const_Opd<float>;
 template class Const_Opd<string>;

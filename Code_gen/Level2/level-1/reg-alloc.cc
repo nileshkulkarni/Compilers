@@ -284,13 +284,14 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[s5] = new Register_Descriptor(s5, "s5", int_num, gp_data);
 	spim_register_table[s6] = new Register_Descriptor(s6, "s6", int_num, gp_data);
 	spim_register_table[s7] = new Register_Descriptor(s7, "s7", int_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f1, "f1", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f2, "f2", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f3, "f3", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f4, "f4", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f5, "f5", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f6, "f6", float_num, gp_data);
-	spim_register_table[s7] = new Register_Descriptor(f7, "f7", float_num, gp_data);
+	
+//	spim_register_table[f1] = new Register_Descriptor(f1, "f1", float_num, gp_data);
+	spim_register_table[f2] = new Register_Descriptor(f2, "f2", float_num, gp_data);
+	spim_register_table[f3] = new Register_Descriptor(f3, "f3", float_num, gp_data);
+	spim_register_table[f4] = new Register_Descriptor(f4, "f4", float_num, gp_data);
+	spim_register_table[f5] = new Register_Descriptor(f5, "f5", float_num, gp_data);
+	spim_register_table[f6] = new Register_Descriptor(f6, "f6", float_num, gp_data);
+	spim_register_table[f7] = new Register_Descriptor(f7, "f7", float_num, gp_data);
 	
 	spim_register_table[gp] = new Register_Descriptor(gp, "gp", int_num, pointer);
 	spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
@@ -382,8 +383,11 @@ Register_Descriptor * Machine_Description::get_new_float_register()
 	}
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
-			"Error in get_new_reg or register requirements of input program cannot be met");
+			"Error in get_new_float_reg or register requirements of input program cannot be met");
 }
+
+
+
 Register_Descriptor * Machine_Description::get_new_register()
 {
 	Register_Descriptor * reg_desc;
