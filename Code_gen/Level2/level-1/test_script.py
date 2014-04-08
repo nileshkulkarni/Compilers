@@ -23,11 +23,13 @@ print("Done generating cfg files\n");
 for f in cfgFiles:
     print("Testing file  " + f ); 
 
-    command = "./cfglp64  -compile -d " + f + " > expected " 
+    command = "./cfglp64  -compile -lra -d " + f + " > expected " 
     os.system(command) 
-    command = "./cfglp -compile -d " + f + " > generated " 
+    command = "./cfglp -compile -lra -d " + f + " > generated " 
     os.system(command)
     os.system("diff -b -B expected generated");
+    print("---------------------------------------------------")
+    os.system("diff -b -B generated expected ");
 '''
 error_files=[]
 for f in files:
