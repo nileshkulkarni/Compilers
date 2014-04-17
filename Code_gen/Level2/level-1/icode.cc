@@ -459,8 +459,16 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
 			file_buffer << "\n";
-
+			break;
+		
+	case i_op_r_o1: 
+			file_buffer << "\t" << operation_name << ":\t";
+			result->print_ics_opd(file_buffer);
+			file_buffer << " <- ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << "\n";
 			break; 
+		
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 				"Intermediate code format not supported");

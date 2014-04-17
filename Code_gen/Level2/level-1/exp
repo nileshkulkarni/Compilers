@@ -1,3 +1,63 @@
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad.d:    	f2 <- 3.23
+	store.d:    	a <- f2
+	iLoad.d:    	f2 <- 5.68
+	store.d:    	j <- f2
+	load.d:    	f2 <- j
+	uminus.d:    	f4 <- f2
+	load.d:    	f2 <- a
+	mul.d:    	f6 <- f4 , f2
+	load.d:    	f2 <- a
+	div.d:    	f4 <- f6 , f2
+	load.d:    	f2 <- j
+	sub.d:    	f6 <- f4 , f2
+	store.d:    	a <- f6
+	load.d:    	f2 <- j
+	uminus.d:    	f4 <- f2
+	load.d:    	f2 <- a
+	sle:    	v0 <- f4 , f2
+	iLoad:    	t0 <- 0
+	sne:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label3
+	goto label4
+
+label3:    	
+	iLoad.d:    	f2 <- 1.00
+	store.d:    	iftmp0 <- f2
+	goto label5
+
+label4:    	
+	iLoad.d:    	f2 <- 0.00
+	store.d:    	iftmp0 <- f2
+
+label5:    	
+	load.d:    	f2 <- iftmp0
+	load.d:    	f4 <- a
+	uminus.d:    	f6 <- f4
+	slt:    	v0 <- f2 , f6
+	iLoad:    	t0 <- 0
+	sne:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label6
+	goto label7
+
+label6:    	
+	load.d:    	f2 <- a
+	iLoad.d:    	f4 <- 1.00
+	add.d:    	f6 <- f2 , f4
+	store.d:    	a <- f6
+	goto label8
+
+label7:    	
+	load.d:    	f2 <- a
+	uminus.d:    	f4 <- f2
+	iLoad.d:    	f2 <- 1.00
+	sub.d:    	f6 <- f4 , f2
+	store.d:    	j <- f6
+
+label8:    	
 
 	.text 			# The .text assembler directive indicates
 	.globl main		# The following is the code (as oppose to data)
@@ -7,17 +67,70 @@ main:				# .globl makes main know to the
 	sw $fp, 0($sp)		# Save the frame pointer
 	sub $fp, $sp, 4		# Update the frame pointer
 
-	sub $sp, $sp, 8		# Make space for the locals
+	sub $sp, $sp, 28		# Make space for the locals
 # Prologue ends
 
 
 label2:    	
+	li.d $f2, 3.23
+	s.d $f2, -8($fp)
+	li.d $f2, 5.68
+	s.d $f2, 0($fp)
+	l.d $f2, 0($fp)
+	neg.d $f4, $f2
+	l.d $f2, -8($fp)
+	mul.d $f6, $f4, $f2
+	l.d $f2, -8($fp)
+	div.d $f4, $f6, $f2
+	l.d $f2, 0($fp)
+	sub.d $f6, $f4, $f2
+	s.d $f6, -8($fp)
+	l.d $f2, 0($fp)
+	neg.d $f4, $f2
+	l.d $f2, -8($fp)
+	sle $v0, $f4, $f2
+	li $t0, 0
+	sne $t1, $v0, $t0
+	bne $t1, $zero, label3 
+	j label4
+
+label3:    	
 	li.d $f2, 1.00
-	mfc1 $v0, $f2
-	sw $v0, 0($fp)
+	s.d $f2, -16($fp)
+	j label5
+
+label4:    	
+	li.d $f2, 0.00
+	s.d $f2, -16($fp)
+
+label5:    	
+	l.d $f2, -16($fp)
+	l.d $f4, -8($fp)
+	neg.d $f6, $f4
+	slt $v0, $f2, $f6
+	li $t0, 0
+	sne $t1, $v0, $t0
+	bne $t1, $zero, label6 
+	j label7
+
+label6:    	
+	l.d $f2, -8($fp)
+	li.d $f4, 1.00
+	add.d $f6, $f2, $f4
+	s.d $f6, -8($fp)
+	j label8
+
+label7:    	
+	l.d $f2, -8($fp)
+	neg.d $f4, $f2
+	li.d $f2, 1.00
+	sub.d $f6, $f4, $f2
+	s.d $f6, 0($fp)
+
+label8:    	
 
 # Epilogue Begins
-	add $sp, $sp, 8
+	add $sp, $sp, 28
 	lw $fp, 0($sp)  
 	jr        $31		# Jump back to the operating system.
 # Epilogue Ends
